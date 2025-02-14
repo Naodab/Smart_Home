@@ -17,4 +17,6 @@
     <string name="remote">Điều khiển</string>
     <string name="follow">Theo dõi</string>
     <string name="logout">Đăng xuất</string>
+    <string name="back">back</string>
+    <string name="face_auth_manual">Vui lòng di chuyển mặt đến khung hình</string>
 </resources>
