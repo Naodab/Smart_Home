@@ -64,6 +64,12 @@ public class HomeFragment extends Fragment {
                 navController.navigate(R.id.action_homeFragment_to_loginFragment);
             }
         });
+
+        binding.faceAuthBtn.setOnClickListener(v -> {
+            hideBottomNav();
+            NavController navController = Navigation.findNavController(view);
+            navController.navigate(R.id.action_homeFragment_to_faceAuthFragment);
+        });
     }
 
     public void showBottomNav() {

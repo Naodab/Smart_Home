@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main_nav"
-    app:startDestination="@id/loginFragment">
+    app:startDestination="@id/homeFragment">
 
     <fragment
         android:id="@+id/loginFragment"
@@ -19,19 +19,10 @@
             app:popExitAnim="@anim/fade_out" />
     </fragment>
     <fragment
-        android:id="@+id/authenticationFragment"
-        android:name="com.smarthome.mobile.view.AuthenticationFragment"
-        android:label="fragment_authentication"
-        tools:layout="@layout/fragment_authentication" />
-    <fragment
         android:id="@+id/monitorFragment"
         android:name="com.smarthome.mobile.view.MonitorFragment"
         android:label="fragment_monitor"
-        tools:layout="@layout/fragment_monitor" >
-        <action
-            android:id="@+id/action_monitorFragment_to_authenticationFragment"
-            app:destination="@id/authenticationFragment" />
-    </fragment>
+        tools:layout="@layout/fragment_monitor" />
     <fragment
         android:id="@+id/homeFragment"
         android:name="com.smarthome.mobile.view.HomeFragment"
@@ -44,5 +35,25 @@
             app:exitAnim="@anim/fade_out"
             app:popEnterAnim="@anim/fade_in"
             app:popExitAnim="@anim/fade_out"  />
+        <action
+            android:id="@+id/action_homeFragment_to_faceAuthFragment"
+            app:destination="@id/faceAuthFragment"
+            app:enterAnim="@anim/fade_in"
+            app:exitAnim="@anim/fade_out"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/fade_out" />
+    </fragment>
+    <fragment
+        android:id="@+id/faceAuthFragment"
+        android:name="com.smarthome.mobile.view.FaceAuthFragment"
+        android:label="fragment_face_auth"
+        tools:layout="@layout/fragment_face_auth" >
+        <action
+            android:id="@+id/action_faceAuthFragment_to_homeFragment"
+            app:destination="@id/homeFragment"
+            app:enterAnim="@anim/fade_in"
+            app:exitAnim="@anim/fade_out"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/fade_out" />
     </fragment>
 </navigation>

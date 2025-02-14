@@ -36,7 +36,14 @@ android {
 }
 
 dependencies {
-
+    implementation(libs.camera.core)
+    implementation(libs.androidx.camera.camera2)
+    implementation(libs.camera.lifecycle)
+    implementation(libs.androidx.camera.view)
+    implementation(libs.androidx.camera.extensions)
+    implementation(libs.guava)
+    implementation(libs.face.detection)
+    implementation(libs.androidx.lifecycle.service)
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.activity)
