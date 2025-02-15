@@ -36,6 +36,9 @@ android {
 }
 
 dependencies {
+    implementation(libs.retrofit)
+    implementation(libs.converter.gson)
+    implementation(libs.logging.interceptor)
     implementation(libs.camera.core)
     implementation(libs.androidx.camera.camera2)
     implementation(libs.camera.lifecycle)

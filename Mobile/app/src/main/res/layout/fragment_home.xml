@@ -13,7 +13,7 @@
         android:layout_height="match_parent"
         android:contentDescription="@string/background"
         android:scaleType="centerCrop"
-        android:src="@drawable/home_back"/>
+        android:src="@drawable/back_home"/>
 
     <TextView
         android:id="@+id/title"
@@ -56,7 +56,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:contentDescription="@string/face_icon"
-                    android:src="@drawable/face_icon"/>
+                    android:src="@drawable/ic_face"/>
 
             </androidx.cardview.widget.CardView>
 
@@ -89,7 +89,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:contentDescription="@string/speech_icon"
-                    android:src="@drawable/speech_icon"/>
+                    android:src="@drawable/ic_speech"/>
 
             </androidx.cardview.widget.CardView>
 
