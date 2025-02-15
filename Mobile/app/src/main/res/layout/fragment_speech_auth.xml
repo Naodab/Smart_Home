@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".view.FaceAuthFragment"
+    tools:context=".view.SpeechAuthFragment"
     android:background="@drawable/back_auth">
 
     <ImageView
@@ -21,20 +21,28 @@
         app:layout_constraintVertical_bias="0.023" />
 
     <androidx.cardview.widget.CardView
-        android:id="@+id/cardView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="32dp"
-        app:cardCornerRadius="40dp"
+        android:id="@+id/btnMic"
+        android:layout_width="250dp"
+        android:layout_height="250dp"
+        android:background="@color/main_color"
+        android:backgroundTintMode="src_over"
+        android:foreground="?attr/selectableItemBackgroundBorderless"
+        app:cardCornerRadius="125dp"
+        app:strokeColor="@color/black"
+        app:strokeWidth="20dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.328"
-        tools:layout_editor_absoluteX="32dp">
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
-        <androidx.camera.view.PreviewView
-            android:id="@+id/cameraPreview"
-            android:layout_width="match_parent"
-            android:layout_height="360dp" />
+        <ImageView
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:layout_gravity="center"
+            android:contentDescription="@string/mic_btn"
+            android:src="@drawable/ic_mic"
+            app:tint="@color/main_color" />
+
     </androidx.cardview.widget.CardView>
 
     <TextView
@@ -43,7 +51,7 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:paddingHorizontal="60dp"
-        android:text="@string/face_auth_manual"
+        android:text="@string/audio_record_manual"
         android:textColor="@color/black"
         android:textSize="20sp"
         android:textStyle="bold"
@@ -51,4 +59,6 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.745"
         tools:layout_editor_absoluteX="0dp" />
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>

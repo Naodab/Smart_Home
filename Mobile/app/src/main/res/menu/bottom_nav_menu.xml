@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:id="@+id/navigation_home"
-        android:icon="@drawable/home_icon"
+        android:icon="@drawable/ic_home"
         android:title="@string/authentication"/>
     <item android:id="@+id/navigation_remote"
-        android:icon="@drawable/remote_icon"
+        android:icon="@drawable/ic_remote"
         android:title="@string/remote"/>
     <item android:id="@+id/navigation_monitor"
-        android:icon="@drawable/follow_icon"
+        android:icon="@drawable/ic_follow"
         android:title="@string/follow"/>
     <item android:id="@+id/navigation_logout"
-        android:icon="@drawable/logout_icon"
+        android:icon="@drawable/ic_logout"
         android:title="@string/logout"/>
 </menu>
