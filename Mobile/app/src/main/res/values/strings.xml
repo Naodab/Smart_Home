@@ -1,3 +1,24 @@
 <resources>
-    <string name="app_name">Mobile</string>
+    <string name="app_name">Smart Home</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="project_name">SMART HOME</string>
+    <string name="login">Đăng nhập</string>
+    <string name="password">Mật khẩu</string>
+    <string name="email">Email</string>
+    <string name="loading">Đang tải...</string>
+    <string name="background">background</string>
+    <string name="icon">icon\n</string>
+    <string name="face_icon">face_icon</string>
+    <string name="face_authentication">Xác thực khuôn mặt</string>
+    <string name="speech_icon">speech icon</string>
+    <string name="speech_authentication">Xác thực giọng nói</string>
+    <string name="authentication">Xác thực</string>
+    <string name="remote">Điều khiển</string>
+    <string name="follow">Theo dõi</string>
+    <string name="logout">Đăng xuất</string>
+    <string name="back">back</string>
+    <string name="face_auth_manual">Vui lòng di chuyển mặt đến khung hình</string>
+    <string name="audio_record_manual">Nhấn giữ để nói</string>
+    <string name="mic_btn">mic_btn</string>
 </resources>
