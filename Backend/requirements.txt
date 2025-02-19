@@ -7,3 +7,6 @@ openai-whisper
 setuptools-rust
 sounddevice
 wavio
+pydub
+transformers
+numpy<2

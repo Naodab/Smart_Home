@@ -1,40 +1,20 @@
 # import whisper
-
-# model = whisper.load_model("turbo")
-
-# # load audio and pad/trim it to fit 30 seconds
-# audio = whisper.load_audio("audio.wav")
-# audio = whisper.pad_or_trim(audio)
-
-# # make log-Mel spectrogram and move to the same device as the model
-# mel = whisper.log_mel_spectrogram(audio, n_mels=model.dims.n_mels).to(model.device)
-
-# # detect the spoken language
-# _, probs = model.detect_language(mel)
-# print(f"Detected language: {max(probs, key=probs.get)}")
-
-# # decode the audio
-# options = whisper.DecodingOptions()
-# result = whisper.decode(model, mel, options)
-
-# # print the recognized text
-# print(result.text)
-
-# import whisper
-
-# model = whisper.load_model("base")
-# result = model.transcribe("audio.wav")
-# print(result["text"])
-
-import whisper
-import torch
+# import torch
 import sounddevice as sd
 import wavio
+from pydub import AudioSegment
+from pydub.effects import normalize
+from transformers import pipeline
+import torchvision
+
+# Tắt cảnh báo Beta từ torchvision
+torchvision.disable_beta_transforms_warning()
 
 # Thiết lập các thông số ghi âm
-duration = 3  # Thời gian ghi âm (giây)
+duration = 5  # Thời gian ghi âm (giây)
 fs = 44100  # Tần số mẫu (Hz)
 filename = "audio.wav"
+processed_filename = "processed_audio.wav"
 
 print("Bắt đầu ghi âm...")
 # Ghi âm từ micro
@@ -46,14 +26,23 @@ print("Ghi âm xong!")
 wavio.write(filename, recording, fs, sampwidth=2)
 print(f"Đã lưu ghi âm vào tệp {filename}")
 
+# Tiền xử lý âm thanh
+audio = AudioSegment.from_wav(filename)
+audio = normalize(audio)  # Chuẩn hóa âm lượng
+audio = audio.strip_silence(silence_len=1000, silence_thresh=-40)  # Cắt bỏ khoảng lặng
+audio.export(processed_filename, format="wav")
+print(f"Đã lưu ghi âm đã xử lý vào tệp {processed_filename}")
 
+# # Kiểm tra xem GPU có sẵn không
+# device = "cuda" if torch.cuda.is_available() else "cpu"
 
-# Kiểm tra xem GPU có sẵn không
-device = "cuda" if torch.cuda.is_available() else "cpu"
+# # Tải mô hình và chuyển nó sang GPU nếu có
+# model = whisper.load_model("base").to(device)
 
-# Tải mô hình và chuyển nó sang GPU nếu có
-model = whisper.load_model("base").to(device)
+# # Chuyển tệp âm thanh đã xử lý sang GPU nếu có và chỉ định ngôn ngữ là tiếng Việt
+# result = model.transcribe(processed_filename, language="vi", fp16=torch.cuda.is_available())
+# print(result["text"])
 
-# Chuyển tệp âm thanh sang GPU nếu có
-result = model.transcribe(filename, language="vi", fp16=torch.cuda.is_available())
-print(result["text"])
+transcriber = pipeline("automatic-speech-recognition", model="vinai/PhoWhisper-tiny")
+output = transcriber(processed_filename)['text']
+print(output)
