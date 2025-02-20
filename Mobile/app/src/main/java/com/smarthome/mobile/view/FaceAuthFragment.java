@@ -4,6 +4,8 @@ import android.Manifest;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.content.ContentValues;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -17,7 +19,6 @@ import androidx.camera.core.ImageCaptureException;
 import androidx.camera.core.ImageProxy;
 import androidx.camera.core.Preview;
 import androidx.camera.lifecycle.ProcessCameraProvider;
-import androidx.camera.view.PreviewView;
 import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
@@ -37,14 +38,26 @@ import com.google.mlkit.vision.face.FaceDetection;
 import com.google.mlkit.vision.face.FaceDetector;
 import com.google.mlkit.vision.face.FaceDetectorOptions;
 import com.smarthome.mobile.R;
+import com.smarthome.mobile.api.FaceApi;
+import com.smarthome.mobile.api.RetrofitClient;
 import com.smarthome.mobile.databinding.FragmentFaceAuthBinding;
 import com.smarthome.mobile.viewmodel.FaceAuthViewModel;
 
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
 
 public class FaceAuthFragment extends Fragment {
     private static final int PERMISSION_REQUEST_CODE = 101;
@@ -179,6 +192,10 @@ public class FaceAuthFragment extends Fragment {
                     @Override
                     public void onImageSaved(@NonNull ImageCapture.OutputFileResults output) {
                         Toast.makeText(requireContext(), "Ảnh đã lưu!", Toast.LENGTH_SHORT).show();
+                        Log.e("SuccessMessageOnSaved:", "Successfully saved!");
+                        Uri savedUri = output.getSavedUri();
+                        if (savedUri != null)
+                            uploadImageToServer(savedUri);
                     }
 
                     @Override
@@ -207,5 +224,41 @@ public class FaceAuthFragment extends Fragment {
         AnimatorSet animatorSet = new AnimatorSet();
         animatorSet.playTogether(scaleX, scaleY);
         animatorSet.start();
+    }
+
+    private String getRealPathFromURI(Uri contentUri) {
+        String result = null;
+        String[] proj = {MediaStore.Images.Media.DATA};
+        Cursor cursor = requireContext().getContentResolver().query(contentUri, proj, null, null, null);
+        if (cursor != null) {
+            int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+            cursor.moveToFirst();
+            result = cursor.getString(column_index);
+            cursor.close();
+        }
+        return result;
+    }
+
+    private void uploadImageToServer(Uri imageUri) {
+        File file = new File(getRealPathFromURI(imageUri));
+
+        RequestBody requestFile = RequestBody.create(MediaType.parse("image/jpeg"), file);
+        MultipartBody.Part body = MultipartBody.Part.createFormData("image", file.getName(), requestFile);
+
+        Retrofit retrofit = RetrofitClient.getClient();
+        FaceApi apiService = retrofit.create(FaceApi.class);
+
+        Call<ResponseBody> call = apiService.uploadImage(body);
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.isSuccessful())
+                    Log.d("UploadSuccess:", "Picture uploaded successfully!");
+            }
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Log.e("UploadFailure:", "Picture uploaded failed: " + t.getMessage());
+            }
+        });
     }
 }
