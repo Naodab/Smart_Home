@@ -1,4 +1,4 @@
-package com.smarthome.mobile.api;
+package com.smarthome.mobile.service;
 
 import okhttp3.MultipartBody;
 import okhttp3.ResponseBody;
@@ -7,7 +7,7 @@ import retrofit2.http.Multipart;
 import retrofit2.http.POST;
 import retrofit2.http.Part;
 
-public interface FaceApi {
+public interface FaceAuthService {
     @Multipart
     @POST("face_detection/detect/")
     Call<ResponseBody> uploadImage(
