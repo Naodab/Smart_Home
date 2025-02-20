@@ -38,12 +38,14 @@ import com.google.mlkit.vision.face.FaceDetection;
 import com.google.mlkit.vision.face.FaceDetector;
 import com.google.mlkit.vision.face.FaceDetectorOptions;
 import com.smarthome.mobile.R;
-import com.smarthome.mobile.api.FaceApi;
-import com.smarthome.mobile.api.RetrofitClient;
+import com.smarthome.mobile.service.FaceAuthService;
+import com.smarthome.mobile.api.FaceApiClient;
 import com.smarthome.mobile.databinding.FragmentFaceAuthBinding;
+import com.smarthome.mobile.util.FaceAuthCallback;
 import com.smarthome.mobile.viewmodel.FaceAuthViewModel;
 
 import java.io.File;
+import java.nio.ByteBuffer;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 import java.util.Objects;
@@ -83,6 +85,7 @@ public class FaceAuthFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        this.faceAuthViewModel = FaceAuthViewModel.getInstance();
         animatePreviewView();
 
         View[] viewsToAnimate = {binding.backBtn, binding.cameraStatus};
@@ -176,26 +179,62 @@ public class FaceAuthFragment extends Fragment {
         }).addOnFailureListener(e -> Log.d("Analyze Image", Objects.requireNonNull(e.getMessage())));
     }
 
+//    public void takePhoto() {
+//        if (imageCapture == null) return;
+//        String timestamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(System.currentTimeMillis());
+//        ContentValues contentValues = new ContentValues();
+//        contentValues.put(MediaStore.MediaColumns.DISPLAY_NAME, "IMG_" + timestamp);
+//        contentValues.put(MediaStore.MediaColumns.MIME_TYPE, "image/jpeg");
+//        ImageCapture.OutputFileOptions outputFileOptions = new ImageCapture.OutputFileOptions.Builder(
+//                requireActivity().getContentResolver(),
+//                MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+//                contentValues
+//        ).build();
+//        imageCapture.takePicture(outputFileOptions, ContextCompat.getMainExecutor(requireContext()),
+//                new ImageCapture.OnImageSavedCallback() {
+//                    @Override
+//                    public void onImageSaved(@NonNull ImageCapture.OutputFileResults output) {
+//                        Toast.makeText(requireContext(), "Ảnh đã lưu!", Toast.LENGTH_SHORT).show();
+//                        Log.e("SuccessMessageOnSaved:", "Successfully saved!");
+//                        Uri savedUri = output.getSavedUri();
+//                        if (savedUri != null)
+//                            uploadImageToServer(savedUri);
+//                    }
+//
+//                    @Override
+//                    public void onError(@NonNull ImageCaptureException exception) {
+//                        Log.e("CameraX", "Chụp ảnh thất bại: " + exception.getMessage(), exception);
+//                    }
+//                }
+//        );
+//    }
+
     public void takePhoto() {
         if (imageCapture == null) return;
-        String timestamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(System.currentTimeMillis());
-        ContentValues contentValues = new ContentValues();
-        contentValues.put(MediaStore.MediaColumns.DISPLAY_NAME, "IMG_" + timestamp);
-        contentValues.put(MediaStore.MediaColumns.MIME_TYPE, "image/jpeg");
-        ImageCapture.OutputFileOptions outputFileOptions = new ImageCapture.OutputFileOptions.Builder(
-                requireActivity().getContentResolver(),
-                MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                contentValues
-        ).build();
-        imageCapture.takePicture(outputFileOptions, ContextCompat.getMainExecutor(requireContext()),
-                new ImageCapture.OnImageSavedCallback() {
+
+        imageCapture.takePicture(ContextCompat.getMainExecutor(requireContext()),
+                new ImageCapture.OnImageCapturedCallback() {
                     @Override
-                    public void onImageSaved(@NonNull ImageCapture.OutputFileResults output) {
-                        Toast.makeText(requireContext(), "Ảnh đã lưu!", Toast.LENGTH_SHORT).show();
-                        Log.e("SuccessMessageOnSaved:", "Successfully saved!");
-                        Uri savedUri = output.getSavedUri();
-                        if (savedUri != null)
-                            uploadImageToServer(savedUri);
+                    public void onCaptureSuccess(@NonNull ImageProxy image) {
+                        super.onCaptureSuccess(image);
+                        ByteBuffer buffer = image.getPlanes()[0].getBuffer();
+                        byte[] bytes = new byte[buffer.remaining()];
+                        buffer.get(bytes);
+                        image.close();
+
+                        faceAuthViewModel.uploadImageToServer(bytes, new FaceAuthCallback() {
+                            @Override
+                            public void onSuccess() {
+                                Log.d("UploadSuccess", "Picture uploaded successfully!");
+                                Toast.makeText(requireContext(), "Ảnh đã đuợc upload đến server!", Toast.LENGTH_SHORT).show();
+                            }
+
+                            @Override
+                            public void onFailure() {
+                                Log.e("UploadFailure", "Picture upload failed");
+                                Toast.makeText(requireContext(), "Thất bại!", Toast.LENGTH_SHORT).show();
+                            }
+                        });
                     }
 
                     @Override
@@ -226,39 +265,39 @@ public class FaceAuthFragment extends Fragment {
         animatorSet.start();
     }
 
-    private String getRealPathFromURI(Uri contentUri) {
-        String result = null;
-        String[] proj = {MediaStore.Images.Media.DATA};
-        Cursor cursor = requireContext().getContentResolver().query(contentUri, proj, null, null, null);
-        if (cursor != null) {
-            int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-            cursor.moveToFirst();
-            result = cursor.getString(column_index);
-            cursor.close();
-        }
-        return result;
-    }
-
-    private void uploadImageToServer(Uri imageUri) {
-        File file = new File(getRealPathFromURI(imageUri));
-
-        RequestBody requestFile = RequestBody.create(MediaType.parse("image/jpeg"), file);
-        MultipartBody.Part body = MultipartBody.Part.createFormData("image", file.getName(), requestFile);
-
-        Retrofit retrofit = RetrofitClient.getClient();
-        FaceApi apiService = retrofit.create(FaceApi.class);
-
-        Call<ResponseBody> call = apiService.uploadImage(body);
-        call.enqueue(new Callback<ResponseBody>() {
-            @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                if (response.isSuccessful())
-                    Log.d("UploadSuccess:", "Picture uploaded successfully!");
-            }
-            @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
-                Log.e("UploadFailure:", "Picture uploaded failed: " + t.getMessage());
-            }
-        });
-    }
+//    private String getRealPathFromURI(Uri contentUri) {
+//        String result = null;
+//        String[] proj = {MediaStore.Images.Media.DATA};
+//        Cursor cursor = requireContext().getContentResolver().query(contentUri, proj, null, null, null);
+//        if (cursor != null) {
+//            int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+//            cursor.moveToFirst();
+//            result = cursor.getString(column_index);
+//            cursor.close();
+//        }
+//        return result;
+//    }
+//
+//    private void uploadImageToServer(Uri imageUri) {
+//        File file = new File(getRealPathFromURI(imageUri));
+//
+//        RequestBody requestFile = RequestBody.create(MediaType.parse("image/jpeg"), file);
+//        MultipartBody.Part body = MultipartBody.Part.createFormData("image", file.getName(), requestFile);
+//
+//        Retrofit retrofit = FaceApiClient.getClient();
+//        FaceAuthService apiService = retrofit.create(FaceAuthService.class);
+//
+//        Call<ResponseBody> call = apiService.uploadImage(body);
+//        call.enqueue(new Callback<ResponseBody>() {
+//            @Override
+//            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+//                if (response.isSuccessful())
+//                    Log.d("UploadSuccess:", "Picture uploaded successfully!");
+//            }
+//            @Override
+//            public void onFailure(Call<ResponseBody> call, Throwable t) {
+//                Log.e("UploadFailure:", "Picture uploaded failed: " + t.getMessage());
+//            }
+//        });
+//    }
 }
