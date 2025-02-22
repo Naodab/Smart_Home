@@ -12,7 +12,7 @@ import retrofit2.http.PartMap;
 
 public interface SpeechAuthService {
     @Multipart
-    @POST("upload")
+    @POST("upload/")
     Call<Void> uploadAudio(
         @Part MultipartBody.Part file,
         @PartMap Map<String, RequestBody> metadata
