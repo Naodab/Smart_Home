@@ -21,7 +21,7 @@ import retrofit2.Response;
 
 public class SpeechAuthRepository {
     private final SpeechAuthService speechAuthService;
-    private final String email = Objects.requireNonNull(AuthRepository.getInstance().getUserLiveData().getValue()).getEmail();
+    private String email;
 
     public SpeechAuthRepository() {
         this.speechAuthService = SpeechApiClient.getClient().create(SpeechAuthService.class);
@@ -39,6 +39,7 @@ public class SpeechAuthRepository {
                 MultipartBody.Part body = MultipartBody.Part.createFormData("file",templateFile.getName(), requestFile);
 
                 Map<String, RequestBody> metadata = new HashMap<>();
+                email = "hoang";
                 metadata.put("email", RequestBody
                         .create(email, MediaType.parse("text/plain")));
 
