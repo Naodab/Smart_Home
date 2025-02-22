@@ -12,10 +12,13 @@ class SpeechCreateAPIView(APIView):
   def post(self, request, *args, **kwargs):
     serializer = SpeechSerializer(data=request.data)
     if serializer.is_valid():
-        # file = serializer.validated_data['file']
+        file = serializer.validated_data['file']
         email = serializer.validated_data['email']
 
         print(email)
+
+        if default_storage.exists(file.name):
+          default_storage.delete(file.name)
         
         # Lưu tệp âm thanh
         file_name = default_storage.save(file.name, file)
