@@ -43,6 +43,6 @@ print(f"Đã lưu ghi âm đã xử lý vào tệp {processed_filename}")
 # result = model.transcribe(processed_filename, language="vi", fp16=torch.cuda.is_available())
 # print(result["text"])
 
-transcriber = pipeline("automatic-speech-recognition", model="vinai/PhoWhisper-tiny")
+transcriber = pipeline("automatic-speech-recognition", model="vinai/PhoWhisper-base")
 output = transcriber(processed_filename)['text']
 print(output)
