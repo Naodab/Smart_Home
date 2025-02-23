@@ -6,7 +6,7 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class SpeechApiClient {
-    private static final String BASE_URL = "http://192.168.88.129:8069/api/speechs/";
+    private static final String BASE_URL = "http://192.168.1.11:8080/";
     private static Retrofit retrofit;
 
     public static Retrofit getClient() {
