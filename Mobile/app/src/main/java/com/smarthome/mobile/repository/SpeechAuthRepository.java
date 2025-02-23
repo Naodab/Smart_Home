@@ -4,10 +4,13 @@ import android.util.Log;
 
 import com.smarthome.mobile.api.SpeechApiClient;
 import com.smarthome.mobile.service.SpeechAuthService;
+import com.smarthome.mobile.util.AudioRecorderHelper;
 import com.smarthome.mobile.util.SpeechAuthCallBack;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -30,13 +33,13 @@ public class SpeechAuthRepository {
     public void uploadAudio(byte[] audioData, SpeechAuthCallBack callBack) {
         new Thread(() -> {
             try {
-                Log.d("Speech Auth Repository", "upload file");
                 File templateFile = File.createTempFile("audio", ".wav");
                 FileOutputStream fos = new FileOutputStream(templateFile);
+                AudioRecorderHelper.writeWavHeader(fos, audioData.length);
                 fos.write(audioData);
                 fos.close();
                 
-                RequestBody requestFile = RequestBody.create(templateFile, MediaType.parse("audio/wav"));
+                RequestBody requestFile = RequestBody.create(templateFile, MediaType.parse("application/octet-stream"));
                 MultipartBody.Part body = MultipartBody.Part.createFormData("file",templateFile.getName(), requestFile);
 
                 Map<String, RequestBody> metadata = new HashMap<>();
