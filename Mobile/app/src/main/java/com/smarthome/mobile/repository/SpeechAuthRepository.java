@@ -59,6 +59,7 @@ public class SpeechAuthRepository {
                     @Override
                     public void onFailure(Call<Void> call, Throwable t) {
                         Log.d("Upload audio", "Failure");
+                        Log.d("Upload audio", Objects.requireNonNull(t.getMessage()));
                         callBack.onFailure();
                     }
                 });
