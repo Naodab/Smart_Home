@@ -21,3 +21,9 @@
 ```
     py -m pip install --upgrade pip
 ```
+
+#### Install torch version helping CUDA
+
+```
+    pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu117
+```
