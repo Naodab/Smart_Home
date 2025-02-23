@@ -16,6 +16,7 @@ class SpeechCreateAPIView(APIView):
         email = serializer.validated_data['email']
 
         print(email)
+        print(file)
 
         if default_storage.exists(file.name):
           default_storage.delete(file.name)
