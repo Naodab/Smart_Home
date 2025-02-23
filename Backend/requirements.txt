@@ -11,3 +11,4 @@ wavio
 pydub
 transformers
 numpy<2
+python-dotenv
