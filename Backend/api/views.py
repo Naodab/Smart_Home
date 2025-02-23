@@ -7,6 +7,8 @@ from django.core.files.storage import default_storage
 
 from .serializers import SpeechSerializer
 
+from AI_Module.speech_recognition.speech_to_text import transfer_audio_to_text
+
 class SpeechCreateAPIView(APIView):
   parser_classes = (MultiPartParser, FormParser)
   def post(self, request, *args, **kwargs):
@@ -27,6 +29,8 @@ class SpeechCreateAPIView(APIView):
         
         # Xử lý tệp âm thanh và email tại đây
         # Ví dụ: Lưu thông tin vào cơ sở dữ liệu hoặc gọi một dịch vụ khác
+
+        transfer_audio_to_text()
         
         return Response({"message": "File uploaded successfully", "file_url": file_url, "email": email})
     return Response(serializer.errors, status=400)

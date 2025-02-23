@@ -40,7 +40,7 @@ public class SpeechAuthRepository {
                 fos.close();
                 
                 RequestBody requestFile = RequestBody.create(templateFile, MediaType.parse("application/octet-stream"));
-                MultipartBody.Part body = MultipartBody.Part.createFormData("file",templateFile.getName(), requestFile);
+                MultipartBody.Part body = MultipartBody.Part.createFormData("file", "audio.wav", requestFile);
 
                 Map<String, RequestBody> metadata = new HashMap<>();
                 email = "hoang";
