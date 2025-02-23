@@ -5,7 +5,6 @@ import android.media.AudioFormat;
 import android.media.AudioRecord;
 import android.media.MediaRecorder;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class AudioRecorderHelper {
@@ -16,6 +15,7 @@ public class AudioRecorderHelper {
     private AudioRecord audioRecord;
     private boolean isRecording = false;
     private AudioDataListener listener;
+    private List<byte[]> recordedData;
 
     public interface AudioDataListener {
         void onAudioDataCaptured(byte[] audioData);
@@ -27,7 +27,7 @@ public class AudioRecorderHelper {
 
     @SuppressLint("MissingPermission")
     public void startRecording() {
-        List<byte[]> recordedData = new ArrayList<>();
+        recordedData.clear();
         audioRecord = new AudioRecord(MediaRecorder.AudioSource.MIC, SAMPLE_RATE,
                 AudioFormat.CHANNEL_IN_MONO, AudioFormat.ENCODING_PCM_16BIT, BUFFER_SIZE);
         audioRecord.startRecording();
@@ -37,12 +37,14 @@ public class AudioRecorderHelper {
             while (isRecording) {
                 int read = audioRecord.read(buffer, 0, buffer.length);
                 if (read > 0) {
-                    recordedData.add(buffer);
+                    byte[] copy = new byte[read];
+                    System.arraycopy(buffer, 0, copy, 0, read);
+                    recordedData.add(copy);
                 }
             }
-            listener.onAudioDataCaptured(mergeBuffers(recordedData));
         }).start();
     }
+
 
     private byte[] mergeBuffers(List<byte[]> buffers) {
         int totalLength = 0;
@@ -62,6 +64,10 @@ public class AudioRecorderHelper {
             audioRecord.stop();
             audioRecord.release();
             audioRecord = null;
+        }
+
+        if (listener != null) {
+            listener.onAudioDataCaptured(mergeBuffers(recordedData));
         }
     }
 }
