@@ -1,5 +1,6 @@
 django==4.2.1
 django-rest-framework
+djangorestframework
 pyyaml
 requests
 django-cors-headers
