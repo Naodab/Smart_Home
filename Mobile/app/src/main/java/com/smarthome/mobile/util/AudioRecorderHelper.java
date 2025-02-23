@@ -5,6 +5,7 @@ import android.media.AudioFormat;
 import android.media.AudioRecord;
 import android.media.MediaRecorder;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class AudioRecorderHelper {
@@ -23,6 +24,7 @@ public class AudioRecorderHelper {
 
     public AudioRecorderHelper(AudioDataListener listener) {
         this.listener = listener;
+        this.recordedData = new ArrayList<>();
     }
 
     @SuppressLint("MissingPermission")
