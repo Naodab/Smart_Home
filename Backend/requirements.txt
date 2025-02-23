@@ -3,3 +3,10 @@ django-rest-framework
 pyyaml
 requests
 django-cors-headers
+openai-whisper
+setuptools-rust
+sounddevice
+wavio
+pydub
+transformers
+numpy<2
