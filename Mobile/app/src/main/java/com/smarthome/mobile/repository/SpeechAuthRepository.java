@@ -35,7 +35,7 @@ public class SpeechAuthRepository {
                 FileOutputStream fos = new FileOutputStream(templateFile);
                 fos.write(audioData);
                 fos.close();
-
+                
                 RequestBody requestFile = RequestBody.create(templateFile, MediaType.parse("audio/wav"));
                 MultipartBody.Part body = MultipartBody.Part.createFormData("file",templateFile.getName(), requestFile);
 
