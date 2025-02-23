@@ -2,4 +2,12 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="main_color">#198B7E</color>
+    <color name="background">#F9F6F1</color>
+    <color name="alpha_background">#99F9F6F1</color>
+    <color name="major_color">#114B5F</color>
+    <color name="main_color_alpha">#90FFFFFF</color>
+    <color name="home_rounded_square">#EEFFFFFF</color>
+    <color name="stroke_shadow">#66454545</color>
+    <color name="navbar_color">#1D1C24</color>
 </resources>
