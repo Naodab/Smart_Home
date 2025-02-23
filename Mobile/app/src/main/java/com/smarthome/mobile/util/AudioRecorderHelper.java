@@ -29,7 +29,11 @@ public class AudioRecorderHelper {
 
     @SuppressLint("MissingPermission")
     public void startRecording() {
-        recordedData.clear();
+        if (recordedData == null) {
+            recordedData = new ArrayList<>();
+        } else {
+            recordedData.clear();
+        }
         audioRecord = new AudioRecord(MediaRecorder.AudioSource.MIC, SAMPLE_RATE,
                 AudioFormat.CHANNEL_IN_MONO, AudioFormat.ENCODING_PCM_16BIT, BUFFER_SIZE);
         audioRecord.startRecording();
