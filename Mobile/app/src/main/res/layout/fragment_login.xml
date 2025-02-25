@@ -73,15 +73,17 @@
             android:layout_marginBottom="16dp"
             android:paddingHorizontal="16dp" />
 
-        <Button
+        <TextView
             android:id="@+id/btn_login"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:layout_marginHorizontal="50dp"
-            android:background="@drawable/rounded_text_back"
             android:text="@string/login"
-            android:textColorHint="@color/black"
+            android:textColor="@color/black"
+            android:textStyle="bold"
+            android:gravity="center"
             android:textSize="20sp"
+            android:background="@drawable/home_rounded_orange_square"
             android:layout_marginBottom="16dp"
             android:paddingHorizontal="16dp" />
     </LinearLayout>
