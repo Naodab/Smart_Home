@@ -22,7 +22,7 @@
         android:fontFamily="@font/title"
         android:gravity="center"
         android:text="@string/project_name"
-        android:textColor="@color/background"
+        android:textColor="@color/orange"
         android:textSize="40sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toTopOf="@+id/background"
@@ -42,7 +42,7 @@
             android:layout_width="match_parent"
             android:layout_height="130dp"
             android:orientation="horizontal"
-            android:background="@drawable/home_rounded_square"
+            android:background="@drawable/home_rounded_orange_square"
             android:paddingVertical="20dp"
             android:layout_marginBottom="16dp">
 
@@ -67,7 +67,7 @@
                 android:text="@string/face_authentication"
                 android:textSize="28sp"
                 android:gravity="center_vertical"
-                android:textColor="@color/cardview_dark_background"
+                android:textColor="@color/black"
                 android:textStyle="bold"/>
         </LinearLayout>
 
@@ -76,7 +76,7 @@
             android:layout_width="match_parent"
             android:layout_height="130dp"
             android:orientation="horizontal"
-            android:background="@drawable/home_rounded_square"
+            android:background="@drawable/home_rounded_orange_square"
             android:paddingVertical="20dp">
 
             <androidx.cardview.widget.CardView
@@ -100,7 +100,7 @@
                 android:text="@string/speech_authentication"
                 android:textSize="28sp"
                 android:gravity="center_vertical"
-                android:textColor="@color/cardview_dark_background"
+                android:textColor="@color/black"
                 android:textStyle="bold"/>
         </LinearLayout>
     </LinearLayout>

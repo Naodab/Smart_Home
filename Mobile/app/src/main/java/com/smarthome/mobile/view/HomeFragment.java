@@ -52,6 +52,9 @@ public class HomeFragment extends Fragment {
         bottomNav.setOnItemSelectedListener(item -> {
             if (item.getItemId() == R.id.navigation_logout) {
                 authRepository.logout();
+            } else if (item.getItemId() == R.id.navigation_monitor) {
+                Navigation.findNavController(requireView())
+                        .navigate(R.id.action_homeFragment_to_monitorFragment);
             }
             return false;
         });
