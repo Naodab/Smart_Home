@@ -9,6 +9,7 @@ from .serializers import SpeechSerializer
 
 from AI_Module.speech_recognition.speech_to_text import transfer_audio_to_text
 
+# /api/speechs/upload/
 class SpeechCreateAPIView(APIView):
   parser_classes = (MultiPartParser, FormParser)
   def post(self, request, *args, **kwargs):
@@ -26,9 +27,6 @@ class SpeechCreateAPIView(APIView):
         # Lưu tệp âm thanh
         file_name = default_storage.save(file.name, file)
         file_url = default_storage.url(file_name)
-        
-        # Xử lý tệp âm thanh và email tại đây
-        # Ví dụ: Lưu thông tin vào cơ sở dữ liệu hoặc gọi một dịch vụ khác
 
         transfer_audio_to_text()
         
