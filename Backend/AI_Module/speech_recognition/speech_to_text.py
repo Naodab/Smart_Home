@@ -42,6 +42,6 @@ def transfer_audio_to_text():
   # result = model.transcribe(processed_filename, language="vi", fp16=torch.cuda.is_available())
   # print(result["text"])
 
-  transcriber = pipeline("automatic-speech-recognition", model="vinai/PhoWhisper-small")
+  transcriber = pipeline("automatic-speech-recognition", model="vinai/PhoWhisper-base")
   output = transcriber(processed_filename)['text']
   print(output)
