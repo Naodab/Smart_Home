@@ -12,3 +12,4 @@ pydub
 transformers
 numpy<2
 python-dotenv
+librosa
