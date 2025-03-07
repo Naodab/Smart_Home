@@ -85,8 +85,14 @@ class SpeakerRecognition:
         # Đọc và resample về 16kHz
         y, _ = librosa.load(audio_path, sr=self.sr)
 
+        # Tăng cường tín hiệu
+        y_harmonic, y_percussive = librosa.effects.hpss(y)
+
         # Chuẩn hóa âm lượng
-        y = librosa.util.normalize(y)
+        y = librosa.util.normalize(y_harmonic)
+
+        # Lọc nhiễu tần số cao
+        y = librosa.effects.preemphasis(y)
 
         # Loại bỏ khoảng lặng
         y, _ = librosa.effects.trim(y)

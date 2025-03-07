@@ -56,12 +56,23 @@ speaker_files = {
     #     "/kaggle/input/voice-dataset/content/drive/MyDrive/dataset/train/id_080/id_080_0090.wav"
     # ],
     "hoang": [
-        "data/Hoang/utt_001.wav",
-        "data/Hoang/utt_002.wav",
-        "data/Hoang/utt_003.wav",
-        "data/Hoang/utt_004.wav",
-        "data/Hoang/utt_005.wav",
-        "data/Hoang/utt_006.wav"
+        "data/Hoang/normal_1.wav",
+        "data/Hoang/normal_2.wav",
+        "data/Hoang/normal_3.wav",
+        "data/Hoang/normal_4.wav",
+        "data/Hoang/normal_5.wav",
+        # "data/Hoang/fast_1.wav",
+        # "data/Hoang/fast_2.wav",
+        # "data/Hoang/fast_3.wav",
+        # "data/Hoang/slow_1.wav",
+        # "data/Hoang/slow_2.wav",
+        # "data/Hoang/slow_3.wav",
+        # "data/Hoang/fun.wav",
+        # "data/Hoang/angry.wav",
+        # "data/Hoang/sad.wav",
+        # "data/Hoang/noise_1.wav",
+        # "data/Hoang/noise_2.wav",
+        # "data/Hoang/noise_3.wav"
     ],
     "huy": [
         "data/Huy/1.wav",
@@ -106,7 +117,7 @@ y_val_true = []
 # print(f"Optimal threshold: {optimal_threshold:.3f} (accuracy: {best_accuracy:.3f})")
 # verifier.threshold = optimal_threshold
 
-verifier.threshold = 0.7
+verifier.threshold = 0.65
 
 def identify_speaker(audio_path):
     """Nhận dạng speaker từ file audio mới"""
@@ -131,7 +142,8 @@ def identify_speaker(audio_path):
     return result
 # Ví dụ sử dụng
 # result = identify_speaker("/kaggle/input/voice-dataset/content/drive/MyDrive/dataset/train/id_001/id_001_0080.wav")
-# result = identify_speaker("data/Hoang/utt_009.wav") 
-# result = identify_speaker("data/Huy/10.wav") 
-# result = identify_speaker("data/Binh/Recording.wav") 
-result = identify_speaker("C:/Users/TechCare/OneDrive - The University of Technology/PBL5/Smart_Home/Backend/media/processed_audio.wav") 
+result = identify_speaker("data/Hoang/utt_005.wav") 
+# result = identify_speaker("data/Doan/test.wav") 
+# result = identify_speaker("data/Huy/8.wav") 
+# result = identify_speaker("data/Binh/Recording (10).wav") 
+# result = identify_speaker("C:/Users/TechCare/OneDrive - The University of Technology/PBL5/Smart_Home/Backend/media/processed_audio.wav") 
