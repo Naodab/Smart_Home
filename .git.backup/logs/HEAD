@@ -1,0 +1,42 @@
+0000000000000000000000000000000000000000 6ba11c369a9d2e63cba6a9df365686807a924ba4 nomenoparty <khronal777@gmail.com> 1739421560 +0700	clone: from https://github.com/Naodab/Smart_Home.git
+6ba11c369a9d2e63cba6a9df365686807a924ba4 fd9c79cf27c842b03ed8d02f2c5737354af7a35f nomenoparty <khronal777@gmail.com> 1739446087 +0700	commit: Config Backend, venv, gitignore
+fd9c79cf27c842b03ed8d02f2c5737354af7a35f 383beb709308b31c5d12ec465c19bb7aaf67da08 nomenoparty <khronal777@gmail.com> 1739446112 +0700	pull origin main: Merge made by the 'ort' strategy.
+383beb709308b31c5d12ec465c19bb7aaf67da08 edfe08bb14e358d8ca0a8102e575ed39eb6b50df nomenoparty <khronal777@gmail.com> 1739706346 +0700	commit: M
+edfe08bb14e358d8ca0a8102e575ed39eb6b50df edfe08bb14e358d8ca0a8102e575ed39eb6b50df nomenoparty <khronal777@gmail.com> 1739706370 +0700	checkout: moving from main to frontend_mobile
+edfe08bb14e358d8ca0a8102e575ed39eb6b50df edfe08bb14e358d8ca0a8102e575ed39eb6b50df nomenoparty <khronal777@gmail.com> 1739706556 +0700	reset: moving to HEAD
+edfe08bb14e358d8ca0a8102e575ed39eb6b50df edfe08bb14e358d8ca0a8102e575ed39eb6b50df nomenoparty <khronal777@gmail.com> 1739706797 +0700	reset: moving to HEAD
+edfe08bb14e358d8ca0a8102e575ed39eb6b50df edfe08bb14e358d8ca0a8102e575ed39eb6b50df nomenoparty <khronal777@gmail.com> 1739706823 +0700	reset: moving to HEAD
+edfe08bb14e358d8ca0a8102e575ed39eb6b50df b223c3a2ad36c9255bac3bb68c087737f974af43 nomenoparty <khronal777@gmail.com> 1739706997 +0700	commit (merge): Merge
+b223c3a2ad36c9255bac3bb68c087737f974af43 0000000000000000000000000000000000000000 nomenoparty <khronal777@gmail.com> 1739879451 +0700	Branch: renamed refs/heads/frontend_mobile to refs/heads/feature/frontend_mobile
+0000000000000000000000000000000000000000 b223c3a2ad36c9255bac3bb68c087737f974af43 nomenoparty <khronal777@gmail.com> 1739879451 +0700	Branch: renamed refs/heads/frontend_mobile to refs/heads/feature/frontend_mobile
+b223c3a2ad36c9255bac3bb68c087737f974af43 b223c3a2ad36c9255bac3bb68c087737f974af43 nomenoparty <khronal777@gmail.com> 1739879483 +0700	checkout: moving from feature/frontend_mobile to feature/speech_recognition
+b223c3a2ad36c9255bac3bb68c087737f974af43 63581da0eef95cf5ee11aab234a55eaa4024f928 nomenoparty <khronal777@gmail.com> 1739879548 +0700	commit: Test speech to text with Whisper
+63581da0eef95cf5ee11aab234a55eaa4024f928 938f815af5a797b4a6683afeedffdb0240e4e89f nomenoparty <khronal777@gmail.com> 1739965762 +0700	commit: Changing to PhoWhisper Model
+938f815af5a797b4a6683afeedffdb0240e4e89f 55f21592ae3ae2da01d7b4d92e232875ed3c1cc5 nomenoparty <khronal777@gmail.com> 1740195343 +0700	commit: Create api app and design model
+55f21592ae3ae2da01d7b4d92e232875ed3c1cc5 6a0b2a33569b2ba7d5d21de91b2c966d5b851880 nomenoparty <khronal777@gmail.com> 1740195433 +0700	pull origin feature/frontend_mobile: Merge made by the 'ort' strategy.
+6a0b2a33569b2ba7d5d21de91b2c966d5b851880 f02466c23e8c57e5f652267b25e28c1bc0902dd8 nomenoparty <khronal777@gmail.com> 1740207362 +0700	commit: Design api POST speech
+f02466c23e8c57e5f652267b25e28c1bc0902dd8 8cf347b69196ded74c6e89706ec2d8097c0e94ea nomenoparty <khronal777@gmail.com> 1740235657 +0700	commit: Test API upload speech, storage file
+8cf347b69196ded74c6e89706ec2d8097c0e94ea 2d60d76f27dc51cc7053a7e49190d8df62136885 nomenoparty <khronal777@gmail.com> 1740286052 +0700	pull origin feature/frontend_mobile: Merge made by the 'ort' strategy.
+2d60d76f27dc51cc7053a7e49190d8df62136885 39f3ebaaa495ddab2ffae1fa2d17b56a7ba348a6 nomenoparty <khronal777@gmail.com> 1740298208 +0700	commit: commit
+39f3ebaaa495ddab2ffae1fa2d17b56a7ba348a6 ba889b9583d09fec329bed1bdedd15e0f134a80c nomenoparty <khronal777@gmail.com> 1740319873 +0700	commit: Commit
+ba889b9583d09fec329bed1bdedd15e0f134a80c 20f4a304eaf11591b7f04186a1fece625a1cd25d nomenoparty <khronal777@gmail.com> 1740319890 +0700	pull origin feature/frontend_mobile: Merge made by the 'ort' strategy.
+20f4a304eaf11591b7f04186a1fece625a1cd25d 89a45c6843e9223a950e58ba016c023f1732890f nomenoparty <khronal777@gmail.com> 1740322544 +0700	commit: Fix wav error
+89a45c6843e9223a950e58ba016c023f1732890f 2bd20b9e279af76feaf453ea3b64a9876e185dae nomenoparty <khronal777@gmail.com> 1740322555 +0700	pull origin feature/frontend_mobile: Merge made by the 'ort' strategy.
+2bd20b9e279af76feaf453ea3b64a9876e185dae 59ef8349f8cf5ef45e80cec1f0fa552b63923809 nomenoparty <khronal777@gmail.com> 1740326201 +0700	commit: Success connect mobile app to server and convert file audio to text
+59ef8349f8cf5ef45e80cec1f0fa552b63923809 7fdf2b677ce9c602ab9abd62b2cbaaae55f6def9 nomenoparty <khronal777@gmail.com> 1740327790 +0700	commit: Add env
+7fdf2b677ce9c602ab9abd62b2cbaaae55f6def9 d3df7f86f41cfed40962669db9dab88e3150af3c nomenoparty <khronal777@gmail.com> 1740588399 +0700	commit: Commit
+d3df7f86f41cfed40962669db9dab88e3150af3c 91726c4caa0b20075b0a7f6fa3a7d3b15870ca36 nomenoparty <khronal777@gmail.com> 1740588694 +0700	commit (merge): Merge feature/frontend_mobile
+91726c4caa0b20075b0a7f6fa3a7d3b15870ca36 d33925feadafdafb479e4e94b3fc7d6bb09daf2a nomenoparty <khronal777@gmail.com> 1740629446 +0700	commit: Commit
+d33925feadafdafb479e4e94b3fc7d6bb09daf2a 2745d22b77e0fb17c4546db217c1763947d5f9a2 nomenoparty <khronal777@gmail.com> 1741276202 +0700	commit: Commit
+2745d22b77e0fb17c4546db217c1763947d5f9a2 2745d22b77e0fb17c4546db217c1763947d5f9a2 nomenoparty <khronal777@gmail.com> 1741276257 +0700	checkout: moving from feature/speech_recognition to feature/speaker_recognition
+2745d22b77e0fb17c4546db217c1763947d5f9a2 fb8bb998a1a99aa2673a706e083ab868c56591c1 nomenoparty <khronal777@gmail.com> 1741282213 +0700	commit: Test speaker recognition
+fb8bb998a1a99aa2673a706e083ab868c56591c1 975c7d8baf05b2e5d9d5e6a94fc6f0628615bb25 nomenoparty <khronal777@gmail.com> 1741282637 +0700	commit: Remove models
+975c7d8baf05b2e5d9d5e6a94fc6f0628615bb25 8fd419594884b208643eb7502e7995bc8a25b59f nomenoparty <khronal777@gmail.com> 1741283216 +0700	commit: Remove .keras .pkl
+8fd419594884b208643eb7502e7995bc8a25b59f a45016c92dc0b1904120e2e6fcd59ae01944c95c nomenoparty <khronal777@gmail.com> 1741283752 +0700	commit: Remove
+a45016c92dc0b1904120e2e6fcd59ae01944c95c a45016c92dc0b1904120e2e6fcd59ae01944c95c nomenoparty <khronal777@gmail.com> 1741284299 +0700	checkout: moving from feature/speaker_recognition to feature/test_speaker_recognition
+a45016c92dc0b1904120e2e6fcd59ae01944c95c a45016c92dc0b1904120e2e6fcd59ae01944c95c nomenoparty <khronal777@gmail.com> 1741284582 +0700	checkout: moving from feature/test_speaker_recognition to feature/speaker_recognition
+a45016c92dc0b1904120e2e6fcd59ae01944c95c 06d1d57b67fdb1b0e85e4e78206c549fe1558f58 nomenoparty <khronal777@gmail.com> 1741345538 +0700	commit: Commit
+0000000000000000000000000000000000000000 dd96559974be3da1bdcce34de02b4b6fe1b80e34 nomenoparty <khronal777@gmail.com> 1741346100 +0700	commit (initial): Clean start without large files
+dd96559974be3da1bdcce34de02b4b6fe1b80e34 0000000000000000000000000000000000000000 nomenoparty <khronal777@gmail.com> 1741346312 +0700	Branch: renamed refs/heads/temp_branch to refs/heads/feature/voice_recognition
+0000000000000000000000000000000000000000 dd96559974be3da1bdcce34de02b4b6fe1b80e34 nomenoparty <khronal777@gmail.com> 1741346312 +0700	Branch: renamed refs/heads/temp_branch to refs/heads/feature/voice_recognition
+dd96559974be3da1bdcce34de02b4b6fe1b80e34 06d1d57b67fdb1b0e85e4e78206c549fe1558f58 nomenoparty <khronal777@gmail.com> 1741346624 +0700	checkout: moving from feature/voice_recognition to feature/speaker_recognition

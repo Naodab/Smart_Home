@@ -33,7 +33,7 @@ public class SpeechAuthRepository {
     public void uploadAudio(byte[] audioData, SpeechAuthCallBack callBack) {
         new Thread(() -> {
             try {
-                File templateFile = File.createTempFile("audio", ".wav");
+                File templateFile = File.createTempFile("audio_1", ".wav");
                 FileOutputStream fos = new FileOutputStream(templateFile);
                 AudioRecorderHelper.writeWavHeader(fos, audioData.length);
                 fos.write(audioData);

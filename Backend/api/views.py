@@ -8,6 +8,7 @@ from django.core.files.storage import default_storage
 from .serializers import SpeechSerializer
 
 from AI_Module.speech_recognition.speech_to_text import transfer_audio_to_text
+from AI_Module.speaker_recognition.test import identify_speaker
 
 # /api/speechs/upload/
 class SpeechCreateAPIView(APIView):
@@ -29,6 +30,9 @@ class SpeechCreateAPIView(APIView):
         file_url = default_storage.url(file_name)
 
         transfer_audio_to_text()
+
+        result = identify_speaker()
+        print(result)
         
         return Response({"message": "File uploaded successfully", "file_url": file_url, "email": email})
     return Response(serializer.errors, status=400)

@@ -7,6 +7,8 @@ from pydub.effects import normalize
 from transformers import pipeline
 import torchvision
 
+from project.views import send_command_to_esp32
+
 # Tắt cảnh báo Beta từ torchvision
 torchvision.disable_beta_transforms_warning()
 
@@ -45,3 +47,8 @@ def transfer_audio_to_text():
   transcriber = pipeline("automatic-speech-recognition", model="vinai/PhoWhisper-base")
   output = transcriber(processed_filename)['text']
   print(output)
+
+  if output == "bật đèn.":
+    send_command_to_esp32(device="led", state="on")
+  else:
+    send_command_to_esp32(device="led", state="off")

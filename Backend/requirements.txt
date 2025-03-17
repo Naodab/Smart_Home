@@ -13,3 +13,6 @@ transformers
 numpy<2
 python-dotenv
 librosa
+torchvision
+daphne
+channels
