@@ -3,10 +3,10 @@ import tensorflow as tf
 import librosa
 from .SpeakerVerification import SpeakerVerification
 
-embedding_model = tf.keras.models.load_model('AI_Module/speaker_recognition/models/embedding_model.keras')
+embedding_model = tf.keras.models.load_model('AI_Module/speaker_recognition/models/mfcc_embedding_model.keras')
 verifier = SpeakerVerification(embedding_model)
 
-data = np.load('AI_Module/speaker_recognition/speaker_database_5.npz', allow_pickle=True)
+data = np.load('AI_Module/speaker_recognition/mfcc_speaker_database.npz', allow_pickle=True)
 verifier.speaker_centroids = data['centroids'].item()
 verifier.threshold = float(data['threshold'])
 
@@ -47,35 +47,34 @@ def preprocess_audio(audio_path, sr=16000, duration=2):
   return y
 
 def extract_features(y, sr=16000, n_mels=40):
-  """Trích xuất đặc trưng với độ dài cố định"""
-  # Tính mel spectrogram
-  mel_spec = librosa.feature.melspectrogram(
-    y=y,
-    sr=sr,
-    n_mels=n_mels,
-    hop_length=512,
-    n_fft=2048
+  """Trích xuất đặc trưng MFCC với độ dài cố định"""
+  # Tính MFCC
+  mfccs = librosa.feature.mfcc(
+      y=y,
+      sr=sr,
+      n_mfcc=n_mels,  # Sử dụng n_mels (40) làm số lượng MFCC
+      hop_length=512,
+      n_fft=2048
   )
-  mel_spec_db = librosa.power_to_db(mel_spec, ref=np.max)
 
-  # Chuẩn hóa
-  mel_spec_db = (mel_spec_db - np.mean(mel_spec_db)) / np.std(mel_spec_db)
+  # Chuẩn hóa MFCC
+  mfccs = (mfccs - np.mean(mfccs)) / np.std(mfccs)
 
   # Đặt độ dài cố định (ví dụ: 128 time steps)
   target_length = 128
 
-  if mel_spec_db.shape[1] > target_length:
+  if mfccs.shape[1] > target_length:
       # Cắt bớt nếu dài hơn
-      mel_spec_db = mel_spec_db[:, :target_length]
+      mfccs = mfccs[:, :target_length]
   else:
       # Pad nếu ngắn hơn
-      padding_width = ((0, 0), (0, target_length - mel_spec_db.shape[1]))
-      mel_spec_db = np.pad(mel_spec_db, padding_width, mode='constant')
+      padding_width = ((0, 0), (0, target_length - mfccs.shape[1]))
+      mfccs = np.pad(mfccs, padding_width, mode='constant')
 
   # Thêm chiều kênh
-  mel_spec_db = np.expand_dims(mel_spec_db, axis=-1)
+  mfccs = np.expand_dims(mfccs, axis=-1)
 
-  return mel_spec_db
+  return mfccs
 
 def identify_speaker():
 
@@ -95,9 +94,9 @@ def identify_speaker():
   speaker_id, confidence = verifier.verify_speaker(mel_spec)
   
   result = {
-      'predicted_speaker': speaker_id,
-      'confidence': confidence,
-      'is_known': speaker_id != "unknown"
+    'predicted_speaker': speaker_id,
+    'confidence': confidence,
+    'is_known': speaker_id != "unknown"
   }
   
   if result['is_known']:

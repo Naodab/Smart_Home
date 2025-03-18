@@ -6,7 +6,7 @@ import librosa
 
 # root_dir = "models"
 # sr = SpeakerRecognition(root_dir)
-embedding_model = tf.keras.models.load_model('models/embedding_model.keras')
+embedding_model = tf.keras.models.load_model('models/mfcc_embedding_model.keras')
 
 # Khởi tạo
 verifier = SpeakerVerification(embedding_model)
@@ -98,36 +98,66 @@ def preprocess_audio(audio_path, sr=16000, duration=2):
 
     return y
 
+# def extract_features(y, sr=16000, n_mels=40):
+#     """Trích xuất đặc trưng với độ dài cố định"""
+#     # Tính mel spectrogram
+#     mel_spec = librosa.feature.melspectrogram(
+#         y=y,
+#         sr=sr,
+#         n_mels=n_mels,
+#         hop_length=512,
+#         n_fft=2048
+#     )
+#     mel_spec_db = librosa.power_to_db(mel_spec, ref=np.max)
+
+#     # Chuẩn hóa
+#     mel_spec_db = (mel_spec_db - np.mean(mel_spec_db)) / np.std(mel_spec_db)
+
+#     # Đặt độ dài cố định (ví dụ: 128 time steps)
+#     target_length = 128
+
+#     if mel_spec_db.shape[1] > target_length:
+#         # Cắt bớt nếu dài hơn
+#         mel_spec_db = mel_spec_db[:, :target_length]
+#     else:
+#         # Pad nếu ngắn hơn
+#         padding_width = ((0, 0), (0, target_length - mel_spec_db.shape[1]))
+#         mel_spec_db = np.pad(mel_spec_db, padding_width, mode='constant')
+
+#     # Thêm chiều kênh
+#     mel_spec_db = np.expand_dims(mel_spec_db, axis=-1)
+
+#     return mel_spec_db
+
 def extract_features(y, sr=16000, n_mels=40):
-    """Trích xuất đặc trưng với độ dài cố định"""
-    # Tính mel spectrogram
-    mel_spec = librosa.feature.melspectrogram(
+    """Trích xuất đặc trưng MFCC với độ dài cố định"""
+    # Tính MFCC
+    mfccs = librosa.feature.mfcc(
         y=y,
         sr=sr,
-        n_mels=n_mels,
+        n_mfcc=n_mels,  # Sử dụng n_mels (40) làm số lượng MFCC
         hop_length=512,
         n_fft=2048
     )
-    mel_spec_db = librosa.power_to_db(mel_spec, ref=np.max)
 
-    # Chuẩn hóa
-    mel_spec_db = (mel_spec_db - np.mean(mel_spec_db)) / np.std(mel_spec_db)
+    # Chuẩn hóa MFCC
+    mfccs = (mfccs - np.mean(mfccs)) / np.std(mfccs)
 
     # Đặt độ dài cố định (ví dụ: 128 time steps)
     target_length = 128
 
-    if mel_spec_db.shape[1] > target_length:
+    if mfccs.shape[1] > target_length:
         # Cắt bớt nếu dài hơn
-        mel_spec_db = mel_spec_db[:, :target_length]
+        mfccs = mfccs[:, :target_length]
     else:
         # Pad nếu ngắn hơn
-        padding_width = ((0, 0), (0, target_length - mel_spec_db.shape[1]))
-        mel_spec_db = np.pad(mel_spec_db, padding_width, mode='constant')
+        padding_width = ((0, 0), (0, target_length - mfccs.shape[1]))
+        mfccs = np.pad(mfccs, padding_width, mode='constant')
 
     # Thêm chiều kênh
-    mel_spec_db = np.expand_dims(mel_spec_db, axis=-1)
+    mfccs = np.expand_dims(mfccs, axis=-1)
 
-    return mel_spec_db
+    return mfccs
 
 # Hàm helper để lấy features từ audio files
 def get_enrollment_samples(speaker_files):
@@ -154,9 +184,9 @@ y_val_true = []
 # print(f"Optimal threshold: {optimal_threshold:.3f} (accuracy: {best_accuracy:.3f})")
 # verifier.threshold = optimal_threshold
 
-verifier.threshold = 0.5
+verifier.threshold = 0.55
 
-np.savez('speaker_database_5.npz',
+np.savez('mfcc_speaker_database.npz',
          centroids=verifier.speaker_centroids,
          threshold=verifier.threshold)
 
@@ -183,7 +213,7 @@ def identify_speaker(audio_path):
     return result
 # Ví dụ sử dụng
 # result = identify_speaker("/kaggle/input/voice-dataset/content/drive/MyDrive/dataset/train/id_001/id_001_0080.wav")
-# result = identify_speaker("data/Hoang/utt_005.wav") 
+result = identify_speaker("data/Hoang/normal_1.wav") 
 # result = identify_speaker("data/Doan/test.wav") 
 # result = identify_speaker("data/Huy/8.wav") 
 # result = identify_speaker("data/Binh/Recording (10).wav") 
