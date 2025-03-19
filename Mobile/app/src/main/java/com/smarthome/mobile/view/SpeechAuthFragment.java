@@ -82,7 +82,7 @@ public class SpeechAuthFragment extends Fragment {
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
                     Log.d("record", "2");
-                    playSound();
+//                    playSound();
                     scaleView(binding.btnMic, 1.0f, SCALE);
                     speechAuthViewModel.startRecording();
                     return true;

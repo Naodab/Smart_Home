@@ -33,7 +33,7 @@ class SpeechCreateAPIView(APIView):
 
         result = identify_speaker()
         print(result)
-        
+
         return Response({"message": "File uploaded successfully", "file_url": file_url, "email": email})
     return Response(serializer.errors, status=400)
   
