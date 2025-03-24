@@ -16,27 +16,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import { PersonHomeForm } from "./person-home-form"
-
-// Mock data for persons in home
-const mockPersonsInHome = {
-  "1": [
-    { id: "1", name: "John Doe" },
-    { id: "2", name: "Jane Smith" },
-  ],
-  "2": [{ id: "3", name: "Bob Johnson" }],
-  "3": [{ id: "4", name: "Alice Williams" }],
-}
-
-// Mock data for devices in home
-const mockDevicesInHome = {
-  "1": [
-    { id: "1", name: "Living Room Thermostat", status: "Online" },
-    { id: "2", name: "Kitchen Smart Light", status: "Online" },
-    { id: "3", name: "Front Door Lock", status: "Offline" },
-  ],
-  "2": [{ id: "4", name: "Beach House Camera", status: "Online" }],
-  "3": [{ id: "5", name: "Cabin Heater", status: "Online" }],
-}
+import { Device, Person } from "./api-service"
 
 // Mock data for all persons (for adding to home)
 const allPersons = [
@@ -52,6 +32,8 @@ interface HomeDetailsProps {
     id: string
     email: string
     address: string
+    persons: Person[]
+    devices: Device[]
   }
 }
 
@@ -62,13 +44,11 @@ export function HomeDetails({ home }: HomeDetailsProps) {
   const [selectedPersons, setSelectedPersons] = useState<string[]>([])
 
   useEffect(() => {
-    // In a real app, you would fetch this data from your API
-    setPersonsInHome(mockPersonsInHome[home.id as keyof typeof mockPersonsInHome] || [])
-    setDevicesInHome(mockDevicesInHome[home.id as keyof typeof mockDevicesInHome] || [])
+    setPersonsInHome(home.persons || [])
+    setDevicesInHome(home.devices || [])
   }, [home.id])
 
   const handleAddPersons = () => {
-    // In a real app, you would send this data to your API
     const newPersons = allPersons.filter((person) => selectedPersons.includes(person.id))
     setPersonsInHome([...personsInHome, ...newPersons])
     setIsAddPersonDialogOpen(false)

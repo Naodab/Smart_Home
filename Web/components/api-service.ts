@@ -1,85 +1,64 @@
-// This is a mock API service to simulate API calls and errors
+const API_BASE_URL = "http://localhost:8088"
 
-// Simulate API delay
-const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
-
-// Modify the simulateRandomError function to reduce error rate for debugging
-const simulateRandomError = (errorRate = 0.2) => {
-  return Math.random() < errorRate
-}
-
-// Error types
 export type ApiError = {
   status: number
   message: string
 }
 
-// Update the apiCall function to better handle the data validation
+export type Home = {
+  id: string
+  email: string
+  address: string
+  persons: Person[]
+  devices: Device[]
+}
+
+export type Person = {
+  id: string
+  name: string
+  homeIds: string[]
+}
+
+export type Device = {
+  id: string
+  name: string
+  status: boolean
+}
+
 export async function apiCall<T>(
   endpoint: string,
   method: "GET" | "POST" | "PUT" | "DELETE" = "GET",
-  data?: any,
+  data?: any
 ): Promise<T> {
   try {
-    // Simulate network delay
-    await delay(800)
+    console.log(`Calling API: ${method} ${API_BASE_URL}${endpoint}`);
 
-    // Validate data for specific endpoints
-    if (endpoint.includes("/connections") && method === "PUT") {
-      // Check if the data has the required format for connections
-      if (!data || !data.personId || !data.connections || !Array.isArray(data.connections)) {
-        throw {
-          status: 400,
-          message: "Bad request: Invalid data format for connections. Expected {personId, connections: string[]}",
-        }
-      }
+    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+      method,
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: data ? JSON.stringify(data) : undefined,
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw { status: response.status, message: errorData.message || "Unknown error" } as ApiError;
     }
 
-    // Simulate random errors (for demonstration) with reduced rate
-    if (simulateRandomError(0.2)) {
-      const errorTypes = [
-        { status: 400, message: "Bad request: Invalid data provided" },
-        { status: 401, message: "Unauthorized: Please login again" },
-        { status: 403, message: "Forbidden: You don't have permission to perform this action" },
-        { status: 404, message: "Not found: The requested resource doesn't exist" },
-        { status: 500, message: "Server error: Something went wrong on our end" },
-        { status: 503, message: "Service unavailable: Please try again later" },
-      ]
-
-      const randomError = errorTypes[Math.floor(Math.random() * errorTypes.length)]
-      throw randomError
-    }
-
-    // Simulate successful response
-    console.log(`API ${method} to ${endpoint}`, data)
-
-    // For GET connections, return mock data
-    if (endpoint.includes("/connections") && method === "GET") {
-      const personId = endpoint.split("/")[2] // Extract personId from URL
-      const mockConnections = {
-        "1": ["1", "2"],
-        "2": ["1"],
-        "3": ["2"],
-        "4": ["3"],
-        "5": [],
-      }
-      return { data: mockConnections[personId as keyof typeof mockConnections] || [] } as unknown as T
-    }
-
-    return { success: true, data } as unknown as T
-  } catch (error) {
-    console.error("API Error:", error)
-    throw error
+    return (method === "DELETE" ? null : await response.json()) as T;
+  } catch (error: any) {
+    console.error("API error:", error);
+    throw { status: 500, message: "Lỗi kết nối đến server. Vui lòng thử lại." } as ApiError;
   }
 }
 
-// Specific API functions for different entities
 export const HomeApi = {
-  getAll: () => apiCall<any[]>("/api/homes"),
-  getById: (id: string) => apiCall<any>(`/api/homes/${id}`),
-  create: (data: any) => apiCall<any>("/api/homes", "POST", data),
-  update: (id: string, data: any) => apiCall<any>(`/api/homes/${id}`, "PUT", data),
-  delete: (id: string) => apiCall<void>(`/api/homes/${id}`, "DELETE"),
+  getAll: () => apiCall<Home[]>("/api/homes/"),
+  getById: (id: string) => apiCall<Home>(`/api/homes/${id}/`),
+  create: (data: Home) => apiCall<Home>("/api/homes/", "POST", data),
+  update: (id: string, data: Home) => apiCall<Home>(`/api/homes/${id}/`, "PUT", data),
+  delete: (id: string) => apiCall<void>(`/api/homes/${id}/`, "DELETE"),
 }
 
 export const PersonApi = {
@@ -100,13 +79,12 @@ export const DeviceApi = {
     apiCall<any>(`/api/devices/${id}/status`, "PUT", { status, personId }),
 }
 
-// Connection API functions
 export const ConnectionApi = {
   getPersonConnections: (personId: string) => apiCall<string[]>(`/api/persons/${personId}/connections`),
   saveConnections: (personId: string, homeIds: string[]) =>
     apiCall<any>(`/api/persons/${personId}/connections`, "PUT", {
-      personId, // Make sure personId is included in the payload
-      connections: homeIds, // Wrap homeIds in a 'connections' property
+      personId,
+      connections: homeIds,
     }),
 }
 

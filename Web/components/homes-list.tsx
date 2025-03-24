@@ -1,8 +1,6 @@
 "use client"
 
-import type React from "react"
-
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
@@ -29,45 +27,41 @@ import {
 } from "@/components/ui/pagination"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
-// Add these imports at the top
-import { HomeApi, type ApiError } from "@/components/api-service"
+import { HomeApi, type ApiError, type Home } from "@/components/api-service"
 import { useToast } from "@/hooks/use-toast"
 import { Loader2 } from "lucide-react"
 
-// Mock data for homes - let's add more items to demonstrate pagination
-const initialHomes = [
-  { id: "1", email: "main.residence@example.com", address: "123 Main St, Anytown, USA" },
-  { id: "2", email: "beach.house@example.com", address: "456 Ocean Ave, Beachtown, USA" },
-  { id: "3", email: "mountain.cabin@example.com", address: "789 Mountain Rd, Highlands, USA" },
-  { id: "4", email: "downtown.apt@example.com", address: "101 City Center, Metropolis, USA" },
-  { id: "5", email: "lakeside.cottage@example.com", address: "202 Lake View, Waterfront, USA" },
-  { id: "6", email: "country.farmhouse@example.com", address: "303 Rural Route, Countryside, USA" },
-  { id: "7", email: "suburban.home@example.com", address: "404 Maple St, Suburbia, USA" },
-  { id: "8", email: "forest.retreat@example.com", address: "505 Pine Trail, Woodland, USA" },
-  { id: "9", email: "desert.oasis@example.com", address: "606 Cactus Rd, Sandville, USA" },
-  { id: "10", email: "island.bungalow@example.com", address: "707 Palm Beach, Tropical Isle, USA" },
-  { id: "11", email: "winter.lodge@example.com", address: "808 Snowy Peak, Frostville, USA" },
-  { id: "12", email: "historic.townhouse@example.com", address: "909 Heritage Ave, Oldtown, USA" },
-]
 
 export function HomesList() {
-  // Add these new state variables
   const { toast } = useToast()
   const [isLoading, setIsLoading] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
 
-  const [homes, setHomes] = useState(initialHomes)
-  const [selectedHome, setSelectedHome] = useState<any>(null)
+  const [homes, setHomes] = useState<Home[]>([])
+  const [selectedHome, setSelectedHome] = useState<Home | null>(null)
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
   const [isViewDialogOpen, setIsViewDialogOpen] = useState(false)
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
   const [searchTerm, setSearchTerm] = useState("")
 
-  // Pagination state
   const [currentPage, setCurrentPage] = useState(1)
   const [itemsPerPage, setItemsPerPage] = useState(5)
 
-  // Update the handleDelete function
+  useEffect(() => {
+    async function fetchHomes() {
+      try {
+        setIsLoading(true)
+        const data = await HomeApi.getAll();
+        setHomes(data);
+        setIsLoading(false)
+      } catch (error) {
+        console.error("Failed to fetch homes", error);
+        setIsLoading(false)
+      }
+    }
+    fetchHomes();
+  }, []);
+
   const handleDelete = async (id: string) => {
     setIsSubmitting(true)
     try {
@@ -91,8 +85,7 @@ export function HomesList() {
     }
   }
 
-  // Update the handleEdit function
-  const handleEdit = async (updatedHome: any) => {
+  const handleEdit = async (updatedHome: Home) => {
     setIsSubmitting(true)
     try {
       await HomeApi.update(updatedHome.id, updatedHome)
@@ -115,40 +108,34 @@ export function HomesList() {
     }
   }
 
-  // Filter homes based on search term
   const filteredHomes = homes.filter(
     (home) =>
       home.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
       home.address.toLowerCase().includes(searchTerm.toLowerCase()),
   )
 
-  // Calculate pagination
   const totalItems = filteredHomes.length
   const totalPages = Math.ceil(totalItems / itemsPerPage)
   const indexOfLastItem = currentPage * itemsPerPage
   const indexOfFirstItem = indexOfLastItem - itemsPerPage
   const currentItems = filteredHomes.slice(indexOfFirstItem, indexOfLastItem)
 
-  // Reset to first page when search term changes
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value)
     setCurrentPage(1)
   }
 
-  // Handle page change
   const paginate = (pageNumber: number) => {
     if (pageNumber > 0 && pageNumber <= totalPages) {
       setCurrentPage(pageNumber)
     }
   }
 
-  // Generate page numbers for pagination
-  const pageNumbers = []
+  const pageNumbers: number[] = []
   for (let i = 1; i <= totalPages; i++) {
     pageNumbers.push(i)
   }
 
-  // Determine which page numbers to show
   const getVisiblePageNumbers = () => {
     if (totalPages <= 5) {
       return pageNumbers

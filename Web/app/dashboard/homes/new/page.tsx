@@ -16,17 +16,14 @@ export default function NewHomePage() {
     try {
       await HomeApi.create(data)
 
-      // Show success toast
       toast({
         title: "Success",
         description: "Home created successfully",
         variant: "success",
       })
 
-      // Navigate back to homes list
       router.push("/dashboard/homes")
     } catch (error) {
-      // Show error toast
       const apiError = error as ApiError
       toast({
         title: "Error",
