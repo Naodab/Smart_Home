@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
@@ -28,78 +28,109 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { ApiError, PersonApi, type Person } from "./api-service"  
+import { useToast } from "@/hooks/use-toast"
 
-// Mock data for persons - let's add more items to demonstrate pagination
-const initialPersons = [
-  { id: "1", name: "John Doe" },
-  { id: "2", name: "Jane Smith" },
-  { id: "3", name: "Bob Johnson" },
-  { id: "4", name: "Alice Williams" },
-  { id: "5", name: "Charlie Brown" },
-  { id: "6", name: "Diana Prince" },
-  { id: "7", name: "Bruce Wayne" },
-  { id: "8", name: "Clark Kent" },
-  { id: "9", name: "Peter Parker" },
-  { id: "10", name: "Tony Stark" },
-  { id: "11", name: "Steve Rogers" },
-  { id: "12", name: "Natasha Romanoff" },
-  { id: "13", name: "Thor Odinson" },
-  { id: "14", name: "Bruce Banner" },
-  { id: "15", name: "Wanda Maximoff" },
-]
+
 
 export function PersonsList() {
-  const [persons, setPersons] = useState(initialPersons)
-  const [selectedPerson, setSelectedPerson] = useState<any>(null)
+  const { toast } = useToast()
+  const [persons, setPersons] = useState<Person[]>([])
+  const [isLoading, setIsLoading] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [selectedPerson, setSelectedPerson] = useState<Person | null>(null)
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
   const [isViewDialogOpen, setIsViewDialogOpen] = useState(false)
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
   const [searchTerm, setSearchTerm] = useState("")
 
-  // Pagination state
   const [currentPage, setCurrentPage] = useState(1)
   const [itemsPerPage, setItemsPerPage] = useState(5)
 
-  const handleDelete = (id: string) => {
-    setPersons(persons.filter((person) => person.id !== id))
-    setIsDeleteDialogOpen(false)
+  useEffect(() => {
+    (async function fetchPersons() {
+      try {
+        setIsLoading(true)
+        const data = await PersonApi.getAll();
+        setPersons(data);
+        setIsLoading(false)
+      } catch (error) {
+        console.error("Failed to fetch persons", error);
+        setIsLoading(false)
+      }
+    })()
+  }, []);
+
+  const handleDelete = async (id: string) => {
+    setIsSubmitting(true)
+    try {
+      await PersonApi.delete(id)
+      setPersons(persons.filter((person) => person.id !== id))
+      toast({
+        title: "Success",
+        description: "Person deleted successfully",
+        variant: "success",
+      })
+    } catch (error) {
+      const apiError = error as ApiError
+      toast({
+        title: "Error",
+        description: apiError.message || "Failed to delete person. Please try again.",
+        variant: "destructive",
+      })
+    } finally {
+      setIsSubmitting(false)
+      setIsDeleteDialogOpen(false)
+    }
   }
 
-  const handleEdit = (updatedPerson: any) => {
-    setPersons(persons.map((person) => (person.id === updatedPerson.id ? updatedPerson : person)))
-    setIsEditDialogOpen(false)
+  const handleEdit = async (updatedPerson: Person) => {
+    setIsSubmitting(true)
+    try {
+      await PersonApi.update(updatedPerson.id, updatedPerson)
+      setPersons(persons.map((person) => (person.id === updatedPerson.id ? updatedPerson : person)))
+      toast({
+        title: "Success",
+        description: "Person updated successfully",
+        variant: "success",
+      })
+    } catch (error) {
+      const apiError = error as ApiError
+      toast({
+        title: "Error",
+        description: apiError.message || "Failed to update person. Please try again.",
+        variant: "destructive",
+      })
+    } finally {
+      setIsSubmitting(false)
+      setIsEditDialogOpen(false)
+    }
   }
 
-  // Filter persons based on search term
   const filteredPersons = persons.filter((person) => person.name.toLowerCase().includes(searchTerm.toLowerCase()))
 
-  // Calculate pagination
   const totalItems = filteredPersons.length
   const totalPages = Math.ceil(totalItems / itemsPerPage)
   const indexOfLastItem = currentPage * itemsPerPage
   const indexOfFirstItem = indexOfLastItem - itemsPerPage
   const currentItems = filteredPersons.slice(indexOfFirstItem, indexOfLastItem)
 
-  // Reset to first page when search term changes
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value)
     setCurrentPage(1)
   }
 
-  // Handle page change
   const paginate = (pageNumber: number) => {
     if (pageNumber > 0 && pageNumber <= totalPages) {
       setCurrentPage(pageNumber)
     }
   }
 
-  // Generate page numbers for pagination
-  const pageNumbers = []
+  const pageNumbers: number[] = []
   for (let i = 1; i <= totalPages; i++) {
     pageNumbers.push(i)
   }
 
-  // Determine which page numbers to show
   const getVisiblePageNumbers = () => {
     if (totalPages <= 5) {
       return pageNumbers

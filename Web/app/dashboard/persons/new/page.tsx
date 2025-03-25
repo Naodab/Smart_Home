@@ -2,16 +2,37 @@
 import { useRouter } from "next/navigation"
 import { PersonForm } from "@/components/person-form"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { ApiError, PersonApi } from "@/components/api-service"
+import { useToast } from "@/hooks/use-toast"
+import { useState } from "react"
 
 export default function NewPersonPage() {
   const router = useRouter()
+  const { toast } = useToast()
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
-  const handleSubmit = (data: any) => {
-    // In a real app, you would send this data to your API
-    console.log("Creating new person:", data)
+  const handleSubmit = async (data: any) => {
+    setIsSubmitting(true)
+    try {
+      await PersonApi.create(data)
 
-    // Navigate back to persons list
-    router.push("/dashboard/persons")
+      toast({
+        title: "Success",
+        description: "Person created successfully",
+        variant: "success",
+      })
+
+      router.push("/dashboard/persons")
+    } catch (error) {
+      const apiError = error as ApiError
+      toast({
+        title: "Error",
+        description: apiError.message || "Failed to create person. Please try again.",
+        variant: "destructive",
+      })
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   const handleCancel = () => {
@@ -30,7 +51,7 @@ export default function NewPersonPage() {
           <CardDescription>Enter the details for the new person</CardDescription>
         </CardHeader>
         <CardContent>
-          <PersonForm onSubmit={handleSubmit} onCancel={handleCancel} />
+          <PersonForm onSubmit={handleSubmit} onCancel={handleCancel} isSubmitting={isSubmitting}/>
         </CardContent>
       </Card>
     </div>

@@ -9,14 +9,42 @@ export type Home = {
   id: string
   email: string
   address: string
-  persons: Person[]
-  devices: Device[]
+  persons: PersonInHome[]
+  devices: DeviceInHome[]
+}
+
+export type PersonInHome = {
+  id: string
+  name: string
+  homeIds: string[]
+}
+
+export type DeviceInHome = {
+  id: string
+  name: string
+  status: boolean
+  homeIds: string[]
+}
+
+export type HomeInPerson = {
+  id: string
+  email: string
+  address: string
 }
 
 export type Person = {
   id: string
   name: string
-  homeIds: string[]
+  homes: HomeInPerson[]
+  histories: HistoryInPerson[]
+}
+
+export type HistoryInPerson = {
+  id: string
+  deviceId: string
+  deviceName: string
+  newStatus: string
+  timestamp: string
 }
 
 export type Device = {
@@ -62,27 +90,27 @@ export const HomeApi = {
 }
 
 export const PersonApi = {
-  getAll: () => apiCall<any[]>("/api/persons"),
-  getById: (id: string) => apiCall<any>(`/api/persons/${id}`),
-  create: (data: any) => apiCall<any>("/api/persons", "POST", data),
-  update: (id: string, data: any) => apiCall<any>(`/api/persons/${id}`, "PUT", data),
-  delete: (id: string) => apiCall<void>(`/api/persons/${id}`, "DELETE"),
+  getAll: () => apiCall<Person[]>("/api/people/"),
+  getById: (id: string) => apiCall<Person>(`/api/people/${id}/`),
+  create: (data: Person) => apiCall<Person>("/api/people/", "POST", data),
+  update: (id: string, data: Person) => apiCall<Person>(`/api/people/${id}/`, "PUT", data),
+  delete: (id: string) => apiCall<void>(`/api/people/${id}/`, "DELETE"),
 }
 
 export const DeviceApi = {
-  getAll: () => apiCall<any[]>("/api/devices"),
-  getById: (id: string) => apiCall<any>(`/api/devices/${id}`),
-  create: (data: any) => apiCall<any>("/api/devices", "POST", data),
-  update: (id: string, data: any) => apiCall<any>(`/api/devices/${id}`, "PUT", data),
-  delete: (id: string) => apiCall<void>(`/api/devices/${id}`, "DELETE"),
+  getAll: () => apiCall<Device[]>("/api/devices/"),
+  getById: (id: string) => apiCall<Device>(`/api/devices/${id}/`),
+  create: (data: Device) => apiCall<Device>("/api/devices/", "POST", data),
+  update: (id: string, data: Device) => apiCall<Device>(`/api/devices/${id}/`, "PUT", data),
+  delete: (id: string) => apiCall<void>(`/api/devices/${id}/`, "DELETE"),
   updateStatus: (id: string, status: string, personId: string) =>
-    apiCall<any>(`/api/devices/${id}/status`, "PUT", { status, personId }),
+    apiCall<Device>(`/api/devices/${id}/status`, "PUT", { status, personId }),
 }
 
 export const ConnectionApi = {
-  getPersonConnections: (personId: string) => apiCall<string[]>(`/api/persons/${personId}/connections`),
+  getPersonConnections: (personId: string) => apiCall<string[]>(`/api/people/${personId}/connections`),
   saveConnections: (personId: string, homeIds: string[]) =>
-    apiCall<any>(`/api/persons/${personId}/connections`, "PUT", {
+    apiCall<any>(`/api/people/${personId}/connections`, "PUT", {
       personId,
       connections: homeIds,
     }),

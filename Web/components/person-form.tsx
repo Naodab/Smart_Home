@@ -6,6 +6,7 @@ import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { Loader2 } from "lucide-react"
 
 interface PersonFormProps {
   initialData?: {
@@ -14,12 +15,13 @@ interface PersonFormProps {
   }
   onSubmit: (data: any) => void
   onCancel: () => void
+  isSubmitting?: boolean
 }
 
-export function PersonForm({ initialData, onSubmit, onCancel }: PersonFormProps) {
+export function PersonForm({ initialData, onSubmit, onCancel, isSubmitting = false }: PersonFormProps) {
   const [formData, setFormData] = useState({
-    id: initialData?.id || "",
-    name: initialData?.name || "",
+    id: initialData?.id ?? "",
+    name: initialData?.name ?? "",
   })
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -46,7 +48,14 @@ export function PersonForm({ initialData, onSubmit, onCancel }: PersonFormProps)
           Cancel
         </Button>
         <Button type="submit" className="bg-green-600 hover:bg-green-700">
-          {initialData?.id ? "Update" : "Create"} Person
+        {isSubmitting ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              {initialData?.id ? "Updating..." : "Creating..."}
+            </>
+          ) : (
+            <>{initialData?.id ? "Update" : "Create"} Person</>
+          )}
         </Button>
       </div>
     </form>

@@ -16,7 +16,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import { PersonHomeForm } from "./person-home-form"
-import { Device, Person } from "./api-service"
+import { DeviceInHome, PersonInHome } from "./api-service"
 
 // Mock data for all persons (for adding to home)
 const allPersons = [
@@ -32,8 +32,8 @@ interface HomeDetailsProps {
     id: string
     email: string
     address: string
-    persons: Person[]
-    devices: Device[]
+    persons: PersonInHome[]
+    devices: DeviceInHome[]
   }
 }
 

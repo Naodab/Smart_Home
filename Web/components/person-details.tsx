@@ -5,66 +5,19 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { User, Home } from "lucide-react"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-
-// Mock data for homes associated with person
-const mockHomesForPerson = {
-  "1": [{ id: "1", email: "main.residence@example.com", address: "123 Main St, Anytown, USA" }],
-  "2": [{ id: "1", email: "main.residence@example.com", address: "123 Main St, Anytown, USA" }],
-  "3": [{ id: "2", email: "beach.house@example.com", address: "456 Ocean Ave, Beachtown, USA" }],
-  "4": [{ id: "3", email: "mountain.cabin@example.com", address: "789 Mountain Rd, Highlands, USA" }],
-  "5": [],
-}
-
-// Mock data for device history
-const mockDeviceHistory = {
-  "1": [
-    {
-      id: "1",
-      deviceId: "1",
-      deviceName: "Living Room Thermostat",
-      newStatus: "Online",
-      timestamp: "2023-05-15 14:30:22",
-    },
-    {
-      id: "2",
-      deviceId: "2",
-      deviceName: "Kitchen Smart Light",
-      newStatus: "Offline",
-      timestamp: "2023-05-14 08:15:10",
-    },
-    {
-      id: "3",
-      deviceId: "2",
-      deviceName: "Kitchen Smart Light",
-      newStatus: "Online",
-      timestamp: "2023-05-14 18:45:33",
-    },
-  ],
-  "2": [
-    { id: "4", deviceId: "3", deviceName: "Front Door Lock", newStatus: "Offline", timestamp: "2023-05-16 22:10:05" },
-  ],
-  "3": [
-    { id: "5", deviceId: "4", deviceName: "Beach House Camera", newStatus: "Online", timestamp: "2023-05-12 09:20:15" },
-  ],
-  "4": [],
-  "5": [],
-}
+import { HomeInPerson, Person, HistoryInPerson } from "./api-service"
 
 interface PersonDetailsProps {
-  person: {
-    id: string
-    name: string
-  }
+  person: Person
 }
 
 export function PersonDetails({ person }: PersonDetailsProps) {
-  const [homesForPerson, setHomesForPerson] = useState<any[]>([])
-  const [deviceHistory, setDeviceHistory] = useState<any[]>([])
+  const [homesForPerson, setHomesForPerson] = useState<HomeInPerson[]>([])
+  const [deviceHistory, setDeviceHistory] = useState<HistoryInPerson[]>([])
 
   useEffect(() => {
-    // In a real app, you would fetch this data from your API
-    setHomesForPerson(mockHomesForPerson[person.id as keyof typeof mockHomesForPerson] || [])
-    setDeviceHistory(mockDeviceHistory[person.id as keyof typeof mockDeviceHistory] || [])
+    setHomesForPerson(person.homes)
+    setDeviceHistory(person.histories)
   }, [person.id])
 
   return (
