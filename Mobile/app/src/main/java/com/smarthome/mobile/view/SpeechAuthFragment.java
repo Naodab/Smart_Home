@@ -3,6 +3,7 @@ package com.smarthome.mobile.view;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.pm.PackageManager;
+import android.media.MediaPlayer;
 import android.media.SoundPool;
 import android.os.Bundle;
 
@@ -12,6 +13,8 @@ import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -54,8 +57,12 @@ public class SpeechAuthFragment extends Fragment {
         soundId = soundPool.load(requireContext(), R.raw.start_audio, 1);
     }
 
-    private void playSound() {
+    private int playSound() {
         soundPool.play(soundId, 1.0f, 1.0f, 1, 0, 1.0f);
+        MediaPlayer mediaPlayer = MediaPlayer.create(getContext(), R.raw.start_audio);
+        int duration = mediaPlayer.getDuration();
+        mediaPlayer.release();
+        return duration;
     }
 
     @Override
@@ -82,9 +89,10 @@ public class SpeechAuthFragment extends Fragment {
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
                     Log.d("record", "2");
-//                    playSound();
+                    int duration = playSound();
                     scaleView(binding.btnMic, 1.0f, SCALE);
-                    speechAuthViewModel.startRecording();
+                    new Handler(Looper.getMainLooper()).postDelayed(
+                            () -> speechAuthViewModel.startRecording(), duration);
                     return true;
 
                 case MotionEvent.ACTION_UP:

@@ -172,7 +172,7 @@ export function DevicesList() {
   }
 
   // Generate page numbers for pagination
-  const pageNumbers = []
+  const pageNumbers: number[] = []
   for (let i = 1; i <= totalPages; i++) {
     pageNumbers.push(i)
   }

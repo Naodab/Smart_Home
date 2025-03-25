@@ -16,3 +16,5 @@ librosa
 torchvision
 daphne
 channels
+tensorflow
+tf-keras
