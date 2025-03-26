@@ -2,9 +2,10 @@
 
 import { Checkbox } from "@/components/ui/checkbox"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { PersonToSelect } from "./api-service"
 
 interface PersonHomeFormProps {
-  allPersons: { id: string; name: string }[]
+  allPersons: PersonToSelect[]
   selectedPersons: string[]
   setSelectedPersons: (ids: string[]) => void
 }

@@ -4,7 +4,7 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
-import { Home, Users, Cpu, LayoutDashboard, History, Link2 } from "lucide-react"
+import { Home, Users, Cpu, LayoutDashboard, History } from "lucide-react"
 
 const navItems = [
   {
@@ -26,11 +26,6 @@ const navItems = [
     title: "Devices",
     href: "/dashboard/devices",
     icon: Cpu,
-  },
-  {
-    title: "Connections",
-    href: "/dashboard/connections",
-    icon: Link2,
   },
   {
     title: "History",

@@ -16,16 +16,15 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import { PersonHomeForm } from "./person-home-form"
-import { DeviceInHome, PersonInHome } from "./api-service"
-
-// Mock data for all persons (for adding to home)
-const allPersons = [
-  { id: "1", name: "John Doe" },
-  { id: "2", name: "Jane Smith" },
-  { id: "3", name: "Bob Johnson" },
-  { id: "4", name: "Alice Williams" },
-  { id: "5", name: "Charlie Brown" },
-]
+import { 
+  DeviceInHome,
+  PersonInHome,
+  PersonToSelect,
+  PersonApi,
+  ApiError,
+  HomePersonApi
+} from "./api-service"
+import { useToast } from "@/hooks/use-toast"
 
 interface HomeDetailsProps {
   home: {
@@ -42,21 +41,80 @@ export function HomeDetails({ home }: HomeDetailsProps) {
   const [devicesInHome, setDevicesInHome] = useState<any[]>([])
   const [isAddPersonDialogOpen, setIsAddPersonDialogOpen] = useState(false)
   const [selectedPersons, setSelectedPersons] = useState<string[]>([])
+  const [allPersons, setAllPersons] = useState<PersonToSelect[]>([])
+  const { toast } = useToast()
 
   useEffect(() => {
     setPersonsInHome(home.persons || [])
     setDevicesInHome(home.devices || [])
   }, [home.id])
 
-  const handleAddPersons = () => {
+  useEffect(() => {
+    const fetchAllPersons = async () => {
+      try {
+        const response = await PersonApi.getPeopleToAdd()
+        setAllPersons(response)
+      } catch (error) {
+        console.error("Error fetching all persons:", error)
+        toast({
+          title: "Error",
+          description: "Failed to fetch persons. Please try again.",
+          variant: "destructive",
+        })
+      }
+    }
+    fetchAllPersons()
+  }, [])
+
+  const handleAddPersons = async () => {
     const newPersons = allPersons.filter((person) => selectedPersons.includes(person.id))
-    setPersonsInHome([...personsInHome, ...newPersons])
     setIsAddPersonDialogOpen(false)
     setSelectedPersons([])
+
+    const data = {
+      home_id: home.id,
+      person_ids: newPersons.map((newPerson) => newPerson.id),
+    }
+
+    try {
+      await HomePersonApi.updateHomePersons(data)
+      toast({
+        title: "Success",
+        description: "Persons added successfully",
+        variant: "success",
+      })
+      setPersonsInHome([...personsInHome, ...newPersons])
+    } catch (error) {
+      const apiError = error as ApiError
+      toast({
+        title: "Error",
+        description: apiError.message || "Failed to add persons. Please try again.",
+        variant: "destructive",
+      })
+    }
   }
 
-  const handleRemovePerson = (personId: string) => {
-    setPersonsInHome(personsInHome.filter((person) => person.id !== personId))
+  const handleRemovePerson = async (personId: string) => {
+    const data = {
+      home_id: home.id,
+      person_ids: [personId],
+    }
+    try {
+      await HomePersonApi.deleteHomePersons(data)
+      toast({
+        title: "Success",
+        description: "Person deleted successfully",
+        variant: "success",
+      })
+      setPersonsInHome(personsInHome.filter((person) => person.id !== personId))
+    } catch (error) {
+      const apiError = error as ApiError
+      toast({
+        title: "Error",
+        description: apiError.message || "Failed to delete person. Please try again.",
+        variant: "destructive",
+      })
+    }
   }
 
   return (

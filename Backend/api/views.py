@@ -5,7 +5,7 @@ from rest_framework.views import APIView
 
 from django.core.files.storage import default_storage
 
-from .serializers import DeviceCreateSerializer, DeviceSerializer, DeviceUpdateSerializer, PersonSerializer, SpeechSerializer, LoginSerializer, RegisterSerializer, HomeSerializer
+from .serializers import DeviceCreateSerializer, DeviceSerializer, DeviceUpdateSerializer, HomePersonAddSerializer, PersonSerializer, SpeechSerializer, LoginSerializer, RegisterSerializer, HomeSerializer
 
 from AI_Module.speech_recognition.speech_to_text import transfer_audio_to_text
 from AI_Module.speaker_recognition.test import identify_speaker
@@ -116,6 +116,13 @@ class PersonAPIView(APIView):
     return Response(serializer.data)
 person_api_view = PersonAPIView.as_view()
 
+# /api/people/select/
+class PersonSelectAPIView(APIView):
+  def get(self, request, *args, **kwargs):
+    persons = Person.objects.values('id', 'name')
+    return Response(persons)
+person_select_api_view = PersonSelectAPIView.as_view()
+
 # /api/people/<id>/
 class PersonIdAPIView(APIView):
   def get(self, request, id, *args, **kwargs):
@@ -136,6 +143,23 @@ class PersonIdAPIView(APIView):
     person.delete()
     return Response({"message": "Person deleted successfully"})
 person_id_api_view = PersonIdAPIView.as_view()
+
+# /api/homes/<id>/persons/
+class HomePersonAPIView(APIView):
+  def put(self, request, id, *args, **kwargs):
+    serializer = HomePersonAddSerializer(data=request.data)
+    if serializer.is_valid():
+      serializer.save()
+      return Response({"message": "Home updated successfully"})
+    return Response(serializer.errors, status=400)
+  
+  def delete(self, request, id, *args, **kwargs):
+    serializer = HomePersonAddSerializer(data=request.data)
+    if serializer.is_valid():
+      serializer.delete(request.data)
+      return Response({"message": "Home updated successfully"})
+    return Response(serializer.errors, status=400)
+home_person_api_view = HomePersonAPIView.as_view()
 
 # /api/devices/
 class DeviceAPIView(APIView):

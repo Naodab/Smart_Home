@@ -61,6 +61,11 @@ export type HomeInDevice = {
   address: string
 }
 
+export type PersonToSelect = {
+  id: string
+  name: string
+}
+
 export type HomeToSelect = {
   id: string
   email: string
@@ -117,6 +122,7 @@ export const PersonApi = {
   create: (data: Person) => apiCall<Person>("/api/people/", "POST", data),
   update: (id: string, data: Person) => apiCall<Person>(`/api/people/${id}/`, "PUT", data),
   delete: (id: string) => apiCall<void>(`/api/people/${id}/`, "DELETE"),
+  getPeopleToAdd: () => apiCall<PersonToSelect[]>("/api/people/select/"),
 }
 
 export const DeviceApi = {
@@ -129,12 +135,9 @@ export const DeviceApi = {
     apiCall<Device>(`/api/devices/${id}/status`, "PUT", { status, personId }),
 }
 
-export const ConnectionApi = {
-  getPersonConnections: (personId: string) => apiCall<string[]>(`/api/people/${personId}/connections`),
-  saveConnections: (personId: string, homeIds: string[]) =>
-    apiCall<any>(`/api/people/${personId}/connections`, "PUT", {
-      personId,
-      connections: homeIds,
-    }),
+export const HomePersonApi = {
+  updateHomePersons: (data: { home_id: string; person_ids: string[] }) =>
+    apiCall<any>(`/api/homes/${data.home_id}/persons/`, "PUT", data),
+  deleteHomePersons: (data: { home_id: string; person_ids: string[] }) =>
+    apiCall<any>(`/api/homes/${data.home_id}/persons/`, "DELETE", data),
 }
-
