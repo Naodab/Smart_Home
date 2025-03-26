@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
@@ -29,155 +29,113 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-
-// Mock data for devices - let's add more items to demonstrate pagination
-const initialDevices = [
-  {
-    id: "1",
-    name: "Living Room Thermostat",
-    status: "Online",
-    homeId: "1",
-    homeName: "main.residence@example.com",
-  },
-  {
-    id: "2",
-    name: "Kitchen Smart Light",
-    status: "Online",
-    homeId: "1",
-    homeName: "main.residence@example.com",
-  },
-  {
-    id: "3",
-    name: "Front Door Lock",
-    status: "Offline",
-    homeId: "1",
-    homeName: "main.residence@example.com",
-  },
-  {
-    id: "4",
-    name: "Beach House Camera",
-    status: "Online",
-    homeId: "2",
-    homeName: "beach.house@example.com",
-  },
-  {
-    id: "5",
-    name: "Cabin Heater",
-    status: "Online",
-    homeId: "3",
-    homeName: "mountain.cabin@example.com",
-  },
-  {
-    id: "6",
-    name: "Bedroom Smart Light",
-    status: "Online",
-    homeId: "1",
-    homeName: "main.residence@example.com",
-  },
-  {
-    id: "7",
-    name: "Garage Door Opener",
-    status: "Offline",
-    homeId: "1",
-    homeName: "main.residence@example.com",
-  },
-  {
-    id: "8",
-    name: "Backyard Motion Sensor",
-    status: "Online",
-    homeId: "1",
-    homeName: "main.residence@example.com",
-  },
-  {
-    id: "9",
-    name: "Pool Temperature Monitor",
-    status: "Online",
-    homeId: "2",
-    homeName: "beach.house@example.com",
-  },
-  {
-    id: "10",
-    name: "Patio Smart Light",
-    status: "Offline",
-    homeId: "2",
-    homeName: "beach.house@example.com",
-  },
-  {
-    id: "11",
-    name: "Fireplace Controller",
-    status: "Online",
-    homeId: "3",
-    homeName: "mountain.cabin@example.com",
-  },
-  {
-    id: "12",
-    name: "Water Leak Detector",
-    status: "Online",
-    homeId: "3",
-    homeName: "mountain.cabin@example.com",
-  },
-]
+import { ApiError, Device, DeviceApi } from "./api-service"
+import { useToast } from "@/hooks/use-toast"
 
 export function DevicesList() {
-  const [devices, setDevices] = useState(initialDevices)
-  const [selectedDevice, setSelectedDevice] = useState<any>(null)
+  const { toast } = useToast()
+  const [devices, setDevices] = useState<Device[]>([])
+  const [selectedDevice, setSelectedDevice] = useState<Device | null>(null)
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
   const [isViewDialogOpen, setIsViewDialogOpen] = useState(false)
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
   const [searchTerm, setSearchTerm] = useState("")
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
-  // Pagination state
+  useEffect(() => {
+    const fetchDevices = async () => {
+      try {
+        const response = await DeviceApi.getAll()
+        setDevices(response)
+      } catch (error) {
+        console.error("Error fetching devices:", error)
+      }
+    }
+    fetchDevices()
+  }, [])
+
   const [currentPage, setCurrentPage] = useState(1)
   const [itemsPerPage, setItemsPerPage] = useState(5)
 
-  const handleDelete = (id: string) => {
-    setDevices(devices.filter((device) => device.id !== id))
-    setIsDeleteDialogOpen(false)
+  const handleDelete = async (id: string) => {
+    setIsSubmitting(true)
+    try {
+      await DeviceApi.delete(id)
+      setDevices(devices.filter((device) => device.id !== id))
+      toast({
+        title: "Success",
+        description: "Device deleted successfully",
+        variant: "success",
+      })
+    } catch (error) {
+      const apiError = error as ApiError
+      toast({
+        title: "Error",
+        description: apiError.message || "Failed to delete device. Please try again.",
+        variant: "destructive",
+      })
+    } finally {
+      setIsSubmitting(false)
+      setIsDeleteDialogOpen(false)
+    }
   }
 
-  const handleEdit = (updatedDevice: any) => {
-    setDevices(devices.map((device) => (device.id === updatedDevice.id ? updatedDevice : device)))
-    setIsEditDialogOpen(false)
+  const handleEdit = async (updatedDevice: Device) => {
+    console.log(updatedDevice)
+    setIsSubmitting(true)
+    try {
+      await DeviceApi.update(updatedDevice.id, updatedDevice)
+      setDevices(devices.map((device) => (device.id === updatedDevice.id ? updatedDevice : device)))
+      toast({
+        title: "Success",
+        description: "Device updated successfully",
+        variant: "success",
+      })
+    } catch (error) {
+      const apiError = error as ApiError
+      toast({
+        title: "Error",
+        description: apiError.message || "Failed to update device. Please try again.",
+        variant: "destructive",
+      })
+    } finally {
+      setIsSubmitting(false)
+      setIsEditDialogOpen(false)
+    }
   }
 
-  const handleStatusChange = (deviceId: string, newStatus: string) => {
+  const handleStatusChange = (deviceId: string, newStatus: boolean) => {
     setDevices(devices.map((device) => (device.id === deviceId ? { ...device, status: newStatus } : device)))
   }
 
-  // Filter devices based on search term
   const filteredDevices = devices.filter(
     (device) =>
       device.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      device.homeName.toLowerCase().includes(searchTerm.toLowerCase()),
+      device.home.email.toLowerCase().includes(searchTerm.toLowerCase()),
   )
 
-  // Calculate pagination
   const totalItems = filteredDevices.length
   const totalPages = Math.ceil(totalItems / itemsPerPage)
   const indexOfLastItem = currentPage * itemsPerPage
   const indexOfFirstItem = indexOfLastItem - itemsPerPage
   const currentItems = filteredDevices.slice(indexOfFirstItem, indexOfLastItem)
 
-  // Reset to first page when search term changes
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value)
     setCurrentPage(1)
   }
 
-  // Handle page change
   const paginate = (pageNumber: number) => {
     if (pageNumber > 0 && pageNumber <= totalPages) {
       setCurrentPage(pageNumber)
     }
   }
 
-  // Generate page numbers for pagination
   const pageNumbers: number[] = []
   for (let i = 1; i <= totalPages; i++) {
     pageNumbers.push(i)
   }
 
-  // Determine which page numbers to show
   const getVisiblePageNumbers = () => {
     if (totalPages <= 5) {
       return pageNumbers
@@ -248,13 +206,13 @@ export function DevicesList() {
                   <TableCell className="font-medium">{device.name}</TableCell>
                   <TableCell>
                     <Badge
-                      variant={device.status === "Online" ? "default" : "secondary"}
-                      className={device.status === "Online" ? "bg-green-500" : "bg-gray-500"}
+                      variant={device.status ? "default" : "secondary"}
+                      className={device.status ? "bg-green-500" : "bg-gray-500"}
                     >
-                      {device.status}
+                      {device.status ? "Active" : "Inactive"}
                     </Badge>
                   </TableCell>
-                  <TableCell>{device.homeName}</TableCell>
+                  <TableCell>{device.home.email}</TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end gap-2">
                       <Button
@@ -402,6 +360,7 @@ export function DevicesList() {
               initialData={selectedDevice}
               onSubmit={handleEdit}
               onCancel={() => setIsEditDialogOpen(false)}
+              isSubmitting={isSubmitting}
             />
           )}
         </DialogContent>

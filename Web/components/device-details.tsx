@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Cpu, History, Power } from "lucide-react"
+import { Cpu, History } from "lucide-react"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -17,35 +17,11 @@ import {
 } from "@/components/ui/dialog"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Label } from "@/components/ui/label"
-import { DeviceApi, type ApiError } from "@/components/api-service"
+import { Device, DeviceApi, type ApiError } from "@/components/api-service"
 import { useToast } from "@/hooks/use-toast"
-import { Loader2 } from "lucide-react"
-
-// Mock data for device history
-const mockDeviceHistory = {
-  "1": [
-    { id: "1", personId: "1", personName: "John Doe", newStatus: "Online", timestamp: "2023-05-15 14:30:22" },
-    { id: "2", personId: "2", personName: "Jane Smith", newStatus: "Offline", timestamp: "2023-05-14 08:15:10" },
-    { id: "3", personId: "2", personName: "Jane Smith", newStatus: "Online", timestamp: "2023-05-14 18:45:33" },
-  ],
-  "2": [
-    { id: "4", personId: "1", personName: "John Doe", newStatus: "Offline", timestamp: "2023-05-13 12:10:05" },
-    { id: "5", personId: "1", personName: "John Doe", newStatus: "Online", timestamp: "2023-05-13 17:22:18" },
-  ],
-  "3": [{ id: "6", personId: "2", personName: "Jane Smith", newStatus: "Offline", timestamp: "2023-05-16 22:10:05" }],
-  "4": [{ id: "7", personId: "3", personName: "Bob Johnson", newStatus: "Online", timestamp: "2023-05-12 09:20:15" }],
-  "5": [],
-}
-
 interface DeviceDetailsProps {
-  device: {
-    id: string
-    name: string
-    status: string
-    homeId: string
-    homeName: string
-  }
-  onStatusChange: (deviceId: string, newStatus: string) => void
+  device: Device
+  onStatusChange: (deviceId: string, newStatus: boolean) => void
 }
 
 export function DeviceDetails({ device, onStatusChange }: DeviceDetailsProps) {
@@ -64,8 +40,7 @@ export function DeviceDetails({ device, onStatusChange }: DeviceDetailsProps) {
   ]
 
   useEffect(() => {
-    // In a real app, you would fetch this data from your API
-    setDeviceHistory(mockDeviceHistory[device.id as keyof typeof mockDeviceHistory] || [])
+    setDeviceHistory(device.histories || [])
     setNewStatus(device.status)
   }, [device.id, device.status])
 
@@ -74,16 +49,14 @@ export function DeviceDetails({ device, onStatusChange }: DeviceDetailsProps) {
 
     setIsSubmitting(true)
     try {
-      await DeviceApi.updateStatus(device.id, newStatus, selectedPerson)
+      await DeviceApi.updateStatus(device.id, newStatus ? "Activate" : "Inactivate", selectedPerson)
 
-      // Call the parent component's onStatusChange
       onStatusChange(device.id, newStatus)
 
-      // Add to history
       const newHistoryEntry = {
         id: `new-${Date.now()}`,
         personId: selectedPerson,
-        personName: persons.find((p) => p.id === selectedPerson)?.name || "Unknown",
+        personName: persons.find((p) => p.id === selectedPerson)?.name ?? "Unknown",
         newStatus,
         timestamp: new Date().toISOString().replace("T", " ").substring(0, 19),
       }
@@ -126,23 +99,16 @@ export function DeviceDetails({ device, onStatusChange }: DeviceDetailsProps) {
           <div className="space-y-1">
             <p className="text-sm text-muted-foreground">Status</p>
             <Badge
-              variant={device.status === "Online" ? "default" : "secondary"}
-              className={device.status === "Online" ? "bg-green-500" : "bg-gray-500"}
+              variant={device.status ? "default" : "secondary"}
+              className={device.status ? "bg-green-500" : "bg-gray-500"}
             >
-              {device.status}
+              {device.status ? "Activate" : "Inactivate"}
             </Badge>
           </div>
           <div className="space-y-1">
             <p className="text-sm text-muted-foreground">Home Email</p>
-            <p className="font-medium">{device.homeName}</p>
+            <p className="font-medium">{device.home.email}</p>
           </div>
-        </div>
-
-        <div className="flex justify-end mb-6">
-          <Button className="bg-green-600 hover:bg-green-700" onClick={() => setIsChangeStatusDialogOpen(true)}>
-            <Power className="mr-2 h-4 w-4" />
-            Change Status
-          </Button>
         </div>
 
         <Tabs defaultValue="history" className="mt-6">
@@ -169,10 +135,10 @@ export function DeviceDetails({ device, onStatusChange }: DeviceDetailsProps) {
                       <TableCell>{history.personName}</TableCell>
                       <TableCell>
                         <Badge
-                          variant={history.newStatus === "Online" ? "default" : "secondary"}
-                          className={history.newStatus === "Online" ? "bg-green-500" : "bg-gray-500"}
+                          variant={history.newStatus ? "default" : "secondary"}
+                          className={history.newStatus ? "bg-green-500" : "bg-gray-500"}
                         >
-                          {history.newStatus}
+                          {history.newStatus ? "Activate" : "Inactivate"}
                         </Badge>
                       </TableCell>
                       <TableCell>{history.timestamp}</TableCell>
@@ -200,13 +166,13 @@ export function DeviceDetails({ device, onStatusChange }: DeviceDetailsProps) {
             <div className="grid gap-4 py-4">
               <div className="space-y-2">
                 <Label htmlFor="status">New Status</Label>
-                <Select value={newStatus} onValueChange={setNewStatus}>
+                <Select value={newStatus ? "Activate" : "Inactivate"} onValueChange={(value) => setNewStatus(value === "Activate")}>
                   <SelectTrigger>
                     <SelectValue placeholder="Select status" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="Online">Online</SelectItem>
-                    <SelectItem value="Offline">Offline</SelectItem>
+                    <SelectItem value="Activate">Activate</SelectItem>
+                    <SelectItem value="Inactivate">Inactivate</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -229,20 +195,6 @@ export function DeviceDetails({ device, onStatusChange }: DeviceDetailsProps) {
             <DialogFooter>
               <Button variant="outline" onClick={() => setIsChangeStatusDialogOpen(false)} disabled={isSubmitting}>
                 Cancel
-              </Button>
-              <Button
-                className="bg-green-600 hover:bg-green-700"
-                onClick={handleStatusChange}
-                disabled={!selectedPerson || isSubmitting}
-              >
-                {isSubmitting ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Updating...
-                  </>
-                ) : (
-                  "Update Status"
-                )}
               </Button>
             </DialogFooter>
           </DialogContent>

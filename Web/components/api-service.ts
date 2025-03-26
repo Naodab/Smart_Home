@@ -23,7 +23,7 @@ export type DeviceInHome = {
   id: string
   name: string
   status: boolean
-  homeIds: string[]
+  homeId: string
 }
 
 export type HomeInPerson = {
@@ -47,10 +47,31 @@ export type HistoryInPerson = {
   timestamp: string
 }
 
+export type HistoryInDevice = {
+  id: string
+  personId: string
+  personName: string
+  newStatus: string
+  timestamp: string
+}
+
+export type HomeInDevice = {
+  id: string
+  email: string
+  address: string
+}
+
+export type HomeToSelect = {
+  id: string
+  email: string
+}
+
 export type Device = {
   id: string
   name: string
   status: boolean
+  home: HomeInDevice
+  histories: HistoryInDevice[]
 }
 
 export async function apiCall<T>(
@@ -87,6 +108,7 @@ export const HomeApi = {
   create: (data: Home) => apiCall<Home>("/api/homes/", "POST", data),
   update: (id: string, data: Home) => apiCall<Home>(`/api/homes/${id}/`, "PUT", data),
   delete: (id: string) => apiCall<void>(`/api/homes/${id}/`, "DELETE"),
+  getEmails: () => apiCall<HomeToSelect[]>("/api/homes/emails/"),
 }
 
 export const PersonApi = {
@@ -100,7 +122,7 @@ export const PersonApi = {
 export const DeviceApi = {
   getAll: () => apiCall<Device[]>("/api/devices/"),
   getById: (id: string) => apiCall<Device>(`/api/devices/${id}/`),
-  create: (data: Device) => apiCall<Device>("/api/devices/", "POST", data),
+  create: (data: any) => apiCall<any>("/api/devices/", "POST", data),
   update: (id: string, data: Device) => apiCall<Device>(`/api/devices/${id}/`, "PUT", data),
   delete: (id: string) => apiCall<void>(`/api/devices/${id}/`, "DELETE"),
   updateStatus: (id: string, status: string, personId: string) =>

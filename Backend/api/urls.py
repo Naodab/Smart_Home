@@ -9,7 +9,10 @@ urlpatterns = [
   
   # Backend urls
   path('homes/', views.home_api_view), # /api/homes/
+  path('homes/emails/', views.home_emails_api_view), # /api/homes/emails/
   path('homes/<str:id>/', views.home_id_api_view), # /api/homes/<id>
   path('people/', views.person_api_view), # /api/people/
   path('people/<str:id>/', views.person_id_api_view), # /api/people/<id>
+  path('devices/', views.device_api_view), # /api/devices/
+  path('devices/<str:id>/', views.device_id_api_view), # /api/devices/<id>
 ]

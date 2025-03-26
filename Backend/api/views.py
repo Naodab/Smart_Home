@@ -1,17 +1,17 @@
-from rest_framework import generics, mixins, authentication, permissions
+from rest_framework import generics, mixins, authentication, permissions, status
 from rest_framework.response import Response
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.views import APIView
 
 from django.core.files.storage import default_storage
 
-from .serializers import PersonSerializer, SpeechSerializer, LoginSerializer, RegisterSerializer, HomeSerializer
+from .serializers import DeviceCreateSerializer, DeviceSerializer, DeviceUpdateSerializer, PersonSerializer, SpeechSerializer, LoginSerializer, RegisterSerializer, HomeSerializer
 
 from AI_Module.speech_recognition.speech_to_text import transfer_audio_to_text
 from AI_Module.speaker_recognition.test import identify_speaker
 
 from django.shortcuts import get_object_or_404
-from api.models import Home, Person
+from api.models import Device, Home, Person
 
 # /api/speeches/upload/
 class SpeechCreateAPIView(APIView):
@@ -94,6 +94,13 @@ class HomeIdAPIView(APIView):
     return Response({"message": "Home deleted successfully"})
 home_id_api_view = HomeIdAPIView.as_view()
 
+# /api/homes/emails/
+class HomeEmailsAPIView(APIView):
+  def get(self, request, *args, **kwargs):
+    homes = Home.objects.values('id', 'email')
+    return Response(homes)
+home_emails_api_view = HomeEmailsAPIView.as_view()
+
 # /api/people/
 class PersonAPIView(APIView):
   def post(self, request, *args, **kwargs):
@@ -129,3 +136,42 @@ class PersonIdAPIView(APIView):
     person.delete()
     return Response({"message": "Person deleted successfully"})
 person_id_api_view = PersonIdAPIView.as_view()
+
+# /api/devices/
+class DeviceAPIView(APIView):
+  def post(self, request, *args, **kwargs):
+    serializer = DeviceCreateSerializer(data=request.data, context={"request": request})
+    if serializer.is_valid():
+      device = serializer.save()
+      return Response(DeviceSerializer(device).data, status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=400)
+  
+  def get(self, request, *args, **kwargs):
+    devices = Device.objects.all()
+    serializer = DeviceSerializer(devices, many=True)
+    return Response(serializer.data)
+
+device_api_view = DeviceAPIView.as_view()
+
+# /api/devices/<id>/
+class DeviceIdAPIView(APIView):
+  def get(self, request, id, *args, **kwargs):
+    device = get_object_or_404(Device, id=id)
+    serializer = DeviceSerializer(device)
+    return Response(serializer.data)
+  
+  def put(self, request, id, *args, **kwargs):
+    print(id, request.data)
+    device = get_object_or_404(Device, id=id)
+    serializer = DeviceUpdateSerializer(device, data=request.data, context={"request": request})
+    if serializer.is_valid():
+      serializer.save()
+      return Response({"message": "Device updated successfully", "name": device.name})
+    return Response(serializer.errors, status=400)
+  
+  def delete(self, request, id, *args, **kwargs):
+    device = get_object_or_404(Device, id=id)
+    device.delete()
+    return Response({"message": "Device deleted successfully"})
+
+device_id_api_view = DeviceIdAPIView.as_view()

@@ -44,10 +44,10 @@ export function PersonForm({ initialData, onSubmit, onCancel, isSubmitting = fal
         <Input id="name" name="name" value={formData.name} onChange={handleChange} required />
       </div>
       <div className="flex justify-end gap-2">
-        <Button type="button" variant="outline" onClick={onCancel}>
+        <Button type="button" variant="outline" onClick={onCancel} disabled={isSubmitting}>
           Cancel
         </Button>
-        <Button type="submit" className="bg-green-600 hover:bg-green-700">
+        <Button type="submit" className="bg-green-600 hover:bg-green-700" disabled={isSubmitting}>
         {isSubmitting ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />

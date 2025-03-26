@@ -155,10 +155,10 @@ export function HomeDetails({ home }: HomeDetailsProps) {
                       <TableCell>{device.name}</TableCell>
                       <TableCell>
                         <Badge
-                          variant={device.status === "Online" ? "default" : "secondary"}
-                          className={device.status === "Online" ? "bg-green-500" : "bg-gray-500"}
+                          variant={device.status ? "default" : "secondary"}
+                          className={device.status ? "bg-green-500" : "bg-gray-500"}
                         >
-                          {device.status}
+                          {device.status ? "Active" : "Inactive"}
                         </Badge>
                       </TableCell>
                     </TableRow>
