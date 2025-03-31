@@ -6,8 +6,7 @@ import librosa
 
 # root_dir = "models"
 # sr = SpeakerRecognition(root_dir)
-embedding_model = tf.keras.models.load_model('models/mfcc_embedding_model_update.keras')
-
+embedding_model = tf.keras.models.load_model('models/resnet_embedding_model.keras')
 # Khởi tạo
 verifier = SpeakerVerification(embedding_model)
 
@@ -186,7 +185,7 @@ y_val_true = []
 
 verifier.threshold = 0.55
 
-np.savez('mfcc_speaker_database_update.npz',
+np.savez('resnet_mfcc_speaker_database.npz',
          centroids=verifier.speaker_centroids,
          threshold=verifier.threshold)
 
@@ -213,8 +212,13 @@ def identify_speaker(audio_path):
     return result
 # Ví dụ sử dụng
 # result = identify_speaker("/kaggle/input/voice-dataset/content/drive/MyDrive/dataset/train/id_001/id_001_0080.wav")
-result = identify_speaker("data/Hoang/normal_1.wav") 
+# result = identify_speaker("data/Hoang/normal_1.wav")
+# print(result)
 # result = identify_speaker("data/Doan/test.wav") 
-result = identify_speaker("data/Huy/8.wav") 
+# result = identify_speaker("data/Huy/8.wav") 
+# print(result)
+
+# result = identify_speaker("C:/Users/TechCare\OneDrive - The University of Technology/PBL5/Smart_Home/Backend/media/audio.wav") 
+# print(result)
 # result = identify_speaker("data/Binh/Recording (10).wav") 
 # result = identify_speaker("C:/Users/TechCare/OneDrive - The University of Technology/PBL5/Smart_Home/Backend/media/processed_audio.wav") 

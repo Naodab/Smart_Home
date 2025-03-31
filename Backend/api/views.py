@@ -16,25 +16,25 @@ class SpeechCreateAPIView(APIView):
   def post(self, request, *args, **kwargs):
     serializer = SpeechSerializer(data=request.data)
     if serializer.is_valid():
-        file = serializer.validated_data['file']
-        email = serializer.validated_data['email']
+      file = serializer.validated_data['file']
+      email = serializer.validated_data['email']
 
-        print(email)
-        print(file)
+      print(email)
+      print(file)
 
-        if default_storage.exists(file.name):
-          default_storage.delete(file.name)
-        
-        # Lưu tệp âm thanh
-        file_name = default_storage.save(file.name, file)
-        file_url = default_storage.url(file_name)
+      if default_storage.exists(file.name):
+        default_storage.delete(file.name)
+      
+      # Lưu tệp âm thanh
+      file_name = default_storage.save(file.name, file)
+      file_url = default_storage.url(file_name)
 
-        transfer_audio_to_text()
+      transfer_audio_to_text()
 
-        result = identify_speaker()
-        print(result)
+      result = identify_speaker()
+      print(result)
 
-        return Response({"message": "File uploaded successfully", "file_url": file_url, "email": email})
+      return Response({"message": "File uploaded successfully", "file_url": file_url, "email": email})
     return Response(serializer.errors, status=400)
   
 speech_create_api_view = SpeechCreateAPIView.as_view()
