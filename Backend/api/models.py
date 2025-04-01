@@ -7,6 +7,8 @@ class Home(models.Model):
   email = models.CharField(max_length=120)
   password = models.CharField(max_length=120)
   address = models.CharField(max_length=120, default="123 Kieu Son Den")
+  temperature = models.FloatField(default=27)
+  humidity = models.FloatField(default=50)
 
   def save(self, *args, **kwargs):
     if not self.password.startswith('pbkdf2_sha256$'):
@@ -27,13 +29,21 @@ class Person(models.Model):
     return f"Person: {self.id} - {self.name}"
 
 class Device(models.Model):
+  DEVICE_TYPES = [
+    ('door', 'Door'),
+    ('fan', 'Fan'),
+    ('light', 'Light'),
+    ('curtain', 'Curtain'),
+  ]
+
   id = models.AutoField(primary_key=True)
   name = models.CharField(max_length=120)
   status = models.BooleanField(default=False)
+  type = models.CharField(max_length=120, choices=DEVICE_TYPES)
   home = models.ForeignKey(Home, on_delete=models.CASCADE, related_name='devices')
 
   def __str__(self):
-    return f"Device: {self.id} - {self.name} - {self.home}"
+    return f"Device: {self.id} - {self.name} - {self.type} - {self.home}"
 
 class History(models.Model):
   id = models.AutoField(primary_key=True)

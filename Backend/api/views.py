@@ -5,7 +5,7 @@ from rest_framework.views import APIView
 
 from django.core.files.storage import default_storage
 
-from .serializers import DeviceCreateSerializer, DeviceSerializer, DeviceUpdateSerializer, HomePersonAddSerializer, PersonSerializer, SpeechSerializer, LoginSerializer, RegisterSerializer, HomeSerializer
+from .serializers import DeviceCreateSerializer, DeviceSerializer, DeviceUpdateSerializer, HomeMobileSerializer, HomePersonAddSerializer, PersonSerializer, SpeechSerializer, LoginSerializer, RegisterSerializer, HomeSerializer
 
 from AI_Module.speech_recognition.speech_to_text import transfer_audio_to_text
 from AI_Module.speaker_recognition.test import identify_speaker
@@ -13,6 +13,7 @@ from AI_Module.speaker_recognition.test import identify_speaker
 from django.shortcuts import get_object_or_404
 from api.models import Device, Home, Person
 
+# MOBILE API
 # /api/speeches/upload/
 class SpeechCreateAPIView(APIView):
   parser_classes = (MultiPartParser, FormParser)
@@ -58,6 +59,24 @@ class LoginAPIView(APIView):
   
 login_api_view = LoginAPIView.as_view()
 
+# /api/mobile/homes/<email>/
+class HomeMobileAPIView(APIView):
+  def get(self, request, email, *args, **kwargs):
+    home = get_object_or_404(Home, email=email)
+    serializer = HomeMobileSerializer(home)
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
+  def put(self, request, email, *args, **kwargs):
+    home = get_object_or_404(Home, email=email)
+    serializer = HomeMobileSerializer(home, data=request.data)
+    if serializer.is_valid():
+      serializer.save()
+      return Response(serializer.data, status=status.HTTP_200_OK)
+    return Response(serializer.errors, status=400)
+
+home_mobile_api_view = HomeMobileAPIView.as_view()
+
+# BACKEND API
 # /api/homes/
 class HomeAPIView(APIView):
   def post(self, request, *args, **kwargs):
@@ -199,3 +218,27 @@ class DeviceIdAPIView(APIView):
     return Response({"message": "Device deleted successfully"})
 
 device_id_api_view = DeviceIdAPIView.as_view()
+
+class HistoryAPIView(APIView):
+  def post(self, request, *args, **kwargs):
+    serializer = HistoryCreateSerializer(data=request.data, context={"request": request})
+    if serializer.is_valid():
+      history = serializer.save()
+      return Response(HistorySerializer(history).data, status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=400)
+  
+  def get(self, request, *args, **kwargs):
+    histories = History.objects.all()
+    serializer = HistorySerializer(histories, many=True)
+    return Response(serializer.data)
+
+history_api_view = HistoryAPIView.as_view()
+
+# /api/histories/<id>/
+class HistoryIdAPIView(APIView):
+  def get(self, request, id, *args, **kwargs):
+    history = get_object_or_404(History, id=id)
+    serializer = HistorySerializer(history)
+    return Response(serializer.data)
+
+history_id_api_view = HistoryIdAPIView.as_view()

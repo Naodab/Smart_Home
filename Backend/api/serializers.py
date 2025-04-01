@@ -32,7 +32,7 @@ class DeviceSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Device
-        fields = ['id', 'name', 'status', 'home', 'histories']
+        fields = ['id', 'name', 'status', 'type', 'home', 'histories']
 
 class DeviceCreateSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
@@ -51,7 +51,7 @@ class DeviceCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Device
-        fields = ['id', 'name', 'status']
+        fields = ['id', 'name', 'status', 'type']
 
 class DeviceUpdateSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
@@ -76,7 +76,7 @@ class DeviceUpdateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Device
-        fields = ['id', 'name', 'status']
+        fields = ['id', 'name', 'status', 'type']
 
 class HomeSerializer(serializers.ModelSerializer):
     persons = serializers.SerializerMethodField()
@@ -92,6 +92,13 @@ class HomeSerializer(serializers.ModelSerializer):
             "id": hp.person.id, 
             "name": hp.person.name
         } for hp in persons]
+
+class HomeMobileSerializer(serializers.ModelSerializer):
+    devices = DeviceSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Home
+        fields = ['id', 'email', 'address', 'temperature', 'humidity', 'devices']
 
 class PersonSerializer(serializers.ModelSerializer):
     homes = serializers.SerializerMethodField()

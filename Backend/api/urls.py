@@ -6,6 +6,7 @@ urlpatterns = [
   # Mobile urls
   path('speeches/upload/', views.speech_create_api_view), # /api/speeches/upload/
   path('homes/login/', views.login_api_view), # /api/homes/login/
+  path('mobile/homes/<str:email>/', views.home_mobile_api_view), # /api/mobile/homes/<email>
   
   # Backend urls
   path('homes/', views.home_api_view), # /api/homes/
@@ -17,4 +18,6 @@ urlpatterns = [
   path('people/<str:id>/', views.person_id_api_view), # /api/people/<id>
   path('devices/', views.device_api_view), # /api/devices/
   path('devices/<str:id>/', views.device_id_api_view), # /api/devices/<id>
+  path('histories/', views.history_api_view), # /api/histories/
+  path('histories/<str:id>/', views.history_id_api_view), # /api/histories/<id>
 ]
