@@ -3,10 +3,10 @@ import tensorflow as tf
 import librosa
 from .SpeakerVerification import SpeakerVerification
 
-embedding_model = tf.keras.models.load_model('AI_Module/speaker_recognition/models/resnet_embedding_model.keras')
+embedding_model = tf.keras.models.load_model('AI_Module/speaker_recognition/models/text_dependent_embedding_model_1.keras')
 verifier = SpeakerVerification(embedding_model)
 
-data = np.load('AI_Module/speaker_recognition/resnet_mfcc_speaker_database.npz', allow_pickle=True)
+data = np.load('AI_Module/speaker_recognition/text_dependent_database_v1.npz', allow_pickle=True)
 verifier.speaker_centroids = data['centroids'].item()
 verifier.threshold = float(data['threshold'])
 
