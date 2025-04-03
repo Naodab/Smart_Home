@@ -194,9 +194,11 @@ export function HomesList() {
               <TableHead>ID</TableHead>
               <TableHead>Email</TableHead>
               <TableHead>Address</TableHead>
+              <TableHead>Temperature (°C)</TableHead>
+              <TableHead>Humidity (%)</TableHead>
               <TableHead className="text-right">Actions</TableHead>
             </TableRow>
-          </TableHeader>
+          </TableHeader>  
           <TableBody>
             {currentItems.length > 0 ? (
               currentItems.map((home) => (
@@ -204,6 +206,8 @@ export function HomesList() {
                   <TableCell>{home.id}</TableCell>
                   <TableCell className="font-medium">{home.email}</TableCell>
                   <TableCell>{home.address}</TableCell>
+                  <TableCell>{home.temperature}°C</TableCell>
+                  <TableCell>{home.humidity}%</TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end gap-2">
                       <Button
@@ -242,7 +246,7 @@ export function HomesList() {
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={4} className="text-center py-4 text-muted-foreground">
+                <TableCell colSpan={6} className="text-center py-4 text-muted-foreground">
                   {searchTerm ? "No homes found matching your search" : "No homes available"}
                 </TableCell>
               </TableRow>

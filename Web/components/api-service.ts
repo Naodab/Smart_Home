@@ -9,6 +9,8 @@ export type Home = {
   id: string
   email: string
   address: string
+  temperature: number
+  humidity: number
   persons: PersonInHome[]
   devices: DeviceInHome[]
 }
