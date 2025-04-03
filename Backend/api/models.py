@@ -1,7 +1,6 @@
 from django.contrib.auth.hashers import make_password, check_password
 from django.db import models
 
-# Create your models here.
 class Home(models.Model):
   id = models.AutoField(primary_key=True)
   email = models.CharField(max_length=120)
@@ -22,6 +21,7 @@ class Home(models.Model):
 class Person(models.Model):
   id = models.AutoField(primary_key=True)
   name = models.CharField(max_length=120)
+  home = models.ForeignKey(Home, on_delete=models.CASCADE, related_name='people')
 
   def __str__(self):
     return f"Person: {self.id} - {self.name}"
@@ -44,11 +44,3 @@ class History(models.Model):
 
   def __str__(self):
     return f"History: {self.id} - {self.device} - {self.status} - {self.time} - {self.person}"
-
-class HomePerson(models.Model):
-  id = models.AutoField(primary_key=True)
-  home = models.ForeignKey(Home, on_delete=models.CASCADE, related_name='home_persons')
-  person = models.ForeignKey(Person, on_delete=models.CASCADE, related_name='person_homes')
-
-  def __str__(self):
-    return f"HomePerson: {self.id} - {self.home} - {self.person}"

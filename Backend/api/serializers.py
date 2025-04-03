@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from api.models import Device, History, Home, Person, HomePerson
+from api.models import Device, History, Home, Person
 
 class SpeechSerializer(serializers.Serializer):
     file = serializers.FileField()
@@ -17,7 +17,9 @@ class DeviceSerializer(serializers.ModelSerializer):
         return {
             "id": obj.home.id,
             "email": obj.home.email,
-            "address": obj.home.address
+            "address": obj.home.address,
+            "temperature": obj.home.temperature,
+            "humidity": obj.home.humidity
         }
 
     def get_histories(self, obj):
@@ -94,20 +96,21 @@ class HomeSerializer(serializers.ModelSerializer):
         } for hp in persons]
 
 class PersonSerializer(serializers.ModelSerializer):
-    homes = serializers.SerializerMethodField()
+    home = serializers.SerializerMethodField()
     histories = serializers.SerializerMethodField()
 
     class Meta:
         model = Person
-        fields = ['id', 'name', 'homes', 'histories']
+        fields = ['id', 'name', 'home', 'histories']
 
-    def get_homes(self, obj):
-        homes = obj.person_homes.all()
-        return [{
-            "id": hp.home.id, 
-            "email": hp.home.email, 
-            "address": hp.home.address
-        } for hp in homes]
+    def get_home(self, obj):
+        return {
+            "id": obj.home.id,
+            "email": obj.home.email,
+            "address": obj.home.address,
+            "temperature": obj.home.temperature,
+            "humidity": obj.home.humidity
+        }
 
     def get_histories(self, obj):
         histories = obj.histories.all()
@@ -127,14 +130,6 @@ class HistorySerializer(serializers.ModelSerializer):
         model = History
         fields = ['id', 'device', 'status', 'time', 'person']
 
-class HomePersonSerializer(serializers.ModelSerializer):
-    home = serializers.PrimaryKeyRelatedField(queryset=Home.objects.all())
-    person = serializers.PrimaryKeyRelatedField(queryset=Person.objects.all())
-
-    class Meta:
-        model = HomePerson
-        fields = ['home', 'person']
-
 class RegisterSerializer(serializers.ModelSerializer):
     class Meta:
         model = Home
@@ -144,51 +139,3 @@ class RegisterSerializer(serializers.ModelSerializer):
         if Home.objects.filter(email=value).exists():
             raise serializers.ValidationError("Email already exists")
         return value
-
-class HomePersonAddSerializer(serializers.Serializer):
-    home_id = serializers.IntegerField()
-    person_ids = serializers.ListField(child=serializers.IntegerField(), allow_empty=False)
-
-    def validate_home_id(self, value):
-        if not Home.objects.filter(id=value).exists():
-            raise serializers.ValidationError(f"Home with id {value} does not exist")
-        return value
-
-    def validate_person_ids(self, value):
-        persons = Person.objects.filter(id__in=value)
-        if persons.count() != len(value):
-            existing_ids = set(persons.values_list("id", flat=True))
-            invalid_ids = [pid for pid in value if pid not in existing_ids]
-            raise serializers.ValidationError({"person_ids": f"Some person IDs do not exist: {invalid_ids}"})
-        return value
-
-    def create(self, validated_data):
-        home_id = validated_data["home_id"]
-        person_ids = validated_data["person_ids"]
-
-        home = Home.objects.get(id=home_id)
-
-        existing_person_ids = set(HomePerson.objects.filter(home=home).values_list("person_id", flat=True))
-
-        new_home_persons = [
-            HomePerson(home=home, person=Person.objects.get(id=pid))
-            for pid in person_ids if pid not in existing_person_ids
-        ]
-
-        if new_home_persons:
-            HomePerson.objects.bulk_create(new_home_persons)
-
-        return home
-
-    def delete(self, validated_data):
-        home_id = validated_data["home_id"]
-        person_ids = validated_data["person_ids"]
-
-        home = Home.objects.get(id=home_id)
-
-        deleted_count, _ = HomePerson.objects.filter(home=home, person_id__in=person_ids).delete()
-
-        if deleted_count == 0:
-            raise serializers.ValidationError({"detail": "No matching HomePerson records found to delete."})
-
-        return home

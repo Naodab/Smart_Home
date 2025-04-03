@@ -13,6 +13,8 @@ interface HomeFormProps {
     id?: string
     email: string
     address: string
+    temperature?: number
+    humidity?: number
   }
   onSubmit: (data: any) => void
   onCancel: () => void
@@ -21,9 +23,9 @@ interface HomeFormProps {
 
 export function HomeForm({ initialData, onSubmit, onCancel, isSubmitting = false }: HomeFormProps) {
   const [formData, setFormData] = useState({
-    id: initialData?.id || "",
-    email: initialData?.email || "",
-    address: initialData?.address || "",
+    id: initialData?.id ?? "",
+    email: initialData?.email ?? "",
+    address: initialData?.address ?? ""
   })
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
