@@ -12,7 +12,6 @@ urlpatterns = [
   path('homes/', views.home_api_view), # /api/homes/
   path('homes/emails/', views.home_emails_api_view), # /api/homes/emails/
   path('homes/<str:id>/', views.home_id_api_view), # /api/homes/<id>
-  path('homes/<str:id>/persons/', views.home_person_api_view), # /api/homes/<id>/persons/
   path('people/', views.person_api_view), # /api/people/
   path('people/select/', views.person_select_api_view), # /api/people/select/
   path('people/<str:id>/', views.person_id_api_view), # /api/people/<id>
