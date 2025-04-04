@@ -14,7 +14,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
-import { Edit, Eye, Trash2, Search, X } from "lucide-react"
+import { Edit, Eye, Trash2, Search, X, Loader2 } from "lucide-react"
 import { PersonForm } from "./person-form"
 import { PersonDetails } from "./person-details"
 import { Input } from "@/components/ui/input"
@@ -28,7 +28,7 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { ApiError, PersonApi, type Person } from "./api-service"  
+import { ApiError, Home, HomeApi, HomeToSelect, PersonApi, type Person } from "./api-service"  
 import { useToast } from "@/hooks/use-toast"
 
 
@@ -36,6 +36,7 @@ import { useToast } from "@/hooks/use-toast"
 export function PersonsList() {
   const { toast } = useToast()
   const [persons, setPersons] = useState<Person[]>([])
+  const [homes, setHomes] = useState<HomeToSelect[]>([])
   const [isLoading, setIsLoading] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [selectedPerson, setSelectedPerson] = useState<Person | null>(null)
@@ -60,6 +61,20 @@ export function PersonsList() {
       }
     })()
   }, []);
+
+  useEffect(() => {
+    (async function fetchHomes() {
+      try {
+        setIsLoading(true)
+        const data = await HomeApi.getEmails();
+        setHomes(data);
+        setIsLoading(false)
+      } catch (error) {
+        console.error("Failed to fetch homes", error)
+        setIsLoading(false)
+      }
+    })()
+  }, [])
 
   const handleDelete = async (id: string) => {
     setIsSubmitting(true)
@@ -87,6 +102,8 @@ export function PersonsList() {
   const handleEdit = async (updatedPerson: Person) => {
     setIsSubmitting(true)
     try {
+      const selectedHome = homes.find((home) => home.id === updatedPerson.home.id)
+      updatedPerson.home.email = selectedHome ? selectedHome.email : ""
       await PersonApi.update(updatedPerson.id, updatedPerson)
       setPersons(persons.map((person) => (person.id === updatedPerson.id ? updatedPerson : person)))
       toast({
@@ -107,7 +124,11 @@ export function PersonsList() {
     }
   }
 
-  const filteredPersons = persons.filter((person) => person.name.toLowerCase().includes(searchTerm.toLowerCase()))
+  const filteredPersons = persons.filter(
+    (person) =>
+      person.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      person.home.email.toLowerCase().includes(searchTerm.toLowerCase())
+  )
 
   const totalItems = filteredPersons.length
   const totalPages = Math.ceil(totalItems / itemsPerPage)
@@ -158,7 +179,7 @@ export function PersonsList() {
       <div className="px-6 mb-4">
         <div className="relative">
           <Input
-            placeholder="Search persons by name..."
+            placeholder="Search persons by name or home email..."
             value={searchTerm}
             onChange={handleSearchChange}
             className="pl-10"
@@ -188,6 +209,7 @@ export function PersonsList() {
             <TableRow>
               <TableHead>ID</TableHead>
               <TableHead>Name</TableHead>
+              <TableHead>Home Email</TableHead>
               <TableHead className="text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
@@ -197,6 +219,7 @@ export function PersonsList() {
                 <TableRow key={person.id}>
                   <TableCell>{person.id}</TableCell>
                   <TableCell className="font-medium">{person.name}</TableCell>
+                  <TableCell>{person.home.email}</TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end gap-2">
                       <Button
@@ -235,7 +258,7 @@ export function PersonsList() {
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={3} className="text-center py-4 text-muted-foreground">
+                <TableCell colSpan={4} className="text-center py-4 t  ext-muted-foreground">
                   {searchTerm ? "No persons found matching your search" : "No persons available"}
                 </TableCell>
               </TableRow>
@@ -344,6 +367,8 @@ export function PersonsList() {
               initialData={selectedPerson}
               onSubmit={handleEdit}
               onCancel={() => setIsEditDialogOpen(false)}
+              isSubmitting={isSubmitting}
+              homes={homes}
             />
           )}
         </DialogContent>
@@ -359,11 +384,22 @@ export function PersonsList() {
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setIsDeleteDialogOpen(false)}>
+            <Button variant="outline" onClick={() => setIsDeleteDialogOpen(false)} disabled={isSubmitting}>
               Cancel
             </Button>
-            <Button variant="destructive" onClick={() => selectedPerson && handleDelete(selectedPerson.id)}>
-              Delete
+            <Button
+              variant="destructive"
+              onClick={() => selectedPerson && handleDelete(selectedPerson.id)}
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Deleting...
+                </>
+              ) : (
+                "Delete"
+              )}
             </Button>
           </DialogFooter>
         </DialogContent>

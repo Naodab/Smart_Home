@@ -32,12 +32,14 @@ export type HomeInPerson = {
   id: string
   email: string
   address: string
+  temperature: number
+  humidity: number
 }
 
 export type Person = {
   id: string
   name: string
-  homes: HomeInPerson[]
+  home: HomeInPerson
   histories: HistoryInPerson[]
 }
 
@@ -76,7 +78,8 @@ export type HomeToSelect = {
 export type Device = {
   id: string
   name: string
-  status: boolean
+  status: string
+  type: string
   home: HomeInDevice
   histories: HistoryInDevice[]
 }

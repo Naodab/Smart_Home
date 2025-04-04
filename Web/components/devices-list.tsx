@@ -4,8 +4,21 @@ import type React from "react"
 
 import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle
+} from "@/components/ui/card"
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow
+} from "@/components/ui/table"
 import {
   Dialog,
   DialogContent,
@@ -28,7 +41,13 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from "@/components/ui/select"
 import { ApiError, Device, DeviceApi } from "./api-service"
 import { useToast } from "@/hooks/use-toast"
 
@@ -41,6 +60,8 @@ export function DevicesList() {
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
   const [searchTerm, setSearchTerm] = useState("")
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [typeFilter, setTypeFilter] = useState("all")
+  const [statusFilter, setStatusFilter] = useState("all")
 
   useEffect(() => {
     const fetchDevices = async () => {
@@ -103,16 +124,20 @@ export function DevicesList() {
       setIsEditDialogOpen(false)
     }
   }
-
-  const handleStatusChange = (deviceId: string, newStatus: boolean) => {
+  
+  const handleStatusChange = (deviceId: string, newStatus: string) => {
     setDevices(devices.map((device) => (device.id === deviceId ? { ...device, status: newStatus } : device)))
   }
 
-  const filteredDevices = devices.filter(
-    (device) =>
+  const filteredDevices = devices.filter((device) => {
+    const matchesSearch =
       device.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      device.home.email.toLowerCase().includes(searchTerm.toLowerCase()),
-  )
+      device.home.email.toLowerCase().includes(searchTerm.toLowerCase())
+
+    const matchesType = typeFilter === "all" || device.type === typeFilter
+
+    return matchesSearch && matchesType
+  })
 
   const totalItems = filteredDevices.length
   const totalPages = Math.ceil(totalItems / itemsPerPage)
@@ -122,6 +147,16 @@ export function DevicesList() {
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value)
+    setCurrentPage(1)
+  }
+
+  const handleTypeFilterChange = (value: string) => {
+    setTypeFilter(value)
+    setCurrentPage(1)
+  }
+  
+  const handleStatusFilterChange = (value: string) => {
+    setStatusFilter(value)
     setCurrentPage(1)
   }
 
@@ -153,6 +188,10 @@ export function DevicesList() {
   }
 
   const visiblePageNumbers = getVisiblePageNumbers()
+  
+  const getDeviceTypeDisplay = (type: string) => {
+    return type.charAt(0).toUpperCase() + type.slice(1)
+  }
 
   return (
     <Card>
@@ -161,30 +200,62 @@ export function DevicesList() {
         <CardDescription>A list of all devices in your SmartHome system.</CardDescription>
       </CardHeader>
       <div className="px-6 mb-4">
-        <div className="relative">
-          <Input
-            placeholder="Search devices by name or home email..."
-            value={searchTerm}
-            onChange={handleSearchChange}
-            className="pl-10"
-          />
-          <div className="absolute left-3 top-1/2 -translate-y-1/2">
-            <Search className="h-4 w-4 text-muted-foreground" />
+        <div className="flex flex-col md:flex-row gap-4">
+          <div className="relative flex-1">
+            <Input
+              placeholder="Search devices by name or home email..."
+              value={searchTerm}
+              onChange={handleSearchChange}
+              className="pl-10"
+            />
+            <div className="absolute left-3 top-1/2 -translate-y-1/2">
+              <Search className="h-4 w-4 text-muted-foreground" />
+            </div>
+            {searchTerm && (
+              <Button
+                variant="ghost"
+                size="sm"
+                className="absolute right-1 top-1/2 -translate-y-1/2 h-7 w-7 p-0"
+                onClick={() => {
+                  setSearchTerm("")
+                  setCurrentPage(1)
+                }}
+              >
+                <X className="h-4 w-4" />
+                <span className="sr-only">Clear search</span>
+              </Button>
+            )}
           </div>
-          {searchTerm && (
-            <Button
-              variant="ghost"
-              size="sm"
-              className="absolute right-1 top-1/2 -translate-y-1/2 h-7 w-7 p-0"
-              onClick={() => {
-                setSearchTerm("")
-                setCurrentPage(1)
-              }}
-            >
-              <X className="h-4 w-4" />
-              <span className="sr-only">Clear search</span>
-            </Button>
-          )}
+          <div className="w-full md:w-[200px]">
+            <Select value={typeFilter} onValueChange={handleTypeFilterChange}>
+              <SelectTrigger>
+                <SelectValue placeholder="Filter by type" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Types</SelectItem>
+                <SelectItem value="door">Door</SelectItem>
+                <SelectItem value="light">Light</SelectItem>
+                <SelectItem value="curtain">Curtain</SelectItem>
+                <SelectItem value="fan">Fan</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="w-full md:w-[150px]">
+            <Select value={statusFilter} onValueChange={handleStatusFilterChange}>
+              <SelectTrigger>
+                <SelectValue placeholder="Filter by status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Status</SelectItem>
+                <SelectItem value="on">On</SelectItem>
+                <SelectItem value="off">Off</SelectItem>
+                <SelectItem value="0">Fan - Level 0</SelectItem>
+                <SelectItem value="1">Fan - Level 1</SelectItem>
+                <SelectItem value="2">Fan - Level 2</SelectItem>
+                <SelectItem value="3">Fan - Level 3</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
         </div>
       </div>
       <CardContent>
@@ -193,6 +264,7 @@ export function DevicesList() {
             <TableRow>
               <TableHead>ID</TableHead>
               <TableHead>Name</TableHead>
+              <TableHead>Type</TableHead>
               <TableHead>Status</TableHead>
               <TableHead>Home Email</TableHead>
               <TableHead className="text-right">Actions</TableHead>
@@ -204,13 +276,31 @@ export function DevicesList() {
                 <TableRow key={device.id}>
                   <TableCell>{device.id}</TableCell>
                   <TableCell className="font-medium">{device.name}</TableCell>
+                  <TableCell>{getDeviceTypeDisplay(device.type)}</TableCell>
                   <TableCell>
-                    <Badge
-                      variant={device.status ? "default" : "secondary"}
-                      className={device.status ? "bg-green-500" : "bg-gray-500"}
-                    >
-                      {device.status ? "Active" : "Inactive"}
-                    </Badge>
+                    {device.type === "fan" ? (
+                      <Badge
+                        variant={device.status === "0" ? "secondary" : "default"}
+                        className={
+                          device.status === "0"
+                            ? "bg-gray-500"
+                            : device.status === "1"
+                              ? "bg-green-300"
+                              : device.status === "2"
+                                ? "bg-green-500"
+                                : "bg-green-700"
+                        }
+                      >
+                        Level {device.status}
+                      </Badge>
+                    ) : (
+                      <Badge
+                        variant={device.status === "on" ? "default" : "secondary"}
+                        className={device.status === "on" ? "bg-green-500" : "bg-gray-500"}
+                      >
+                        {device.status === "on" ? "On" : "Off"}
+                      </Badge>
+                    )}
                   </TableCell>
                   <TableCell>{device.home.email}</TableCell>
                   <TableCell className="text-right">
@@ -252,7 +342,9 @@ export function DevicesList() {
             ) : (
               <TableRow>
                 <TableCell colSpan={5} className="text-center py-4 text-muted-foreground">
-                  {searchTerm ? "No devices found matching your search" : "No devices available"}
+                  {searchTerm || typeFilter !== "all" || statusFilter !== "all" 
+                    ? "No devices found matching your search" 
+                    : "No devices available"}
                 </TableCell>
               </TableRow>
             )}

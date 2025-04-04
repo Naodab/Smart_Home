@@ -43,7 +43,7 @@ export default function NewHomePage() {
     <div className="space-y-6">
       <div>
         <h2 className="text-3xl font-bold tracking-tight">Add New Home</h2>
-        <p className="text-muted-foreground">Create a new home with email in your SmartHome system</p>
+        <p className="text-muted-foreground">Create a new home with email in SmartHome system</p>
       </div>
       <Card>
         <CardHeader>

@@ -15,7 +15,7 @@ export default function HomesPage() {
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-3xl font-bold tracking-tight">Homes</h2>
-          <p className="text-muted-foreground">Manage all your registered homes</p>
+          <p className="text-muted-foreground">Manage all registered homes</p>
         </div>
         <Link href="/dashboard/homes/new">
           <Button className="bg-green-600 hover:bg-green-700">

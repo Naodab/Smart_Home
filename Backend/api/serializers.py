@@ -1,3 +1,4 @@
+from django.db.models import Q
 from rest_framework import serializers
 from api.models import Device, History, Home, Person
 
@@ -86,21 +87,53 @@ class HomeSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Home
-        fields = ['id', 'email', 'address', 'persons', 'devices']
+        fields = ['id', 'email', 'address', 'persons', 'devices', 'temperature', 'humidity']
 
     def get_persons(self, obj):
-        persons = obj.home_persons.all()
+        persons = obj.people.all()
         return [{
-            "id": hp.person.id, 
-            "name": hp.person.name
+            "id": hp.id,
+            "name": hp.name
         } for hp in persons]
 
 class HomeMobileSerializer(serializers.ModelSerializer):
-    devices = DeviceSerializer(many=True, read_only=True)
+  devices = DeviceSerializer(many=True, read_only=True)
+
+  class Meta:
+    model = Home
+    fields = ['id', 'email', 'address', 'temperature', 'humidity', 'devices']   
+
+class PersonSaveSerializer(serializers.ModelSerializer):
+    def create(self, validated_data):
+        home_data = self.context["request"].data.get('home', None)
+        home_email = home_data.get("email") if home_data else None
+        if not home_email:  
+            raise serializers.ValidationError({"home": "Home email is required"})
+        try:
+            home = Home.objects.get(email=home_email)
+        except Home.DoesNotExist:
+            raise serializers.ValidationError({"home": f"Home with email {home_email} does not exist"})
+        person = Person.objects.create(home=home, **validated_data)
+        return person
+
+    def update(self, instance, validated_data):
+        home_data = self.context["request"].data.get('home', None)
+        home_email = home_data.get("email") if home_data else None
+        if not home_email:
+            raise serializers.ValidationError({"home": "Home email is required"})
+        try:
+            home = Home.objects.get(email=home_email)
+        except Home.DoesNotExist:
+            raise serializers.ValidationError({"home": f"Home with email {home_email} does not exist"})
+        instance.home = home
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        instance.save()
+        return instance
 
     class Meta:
-        model = Home
-        fields = ['id', 'email', 'address', 'temperature', 'humidity', 'devices']
+        model = Person
+        fields = ['id', 'name']
 
 class PersonSerializer(serializers.ModelSerializer):
     home = serializers.SerializerMethodField()

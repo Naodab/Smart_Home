@@ -1,4 +1,4 @@
-from rest_framework import generics, mixins, authentication, permissions, status
+from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.views import APIView
@@ -7,13 +7,12 @@ from django.core.files.storage import default_storage
 
 from .serializers import DeviceCreateSerializer, \
                           DeviceSerializer, \
-                          DeviceUpdateSerializer, \
+                          DeviceUpdateSerializer, PersonSaveSerializer, \
                           PersonSerializer, \
                           SpeechSerializer, \
                           LoginSerializer, \
                           RegisterSerializer, \
                           HomeSerializer
-from .serializers import DeviceCreateSerializer, DeviceSerializer, DeviceUpdateSerializer, HomeMobileSerializer, HomePersonAddSerializer, PersonSerializer, SpeechSerializer, LoginSerializer, RegisterSerializer, HomeSerializer
 
 from AI_Module.speech_recognition.speech_to_text import transfer_audio_to_text
 from AI_Module.speaker_recognition.test import identify_speaker
@@ -131,7 +130,7 @@ home_emails_api_view = HomeEmailsAPIView.as_view()
 # /api/people/
 class PersonAPIView(APIView):
   def post(self, request, *args, **kwargs):
-    serializer = PersonSerializer(data=request.data)
+    serializer = PersonSaveSerializer(data=request.data, context={"request": request})
     if serializer.is_valid():
       person = serializer.save()
       return Response({"message": "Person registered successfully", "name": person.name})
@@ -159,7 +158,7 @@ class PersonIdAPIView(APIView):
   
   def put(self, request, id, *args, **kwargs):
     person = get_object_or_404(Person, id=id)
-    serializer = PersonSerializer(person, data=request.data)
+    serializer = PersonSaveSerializer(person, data=request.data)
     if serializer.is_valid():
       serializer.save()
       return Response({"message": "Person updated successfully", "name": person.name})
@@ -174,6 +173,7 @@ person_id_api_view = PersonIdAPIView.as_view()
 # /api/devices/
 class DeviceAPIView(APIView):
   def post(self, request, *args, **kwargs):
+    print(request.data)
     serializer = DeviceCreateSerializer(data=request.data, context={"request": request})
     if serializer.is_valid():
       device = serializer.save()

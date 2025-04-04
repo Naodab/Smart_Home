@@ -15,7 +15,7 @@ export default function PersonsPage() {
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-3xl font-bold tracking-tight">Persons</h2>
-          <p className="text-muted-foreground">Manage all persons in your SmartHome system</p>
+          <p className="text-muted-foreground">Manage all persons in SmartHome system</p>
         </div>
         <Link href="/dashboard/persons/new">
           <Button className="bg-green-600 hover:bg-green-700">

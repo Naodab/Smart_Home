@@ -3,28 +3,20 @@
 import { useState, useEffect } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Home, Users, Cpu } from "lucide-react"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
+import { Home, Users, Cpu, Thermometer, Droplets } from "lucide-react"
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog"
-import { PersonHomeForm } from "./person-home-form"
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow
+} from "@/components/ui/table"
+import { Badge } from "@/components/ui/badge"
 import { 
   DeviceInHome,
   PersonInHome,
-  PersonToSelect,
-  PersonApi,
-  ApiError,
-  HomePersonApi
 } from "./api-service"
-import { useToast } from "@/hooks/use-toast"
 
 interface HomeDetailsProps {
   home: {
@@ -33,89 +25,19 @@ interface HomeDetailsProps {
     address: string
     persons: PersonInHome[]
     devices: DeviceInHome[]
+    temperature: number
+    humidity: number
   }
 }
 
 export function HomeDetails({ home }: HomeDetailsProps) {
   const [personsInHome, setPersonsInHome] = useState<any[]>([])
   const [devicesInHome, setDevicesInHome] = useState<any[]>([])
-  const [isAddPersonDialogOpen, setIsAddPersonDialogOpen] = useState(false)
-  const [selectedPersons, setSelectedPersons] = useState<string[]>([])
-  const [allPersons, setAllPersons] = useState<PersonToSelect[]>([])
-  const { toast } = useToast()
 
   useEffect(() => {
     setPersonsInHome(home.persons || [])
     setDevicesInHome(home.devices || [])
   }, [home.id])
-
-  useEffect(() => {
-    const fetchAllPersons = async () => {
-      try {
-        const response = await PersonApi.getPeopleToAdd()
-        setAllPersons(response)
-      } catch (error) {
-        console.error("Error fetching all persons:", error)
-        toast({
-          title: "Error",
-          description: "Failed to fetch persons. Please try again.",
-          variant: "destructive",
-        })
-      }
-    }
-    fetchAllPersons()
-  }, [])
-
-  const handleAddPersons = async () => {
-    const newPersons = allPersons.filter((person) => selectedPersons.includes(person.id))
-    setIsAddPersonDialogOpen(false)
-    setSelectedPersons([])
-
-    const data = {
-      home_id: home.id,
-      person_ids: newPersons.map((newPerson) => newPerson.id),
-    }
-
-    try {
-      await HomePersonApi.updateHomePersons(data)
-      toast({
-        title: "Success",
-        description: "Persons added successfully",
-        variant: "success",
-      })
-      setPersonsInHome([...personsInHome, ...newPersons])
-    } catch (error) {
-      const apiError = error as ApiError
-      toast({
-        title: "Error",
-        description: apiError.message || "Failed to add persons. Please try again.",
-        variant: "destructive",
-      })
-    }
-  }
-
-  const handleRemovePerson = async (personId: string) => {
-    const data = {
-      home_id: home.id,
-      person_ids: [personId],
-    }
-    try {
-      await HomePersonApi.deleteHomePersons(data)
-      toast({
-        title: "Success",
-        description: "Person deleted successfully",
-        variant: "success",
-      })
-      setPersonsInHome(personsInHome.filter((person) => person.id !== personId))
-    } catch (error) {
-      const apiError = error as ApiError
-      toast({
-        title: "Error",
-        description: apiError.message || "Failed to delete person. Please try again.",
-        variant: "destructive",
-      })
-    }
-  }
 
   return (
     <Card>
@@ -138,6 +60,24 @@ export function HomeDetails({ home }: HomeDetailsProps) {
           </div>
         </div>
 
+        <div className="grid grid-cols-2 gap-4 mb-6">
+          <div className="flex items-center gap-2">
+            <Thermometer className="h-5 w-5 text-orange-500" />
+            <div>
+              <p className="text-sm text-muted-foreground">Temperature</p>
+              <p className="font-medium">{home.temperature}°C</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <Droplets className="h-5 w-5 text-blue-500" />
+            <div>
+              <p className="text-sm text-muted-foreground">Humidity</p>
+              <p className="font-medium">{home.humidity}%</p>
+            </div>
+          </div>
+        </div>
+
+
         <Tabs defaultValue="persons" className="mt-6">
           <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="persons" className="flex items-center gap-2">
@@ -153,20 +93,12 @@ export function HomeDetails({ home }: HomeDetailsProps) {
           <TabsContent value="persons" className="mt-4">
             <div className="flex justify-between items-center mb-4">
               <h4 className="text-lg font-semibold">Persons in this Home</h4>
-              <Button
-                size="sm"
-                className="bg-green-600 hover:bg-green-700"
-                onClick={() => setIsAddPersonDialogOpen(true)}
-              >
-                Add Person
-              </Button>
             </div>
             <Table>
               <TableHeader>
                 <TableRow>
                   <TableHead>ID</TableHead>
                   <TableHead>Name</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -175,11 +107,6 @@ export function HomeDetails({ home }: HomeDetailsProps) {
                     <TableRow key={person.id}>
                       <TableCell>{person.id}</TableCell>
                       <TableCell>{person.name}</TableCell>
-                      <TableCell className="text-right">
-                        <Button variant="outline" size="sm" onClick={() => handleRemovePerson(person.id)}>
-                          Remove
-                        </Button>
-                      </TableCell>
                     </TableRow>
                   ))
                 ) : (
@@ -233,28 +160,6 @@ export function HomeDetails({ home }: HomeDetailsProps) {
           </TabsContent>
         </Tabs>
 
-        {/* Add Person to Home Dialog */}
-        <Dialog open={isAddPersonDialogOpen} onOpenChange={setIsAddPersonDialogOpen}>
-          <DialogContent className="sm:max-w-[525px]">
-            <DialogHeader>
-              <DialogTitle>Add Persons to Home</DialogTitle>
-              <DialogDescription>Select persons to add to this home.</DialogDescription>
-            </DialogHeader>
-            <PersonHomeForm
-              allPersons={allPersons.filter((p) => !personsInHome.some((hp) => hp.id === p.id))}
-              selectedPersons={selectedPersons}
-              setSelectedPersons={setSelectedPersons}
-            />
-            <DialogFooter>
-              <Button variant="outline" onClick={() => setIsAddPersonDialogOpen(false)}>
-                Cancel
-              </Button>
-              <Button className="bg-green-600 hover:bg-green-700" onClick={handleAddPersons}>
-                Add Selected Persons
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
       </CardContent>
     </Card>
   )

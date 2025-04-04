@@ -33,7 +33,7 @@ export function HomeForm({ initialData, onSubmit, onCancel, isSubmitting = false
     setFormData({
       ...formData,
       [name]: value,
-    })
+    })  
   }
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -52,7 +52,7 @@ export function HomeForm({ initialData, onSubmit, onCancel, isSubmitting = false
           value={formData.email}
           onChange={handleChange}
           required
-          disabled={isSubmitting}
+          disabled={Boolean(isSubmitting || initialData?.id)}
         />
       </div>
       <div className="space-y-2">

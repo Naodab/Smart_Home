@@ -1,24 +1,22 @@
 "use client"
 
-import { useState, useEffect } from "react"
 import { Card, CardContent } from "@/components/ui/card"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { User, Home } from "lucide-react"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { HomeInPerson, Person, HistoryInPerson } from "./api-service"
+import { User, Home, History, Table, Badge } from "lucide-react"
+import { HistoryInPerson, Person } from "./api-service"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@radix-ui/react-tabs"
+import { TableBody, TableCell, TableHead, TableHeader, TableRow } from "./ui/table"
+import { useEffect, useState } from "react"
 
 interface PersonDetailsProps {
   person: Person
 }
 
 export function PersonDetails({ person }: PersonDetailsProps) {
-  const [homesForPerson, setHomesForPerson] = useState<HomeInPerson[]>([])
-  const [deviceHistory, setDeviceHistory] = useState<HistoryInPerson[]>([])
+  const [histories, setHistories] = useState<HistoryInPerson[]>([])
 
   useEffect(() => {
-    setHomesForPerson(person.homes)
-    setDeviceHistory(person.histories)
-  }, [person.id])
+    setHistories(person.histories)
+  }, [])
 
   return (
     <Card>
@@ -35,52 +33,22 @@ export function PersonDetails({ person }: PersonDetailsProps) {
             <p className="text-sm text-muted-foreground">ID</p>
             <p className="font-medium">{person.id}</p>
           </div>
+          <div className="flex items-center gap-2">
+            <Home className="h-5 w-5 text-green-600" />
+            <div>
+              <p className="text-sm text-muted-foreground">Home</p>
+              <p className="font-medium">{person.home.email}</p>
+            </div>
+          </div>
         </div>
 
-        <Tabs defaultValue="homes" className="mt-6">
-          <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="homes" className="flex items-center gap-2">
-              <Home className="h-4 w-4" />
-              Homes
-            </TabsTrigger>
+        <Tabs defaultValue="history" className="mt-6">
+          <TabsList className="grid w-full grid-cols-1">
             <TabsTrigger value="history" className="flex items-center gap-2">
-              <User className="h-4 w-4" />
+              <History className="h-4 w-4" />
               Device History
             </TabsTrigger>
           </TabsList>
-
-          <TabsContent value="homes" className="mt-4">
-            <div className="flex justify-between items-center mb-4">
-              <h4 className="text-lg font-semibold">Homes Associated with this Person</h4>
-            </div>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>ID</TableHead>
-                  <TableHead>Email</TableHead>
-                  <TableHead>Address</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {homesForPerson.length > 0 ? (
-                  homesForPerson.map((home) => (
-                    <TableRow key={home.id}>
-                      <TableCell>{home.id}</TableCell>
-                      <TableCell>{home.email}</TableCell>
-                      <TableCell>{home.address}</TableCell>
-                    </TableRow>
-                  ))
-                ) : (
-                  <TableRow>
-                    <TableCell colSpan={3} className="text-center py-4 text-muted-foreground">
-                      No homes associated with this person
-                    </TableCell>
-                  </TableRow>
-                )}
-              </TableBody>
-            </Table>
-          </TabsContent>
-
           <TabsContent value="history" className="mt-4">
             <div className="flex justify-between items-center mb-4">
               <h4 className="text-lg font-semibold">Device Status Change History</h4>
@@ -94,11 +62,18 @@ export function PersonDetails({ person }: PersonDetailsProps) {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {deviceHistory.length > 0 ? (
-                  deviceHistory.map((history) => (
+                {histories.length > 0 ? (
+                  histories.map((history) => (
                     <TableRow key={history.id}>
                       <TableCell>{history.deviceName}</TableCell>
-                      <TableCell>{history.newStatus}</TableCell>
+                      <TableCell>
+                        <Badge
+                          fontVariant={history.newStatus ? "default" : "secondary"}
+                          className={history.newStatus ? "bg-green-500" : "bg-gray-500"}
+                        >
+                          {history.newStatus ? "Active" : "Inactive"}
+                        </Badge>
+                      </TableCell>
                       <TableCell>{history.timestamp}</TableCell>
                     </TableRow>
                   ))

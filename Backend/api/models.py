@@ -23,7 +23,7 @@ class Home(models.Model):
 class Person(models.Model):
   id = models.AutoField(primary_key=True)
   name = models.CharField(max_length=120)
-  home = models.ForeignKey(Home, on_delete=models.CASCADE, related_name='people')
+  home = models.ForeignKey(Home, on_delete=models.CASCADE, related_name='people', null=True, blank=True)
 
   def __str__(self):
     return f"Person: {self.id} - {self.name}"
@@ -38,9 +38,9 @@ class Device(models.Model):
 
   id = models.AutoField(primary_key=True)
   name = models.CharField(max_length=120)
-  status = models.BooleanField(default=False)
-  type = models.CharField(max_length=120, choices=DEVICE_TYPES)
-  home = models.ForeignKey(Home, on_delete=models.CASCADE, related_name='devices')
+  status = models.CharField(max_length=10, default="off")
+  type = models.CharField(max_length=120, choices=DEVICE_TYPES, default="door")
+  home = models.ForeignKey(Home, on_delete=models.CASCADE, related_name='devices', null=True, blank=True)
 
   def __str__(self):
     return f"Device: {self.id} - {self.name} - {self.type} - {self.home}"

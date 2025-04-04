@@ -23,7 +23,7 @@ export default function NewDevicePage() {
         variant: "success",
       })
 
-      router.push("/dashboard/devices")
+      // router.push("/dashboard/devices")
     } catch (error) {
       const apiError = error as ApiError
       toast({
@@ -44,7 +44,7 @@ export default function NewDevicePage() {
     <div className="space-y-6">
       <div>
         <h2 className="text-3xl font-bold tracking-tight">Add New Device</h2>
-        <p className="text-muted-foreground">Create a new device in your SmartHome system</p>
+        <p className="text-muted-foreground">Create a new device in SmartHome system</p>
       </div>
       <Card>
         <CardHeader>

@@ -15,7 +15,7 @@ export default function DevicesPage() {
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-3xl font-bold tracking-tight">Devices</h2>
-          <p className="text-muted-foreground">Manage all devices in your SmartHome system</p>
+          <p className="text-muted-foreground">Manage all devices in SmartHome system</p>
         </div>
         <Link href="/dashboard/devices/new">
           <Button className="bg-green-600 hover:bg-green-700">

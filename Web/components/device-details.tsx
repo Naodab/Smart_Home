@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Cpu, History } from "lucide-react"
+import { Blinds, Cpu, DoorOpen, Fan, History, LightbulbIcon, Loader2, Power } from "lucide-react"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -21,7 +21,7 @@ import { Device, DeviceApi, type ApiError } from "@/components/api-service"
 import { useToast } from "@/hooks/use-toast"
 interface DeviceDetailsProps {
   device: Device
-  onStatusChange: (deviceId: string, newStatus: boolean) => void
+  onStatusChange: (deviceId: string, newStatus: string) => void
 }
 
 export function DeviceDetails({ device, onStatusChange }: DeviceDetailsProps) {
@@ -81,34 +81,82 @@ export function DeviceDetails({ device, onStatusChange }: DeviceDetailsProps) {
     }
   }
 
+  const getDeviceTypeIcon = () => {
+    switch (device.type) {
+      case "light":
+        return <LightbulbIcon className="h-6 w-6 text-yellow-500" />
+      case "door":
+        return <DoorOpen className="h-6 w-6 text-blue-500" />
+      case "curtain":
+        return <Blinds className="h-6 w-6 text-purple-500" />
+      case "fan":
+        return <Fan className="h-6 w-6 text-green-500" />
+      default:
+        return <Cpu className="h-6 w-6 text-green-600" />
+    }
+  }
+
+  const getDeviceTypeDisplay = () => {
+    return device.type.charAt(0).toUpperCase() + device.type.slice(1)
+  }
+
   return (
     <Card>
       <CardContent className="pt-6">
         <div className="flex items-center gap-4 mb-6">
-          <div className="p-2 bg-green-100 rounded-full">
-            <Cpu className="h-6 w-6 text-green-600" />
-          </div>
+          <div className="p-2 bg-green-100 rounded-full">{getDeviceTypeIcon()}</div>
           <h3 className="text-xl font-semibold">{device.name}</h3>
         </div>
 
-        <div className="grid grid-cols-3 gap-4 mb-6">
+        <div className="grid grid-cols-4 gap-4 mb-6">
           <div className="space-y-1">
             <p className="text-sm text-muted-foreground">ID</p>
             <p className="font-medium">{device.id}</p>
           </div>
           <div className="space-y-1">
+            <p className="text-sm text-muted-foreground">Type</p>
+            <p className="font-medium">{getDeviceTypeDisplay()}</p>
+          </div>
+          <div className="space-y-1">
             <p className="text-sm text-muted-foreground">Status</p>
-            <Badge
-              variant={device.status ? "default" : "secondary"}
-              className={device.status ? "bg-green-500" : "bg-gray-500"}
-            >
-              {device.status ? "Activate" : "Inactivate"}
-            </Badge>
+            {device.type === "fan" ? (
+              <Badge
+                variant={device.status === "0" ? "secondary" : "default"}
+                className={
+                  device.status === "0"
+                    ? "bg-gray-500"
+                    : device.status === "1"
+                      ? "bg-green-300"
+                      : device.status === "2"
+                        ? "bg-green-500"
+                        : "bg-green-700"
+                }
+              >
+                Level {device.status}
+              </Badge>
+            ) : (
+              <Badge
+                variant={device.status === "on" ? "default" : "secondary"}
+                className={device.status === "on" ? "bg-green-500" : "bg-gray-500"}
+              >
+                {device.status === "on" ? "On" : "Off"}
+              </Badge>
+            )}
           </div>
           <div className="space-y-1">
             <p className="text-sm text-muted-foreground">Home Email</p>
             <p className="font-medium">{device.home.email}</p>
           </div>
+        </div>
+        
+        <div className="flex justify-end mb-6">
+          <Button
+            className="bg-green-600 hover:bg-green-700"
+            onClick={() => setIsChangeStatusDialogOpen(true)}
+          >
+            <Power className="mr-2 h-4 w-4" />
+            Change Status
+          </Button>
         </div>
 
         <Tabs defaultValue="history" className="mt-6">
@@ -134,12 +182,32 @@ export function DeviceDetails({ device, onStatusChange }: DeviceDetailsProps) {
                     <TableRow key={history.id}>
                       <TableCell>{history.personName}</TableCell>
                       <TableCell>
-                        <Badge
-                          variant={history.newStatus ? "default" : "secondary"}
-                          className={history.newStatus ? "bg-green-500" : "bg-gray-500"}
-                        >
-                          {history.newStatus ? "Activate" : "Inactivate"}
-                        </Badge>
+                        {history.newStatus === "0" ||
+                        history.newStatus === "1" ||
+                        history.newStatus === "2" ||
+                        history.newStatus === "3" ? (
+                          <Badge
+                            variant={history.newStatus === "0" ? "secondary" : "default"}
+                            className={
+                              history.newStatus === "0"
+                                ? "bg-gray-500"
+                                : history.newStatus === "1"
+                                  ? "bg-green-300"
+                                  : history.newStatus === "2"
+                                    ? "bg-green-500"
+                                    : "bg-green-700"
+                            }
+                          >
+                            Level {history.newStatus}
+                          </Badge>
+                        ) : (
+                          <Badge
+                            variant={history.newStatus === "on" ? "default" : "secondary"}
+                            className={history.newStatus === "on" ? "bg-green-500" : "bg-gray-500"}
+                          >
+                            {history.newStatus === "on" ? "On" : "Off"}
+                          </Badge>
+                        )}
                       </TableCell>
                       <TableCell>{history.timestamp}</TableCell>
                     </TableRow>
@@ -166,19 +234,36 @@ export function DeviceDetails({ device, onStatusChange }: DeviceDetailsProps) {
             <div className="grid gap-4 py-4">
               <div className="space-y-2">
                 <Label htmlFor="status">New Status</Label>
-                <Select value={newStatus ? "Activate" : "Inactivate"} onValueChange={(value) => setNewStatus(value === "Activate")}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select status" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Activate">Activate</SelectItem>
-                    <SelectItem value="Inactivate">Inactivate</SelectItem>
-                  </SelectContent>
-                </Select>
+                {device.type === "fan" ? (
+                  <Select value={newStatus} onValueChange={setNewStatus}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select fan level" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="0">Level 0 (Off)</SelectItem>
+                      <SelectItem value="1">Level 1 (Low)</SelectItem>
+                      <SelectItem value="2">Level 2 (Medium)</SelectItem>
+                      <SelectItem value="3">Level 3 (High)</SelectItem>
+                    </SelectContent>
+                  </Select>
+                ) : (
+                  <Select value={newStatus} onValueChange={setNewStatus}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select status" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="on">On</SelectItem>
+                      <SelectItem value="off">Off</SelectItem>
+                    </SelectContent>
+                  </Select>
+                )}
               </div>
               <div className="space-y-2">
                 <Label htmlFor="person">Person Making Change</Label>
-                <Select value={selectedPerson} onValueChange={setSelectedPerson}>
+                <Select
+                  value={selectedPerson}
+                  onValueChange={setSelectedPerson}
+                >
                   <SelectTrigger>
                     <SelectValue placeholder="Select person" />
                   </SelectTrigger>
@@ -193,8 +278,26 @@ export function DeviceDetails({ device, onStatusChange }: DeviceDetailsProps) {
               </div>
             </div>
             <DialogFooter>
-              <Button variant="outline" onClick={() => setIsChangeStatusDialogOpen(false)} disabled={isSubmitting}>
+              <Button
+                variant="outline"
+                onClick={() => setIsChangeStatusDialogOpen(false)}
+                disabled={isSubmitting}
+              >
                 Cancel
+              </Button>
+              <Button
+                className="bg-green-600 hover:bg-green-700"
+                onClick={handleStatusChange}
+                disabled={!selectedPerson || isSubmitting}
+              >
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Updating...
+                  </>
+                ) : (
+                  "Update Status"
+                )}
               </Button>
             </DialogFooter>
           </DialogContent>
