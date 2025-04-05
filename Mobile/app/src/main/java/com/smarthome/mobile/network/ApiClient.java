@@ -1,31 +1,34 @@
-package com.smarthome.mobile.api;
+package com.smarthome.mobile.network;
 
 import static com.smarthome.mobile.BuildConfig.API_BASE_URL;
 
+import com.smarthome.mobile.app.MyApp;
+
 import okhttp3.OkHttpClient;
-import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class SpeechApiClient {
+public class ApiClient {
     private static final String BASE_URL = API_BASE_URL;
     private static Retrofit retrofit;
 
     public static Retrofit getClient() {
         if (retrofit == null) {
-            HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
-            logging.setLevel(HttpLoggingInterceptor.Level.BODY);
-
+            SessionManager sessionManager = MyApp.getInstance().getSessionManager();
             OkHttpClient client = new OkHttpClient.Builder()
-                    .addInterceptor(logging)
+                    .addInterceptor(new AuthInterceptor(sessionManager))
                     .build();
 
             retrofit = new Retrofit.Builder()
                     .baseUrl(BASE_URL)
-                    .client(client)
                     .addConverterFactory(GsonConverterFactory.create())
+                    .client(client)
                     .build();
         }
         return retrofit;
+    }
+
+    public static ApiService getApiService() {
+        return retrofit.create(ApiService.class);
     }
 }

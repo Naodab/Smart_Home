@@ -6,7 +6,6 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
@@ -17,13 +16,12 @@ import android.widget.Toast;
 
 import com.smarthome.mobile.R;
 import com.smarthome.mobile.databinding.FragmentLoginBinding;
-import com.smarthome.mobile.model.UserAuthentication;
 import com.smarthome.mobile.util.Constants;
-import com.smarthome.mobile.viewmodel.LoginViewModel;
+import com.smarthome.mobile.viewmodel.AuthViewModel;
 
 public class LoginFragment extends Fragment {
     private FragmentLoginBinding binding;
-    private LoginViewModel loginViewModel;
+    private AuthViewModel loginViewModel;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -33,7 +31,7 @@ public class LoginFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        loginViewModel = LoginViewModel.getInstance();
+        loginViewModel = new AuthViewModel();
         binding = FragmentLoginBinding.inflate(inflater, container, false);
         return binding.getRoot();
     }

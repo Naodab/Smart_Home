@@ -2,8 +2,8 @@ package com.smarthome.mobile.repository;
 
 import android.util.Log;
 
-import com.smarthome.mobile.api.FaceApiClient;
-import com.smarthome.mobile.service.FaceAuthService;
+import com.smarthome.mobile.network.ApiService;
+import com.smarthome.mobile.network.ApiClient;
 import com.smarthome.mobile.util.FaceAuthCallback;
 
 import java.io.File;
@@ -21,10 +21,10 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class FaceAuthRepository {
-    private final FaceAuthService faceAuthService;
+    private final ApiService apiService;
 
     public FaceAuthRepository() {
-        this.faceAuthService = FaceApiClient.getClient().create(FaceAuthService.class);
+        this.apiService = ApiClient.getClient().create(ApiService.class);
     }
 
     public void uploadImage(byte[] imageData, FaceAuthCallback callback) {
@@ -39,7 +39,7 @@ public class FaceAuthRepository {
                 RequestBody requestFile = RequestBody.create(templateFile, MediaType.parse("image/jpg"));
                 MultipartBody.Part body = MultipartBody.Part.createFormData("image", templateFile.getName(), requestFile);
 
-                faceAuthService.uploadImage(body).enqueue(new Callback<ResponseBody>() {
+                apiService.authenticateFaces(body).enqueue(new Callback<ResponseBody>() {
                     @Override
                     public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                         // TODO: check if authenticate or not

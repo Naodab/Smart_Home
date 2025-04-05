@@ -1,49 +1,62 @@
 package com.smarthome.mobile.repository;
 
+import androidx.annotation.NonNull;
 import androidx.lifecycle.MutableLiveData;
 
-import com.google.firebase.auth.FirebaseUser;
-import com.smarthome.mobile.model.UserAuthentication;
-import com.smarthome.mobile.service.FirebaseAuthService;
+import com.smarthome.mobile.app.MyApp;
+import com.smarthome.mobile.dto.request.LoginRequest;
+import com.smarthome.mobile.dto.response.LoginResponse;
+import com.smarthome.mobile.network.ApiClient;
+import com.smarthome.mobile.network.ApiService;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class AuthRepository {
-    private final FirebaseAuthService firebaseAuthService;
-    private final MutableLiveData<UserAuthentication> userLiveData;
+    private final ApiService apiService;
+    private final MutableLiveData<Boolean> loginStatus;
 
-    private AuthRepository() {
-        this.firebaseAuthService = new FirebaseAuthService();
-        this.userLiveData = new MutableLiveData<>();
+    public AuthRepository() {
+        this.apiService = ApiClient.getApiService();
+        this.loginStatus = new MutableLiveData<>();
     }
 
-    private static AuthRepository _instance;
-
-    public static AuthRepository getInstance() {
-        if (_instance == null)
-            _instance = new AuthRepository();
-        return _instance;
-    }
-
-    public MutableLiveData<UserAuthentication> getUserLiveData() {
-        return this.userLiveData;
+    public MutableLiveData<Boolean> getLoginStatus() {
+        return this.loginStatus;
     }
 
     public void login(String email, String password) {
-        firebaseAuthService.login(email, password, new FirebaseAuthService.AuthCallBack() {
+        LoginRequest request = new LoginRequest(email, password);
+        apiService.login(request).enqueue(new Callback<LoginResponse>() {
             @Override
-            public void onSuccess(FirebaseUser user) {
-                UserAuthentication u = new UserAuthentication(user.getUid(), user.getEmail());
-                userLiveData.postValue(u);
+            public void onResponse(
+                    @NonNull Call<LoginResponse> call,
+                    @NonNull Response<LoginResponse> response) {
+                if (response.isSuccessful()) {
+                    LoginResponse rp = response.body();
+                    assert rp != null;
+                    MyApp.getInstance().getSessionManager().saveAuthToken(rp.getToken());
+                    MyApp.getInstance().getSessionManager().saveUserAddress(rp.getAddress());
+                    MyApp.getInstance().getSessionManager().saveUserEmail(rp.getEmail());
+                    MyApp.getInstance().getSessionManager().saveUserId(rp.getId());
+                    loginStatus.setValue(true);
+                } else {
+                    loginStatus.setValue(false);
+                }
             }
 
             @Override
-            public void onFailure(Exception e) {
-                userLiveData.postValue(null);
+            public void onFailure(@NonNull Call<LoginResponse> call, @NonNull Throwable t) {
+                loginStatus.setValue(false);
             }
         });
     }
 
     public void logout() {
-        firebaseAuthService.logout();
-        userLiveData.postValue(null);
+
+    }
+
+    public void changePassword(String oldPassword, String newPassword) {
     }
 }

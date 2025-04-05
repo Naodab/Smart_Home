@@ -3,9 +3,6 @@ package com.smarthome.mobile.view;
 import android.Manifest;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
-import android.content.ContentValues;
-import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -25,7 +22,6 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 
 import android.os.Looper;
-import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -38,28 +34,14 @@ import com.google.mlkit.vision.face.FaceDetection;
 import com.google.mlkit.vision.face.FaceDetector;
 import com.google.mlkit.vision.face.FaceDetectorOptions;
 import com.smarthome.mobile.R;
-import com.smarthome.mobile.service.FaceAuthService;
-import com.smarthome.mobile.api.FaceApiClient;
 import com.smarthome.mobile.databinding.FragmentFaceAuthBinding;
 import com.smarthome.mobile.util.FaceAuthCallback;
 import com.smarthome.mobile.viewmodel.FaceAuthViewModel;
 
-import java.io.File;
 import java.nio.ByteBuffer;
-import java.text.SimpleDateFormat;
-import java.util.Locale;
 import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
-import okhttp3.MediaType;
-import okhttp3.MultipartBody;
-import okhttp3.RequestBody;
-import okhttp3.ResponseBody;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-import retrofit2.Retrofit;
 
 public class FaceAuthFragment extends Fragment {
     private static final int PERMISSION_REQUEST_CODE = 101;
