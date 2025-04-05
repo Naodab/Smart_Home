@@ -9,28 +9,51 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { AlertCircle } from "lucide-react"
 import { Alert, AlertDescription } from "@/components/ui/alert"
+import { useToast } from "./ui/use-toast"
+import { loginUser } from "@/lib/auth-actions"
+import { saveAuthData } from "@/lib/auth"
 
 export function LoginForm() {
   const router = useRouter()
-  const [username, setUsername] = useState("")
+  const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [error, setError] = useState("")
   const [isLoading, setIsLoading] = useState(false)
+  const { toast } = useToast()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
     setError("")
 
-    // In a real application, you would validate credentials against a backend
-    // This is a simplified example
-    if (username === "admin" && password === "password") {
-      // Simulate API call
-      setTimeout(() => {
+    try {
+      const result = await loginUser({
+        email: email,
+        password: password
+      })
+      if (result.success) {
+        toast({
+          title: "Success",
+          description: "Home deleted successfully",
+          variant: "success",
+        })
+        saveAuthData(result.data)
         router.push("/dashboard")
-      }, 1000)
-    } else {
-      setError("Invalid username or password")
+        router.refresh()
+      } else {
+        toast({
+          variant: "destructive",
+          title: "Login failed",
+          description: result.error ?? "Please check your credentials and try again.",
+        })
+      }
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Something went wrong",
+        description: "Please try again later.",
+      })
+    } finally {
       setIsLoading(false)
     }
   }
@@ -45,12 +68,12 @@ export function LoginForm() {
           </Alert>
         )}
         <div className="space-y-2">
-          <Label htmlFor="username">Username</Label>
+          <Label htmlFor="email">Email</Label>
           <Input
-            id="username"
-            placeholder="Enter your username"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
+            id="email"
+            placeholder="Enter your Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
             required
           />
         </div>

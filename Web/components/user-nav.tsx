@@ -10,14 +10,33 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { getDecodedToken, getUserEmail, removeAuthData } from "@/lib/auth"
 import { LogOut, User } from "lucide-react"
 import { useRouter } from "next/navigation"
+import { useEffect, useState } from "react"
 
 export function UserNav() {
   const router = useRouter()
+  const [userEmail, setUserEmail] = useState("")
+  const [userName, setUserName] = useState("")
+  
+  useEffect(() => {
+    const email = getUserEmail()
+    if (email) {
+      setUserEmail(email)
+      const nameFromEmail = email.split("@")[0]
+      setUserName(nameFromEmail.charAt(0).toUpperCase() + nameFromEmail.slice(1))
+    }
+    const decodedToken = getDecodedToken()
+    if (decodedToken) {
+      if (decodedToken.email) {
+        setUserEmail(decodedToken.email)
+      }
+    }
+  }, [])
 
   const handleLogout = () => {
-    // In a real app, you would handle logout logic here
+    removeAuthData()
     router.push("/login")
   }
 
@@ -33,8 +52,8 @@ export function UserNav() {
       <DropdownMenuContent className="w-56" align="end" forceMount>
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col space-y-1">
-            <p className="text-sm font-medium leading-none">Admin</p>
-            <p className="text-xs leading-none text-muted-foreground">admin@smarthome.com</p>
+            <p className="text-sm font-medium leading-none">{userName.charAt(0).toUpperCase()}</p>
+            <p className="text-xs leading-none text-muted-foreground">{userEmail}</p>
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />

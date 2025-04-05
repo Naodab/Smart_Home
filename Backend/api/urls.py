@@ -22,5 +22,5 @@ urlpatterns = [
   path('histories/<str:id>/', views.history_id_api_view), # /api/histories/<id>
 
   # Common urls
-  path('tokens/refresh/', views.refresh_token_api_view), # /api/tokens/refresh/
+  path('token/refresh/', views.refresh_token_api_view), # /api/token/refresh/
 ]

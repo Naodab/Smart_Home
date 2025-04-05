@@ -1,3 +1,7 @@
+import { getAuthToken } from "@/lib/auth"
+import { toast } from "./ui/use-toast"
+import router from "next/router"
+
 const API_BASE_URL = "http://localhost:8088"
 
 export type ApiError = {
@@ -91,12 +95,26 @@ export async function apiCall<T>(
 ): Promise<T> {
   try {
     console.log(`Calling API: ${method} ${API_BASE_URL}${endpoint}`);
+    const token = await getAuthToken()
+
+    const headers: Record<string, string> = {
+      "Content-Type": "application/json",
+    }
+    if  (token) {
+      headers["Authorization"] = `Bearer ${token}`
+    } else {
+      toast({
+        variant: "destructive",
+        title: "Unauthorized",
+        description: "Please log in again.",
+      })
+      router.push("/login")
+      return Promise.reject({ status: 401, message: "Unauthorized" } as ApiError);
+    }
 
     const response = await fetch(`${API_BASE_URL}${endpoint}`, {
       method,
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: headers,
       body: data ? JSON.stringify(data) : undefined,
     });
 
