@@ -1,9 +1,14 @@
 from rest_framework import status
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.views import APIView
 
 from django.core.files.storage import default_storage
+from rest_framework_simplejwt.tokens import RefreshToken
+
+from api.permissions import IsAdmin
+from api.tokens import get_tokens_for_user
 
 from .serializers import DeviceCreateSerializer, \
                           DeviceSerializer, \
@@ -21,8 +26,11 @@ from django.shortcuts import get_object_or_404
 from api.models import Device, Home, Person
 
 # MOBILE API
+# ONLY FOR USER
 # /api/speeches/upload/
 class SpeechCreateAPIView(APIView):
+  permission_classes = [AllowAny]
+  
   parser_classes = (MultiPartParser, FormParser)
   def post(self, request, *args, **kwargs):
     serializer = SpeechSerializer(data=request.data)
@@ -30,7 +38,7 @@ class SpeechCreateAPIView(APIView):
         file = serializer.validated_data['file']
         email = serializer.validated_data['email']
 
-        print(email)
+        print(email) 
         print(file)
 
         if default_storage.exists(file.name):
@@ -50,8 +58,10 @@ class SpeechCreateAPIView(APIView):
   
 speech_create_api_view = SpeechCreateAPIView.as_view()
 
-# /api/homes/login/
-class LoginAPIView(APIView):
+# /api/users/login/
+class UserLoginAPIView(APIView):
+  permission_classes = [AllowAny]
+
   def post(self, request, *args, **kwargs):
     serializer = LoginSerializer(data=request.data)
     if serializer.is_valid():
@@ -59,12 +69,15 @@ class LoginAPIView(APIView):
       password = serializer.validated_data['password']
 
       home = get_object_or_404(Home, email=email)
+      if home.is_staff:
+        return Response({"message": "Permission denied, user required"}, status=403)
       if home.check_password(password):
-        return Response({"message": "Login successful", "email": email, "password": password})
+        tokens = get_tokens_for_user(home)
+        return Response({"message": "Login successful", "email": email, "tokens": tokens})
       return Response({"message": "Invalid credentials"}, status=401)
     return Response(serializer.errors, status=400)
   
-login_api_view = LoginAPIView.as_view()
+user_login_api_view = UserLoginAPIView.as_view()
 
 # /api/mobile/homes/<email>/
 class HomeMobileAPIView(APIView):
@@ -84,8 +97,30 @@ class HomeMobileAPIView(APIView):
 home_mobile_api_view = HomeMobileAPIView.as_view()
 
 # BACKEND API
+# ONLY FOR ADMIN
+class AdminLoginAPIView(APIView):
+  permission_classes = [AllowAny]
+  
+  def post(self, request,  *args, **kwargs):
+    serializer = LoginSerializer(data=request.data)
+    if serializer.is_valid():
+      email = serializer.validated_data['email']
+      password = serializer.validated_data['password']
+
+      home = get_object_or_404(Home, email=email)
+      if not home.is_staff:
+        return Response({"message": "Permission denied, admin required"}, status=403)
+      if home.check_password(password):
+        tokens = get_tokens_for_user(home)
+        return Response({"message": "Login successful", "email": email, "tokens": tokens})
+      return Response({"message": "Invalid credentials"}, status=401)
+    return Response(serializer.errors, status=400)
+admin_login_api_view = AdminLoginAPIView.as_view()
+
 # /api/homes/
 class HomeAPIView(APIView):
+  permission_classes = [IsAuthenticated, IsAdmin]
+
   def post(self, request, *args, **kwargs):
     serializer = RegisterSerializer(data=request.data)
     if serializer.is_valid():
@@ -95,12 +130,15 @@ class HomeAPIView(APIView):
   
   def get(self, request, *args, **kwargs):
     homes = Home.objects.all()
+    homes = [home for home in homes if home.is_staff == False]
     serializer = HomeSerializer(homes, many=True)
     return Response(serializer.data)
 home_api_view = HomeAPIView.as_view()
 
 # /api/homes/<id>/
 class HomeIdAPIView(APIView):
+  permission_classes = [IsAuthenticated, IsAdmin]
+
   def get(self, request, id, *args, **kwargs):
     home = get_object_or_404(Home, id=id)
     serializer = HomeSerializer(home)
@@ -122,6 +160,8 @@ home_id_api_view = HomeIdAPIView.as_view()
 
 # /api/homes/emails/
 class HomeEmailsAPIView(APIView):
+  permission_classes = [IsAuthenticated, IsAdmin]
+
   def get(self, request, *args, **kwargs):
     homes = Home.objects.values('id', 'email')
     return Response(homes)
@@ -129,6 +169,8 @@ home_emails_api_view = HomeEmailsAPIView.as_view()
 
 # /api/people/
 class PersonAPIView(APIView):
+  permission_classes = [IsAuthenticated, IsAdmin]
+  
   def post(self, request, *args, **kwargs):
     serializer = PersonSaveSerializer(data=request.data, context={"request": request})
     if serializer.is_valid():
@@ -144,6 +186,8 @@ person_api_view = PersonAPIView.as_view()
 
 # /api/people/select/
 class PersonSelectAPIView(APIView):
+  permission_classes = [IsAuthenticated, IsAdmin]
+  
   def get(self, request, *args, **kwargs):
     persons = Person.objects.values('id', 'name')
     return Response(persons)
@@ -151,6 +195,8 @@ person_select_api_view = PersonSelectAPIView.as_view()
 
 # /api/people/<id>/
 class PersonIdAPIView(APIView):
+  permission_classes = [IsAuthenticated, IsAdmin]
+  
   def get(self, request, id, *args, **kwargs):
     person = get_object_or_404(Person, id=id)
     serializer = PersonSerializer(person)
@@ -172,6 +218,8 @@ person_id_api_view = PersonIdAPIView.as_view()
 
 # /api/devices/
 class DeviceAPIView(APIView):
+  permission_classes = [IsAuthenticated, IsAdmin]
+  
   def post(self, request, *args, **kwargs):
     print(request.data)
     serializer = DeviceCreateSerializer(data=request.data, context={"request": request})
@@ -189,6 +237,8 @@ device_api_view = DeviceAPIView.as_view()
 
 # /api/devices/<id>/
 class DeviceIdAPIView(APIView):
+  permission_classes = [IsAuthenticated, IsAdmin]
+  
   def get(self, request, id, *args, **kwargs):
     device = get_object_or_404(Device, id=id)
     serializer = DeviceSerializer(device)
@@ -211,6 +261,8 @@ class DeviceIdAPIView(APIView):
 device_id_api_view = DeviceIdAPIView.as_view()
 
 class HistoryAPIView(APIView):
+  permission_classes = [IsAuthenticated, IsAdmin]
+  
   def post(self, request, *args, **kwargs):
     serializer = HistoryCreateSerializer(data=request.data, context={"request": request})
     if serializer.is_valid():
@@ -227,9 +279,34 @@ history_api_view = HistoryAPIView.as_view()
 
 # /api/histories/<id>/
 class HistoryIdAPIView(APIView):
+  permission_classes = [IsAuthenticated, IsAdmin]
+  
   def get(self, request, id, *args, **kwargs):
     history = get_object_or_404(History, id=id)
     serializer = HistorySerializer(history)
     return Response(serializer.data)
 
 history_id_api_view = HistoryIdAPIView.as_view()
+
+
+# COMMON API
+# api/tokens/refresh/
+class RefreshTokenAPIView(APIView):
+  permission_classes  = [AllowAny]
+
+  def post(self, request):
+    try:
+      refresh = request.data['refresh']
+      if not refresh:
+        return Response({'error': 'Refresh token is required'}, status=status.HTTP_400_BAD_REQUEST)
+      token = RefreshToken(token=refresh)
+      user_id = token.payload.get('user_id')
+      try:
+        user = Home.objects.get(id=user_id)
+      except Home.DoesNotExist:
+        return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
+      tokens = get_tokens_for_user(user)
+      return Response({"message": "Token refreshed successfully", "tokens": tokens})
+    except Exception as e:
+      return Response({"message": str(e)}, status=400)
+refresh_token_api_view = RefreshTokenAPIView.as_view()

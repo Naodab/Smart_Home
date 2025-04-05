@@ -1,21 +1,42 @@
 from django.contrib.auth.hashers import make_password, check_password
 from django.db import models
+from django.contrib.auth.models import AbstractUser, BaseUserManager
+from project.settings import DEFAULT_PASSWORD
 
-class Home(models.Model):
+class HomeManager(BaseUserManager):
+  def create_user(self, email, password=DEFAULT_PASSWORD, **extra_fields):
+    if not email:
+        raise ValueError('The Email field must be set')
+    email = self.normalize_email(email)
+    user = self.model(email=email, **extra_fields)
+    user.set_password(password)
+    user.save(using=self._db)
+    return user
+
+  def create_superuser(self, email, password=None, **extra_fields):
+    extra_fields.setdefault('is_staff', True)
+    extra_fields.setdefault('is_superuser', True)
+    
+    if extra_fields.get('is_staff') is not True:
+        raise ValueError('Superuser must have is_staff=True.')
+    if extra_fields.get('is_superuser') is not True:
+        raise ValueError('Superuser must have is_superuser=True.')
+    
+    return self.create_user(email, password, **extra_fields)
+
+class Home(AbstractUser):
+  username = None
   id = models.AutoField(primary_key=True)
-  email = models.CharField(max_length=120)
-  password = models.CharField(max_length=120)
+  email = models.EmailField(max_length=120, unique=True)
+  password = models.CharField(max_length=120, default=DEFAULT_PASSWORD)
   address = models.CharField(max_length=120, default="123 Kieu Son Den")
   temperature = models.FloatField(default=27)
   humidity = models.FloatField(default=50)
 
-  def save(self, *args, **kwargs):
-    if not self.password.startswith('pbkdf2_sha256$'):
-      self.password = make_password(self.password)
-    super().save(*args, **kwargs)
+  USERNAME_FIELD = 'email'
+  REQUIRED_FIELDS = []
 
-  def check_password(self, raw_password):
-    return check_password(raw_password, self.password)  
+  objects = HomeManager()
 
   def __str__(self):
     return f"Home: {self.id} - {self.email}"
