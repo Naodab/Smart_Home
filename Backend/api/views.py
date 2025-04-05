@@ -12,7 +12,8 @@ from api.tokens import get_tokens_for_user
 
 from .serializers import DeviceCreateSerializer, \
                           DeviceSerializer, \
-                          DeviceUpdateSerializer, PersonSaveSerializer, \
+                          DeviceUpdateSerializer, \
+                          PersonSaveSerializer, \
                           PersonSerializer, \
                           SpeechSerializer, \
                           LoginSerializer, \
@@ -204,7 +205,7 @@ class PersonIdAPIView(APIView):
   
   def put(self, request, id, *args, **kwargs):
     person = get_object_or_404(Person, id=id)
-    serializer = PersonSaveSerializer(person, data=request.data)
+    serializer = PersonSaveSerializer(person, data=request.data, context={"request": request})
     if serializer.is_valid():
       serializer.save()
       return Response({"message": "Person updated successfully", "name": person.name})
