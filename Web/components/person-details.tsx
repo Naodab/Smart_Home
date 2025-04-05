@@ -28,7 +28,7 @@ export function PersonDetails({ person }: PersonDetailsProps) {
           <h3 className="text-xl font-semibold">{person.name}</h3>
         </div>
 
-        <div className="mb-6">
+        <div className="grid grid-cols-2 gap-4 mb-6">
           <div className="space-y-1">
             <p className="text-sm text-muted-foreground">ID</p>
             <p className="font-medium">{person.id}</p>
