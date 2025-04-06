@@ -27,7 +27,7 @@ public class MonitorFragment extends Fragment {
     FragmentMonitorBinding binding;
     DeviceAdapter deviceAdapter;
     private BottomNavigationView bottomNav;
-    private final AuthRepository authRepository = AuthRepository.getInstance();
+    private final AuthRepository authRepository = new AuthRepository();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

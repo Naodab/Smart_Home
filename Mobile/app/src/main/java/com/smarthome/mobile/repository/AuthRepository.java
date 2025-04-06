@@ -1,5 +1,8 @@
 package com.smarthome.mobile.repository;
 
+import android.util.Log;
+import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.lifecycle.MutableLiveData;
 
@@ -18,7 +21,7 @@ public class AuthRepository {
     private final MutableLiveData<Boolean> loginStatus;
 
     public AuthRepository() {
-        this.apiService = ApiClient.getApiService();
+        this.apiService = ApiClient.getClient().create(ApiService.class);
         this.loginStatus = new MutableLiveData<>();
     }
 
@@ -36,7 +39,9 @@ public class AuthRepository {
                 if (response.isSuccessful()) {
                     LoginResponse rp = response.body();
                     assert rp != null;
-                    MyApp.getInstance().getSessionManager().saveAuthToken(rp.getToken());
+                    Log.i("LOGIN", "onResponse: " + rp.getTokens().toString());
+                    MyApp.getInstance().getSessionManager().saveAuthToken(rp.getTokens().getAccess());
+                    MyApp.getInstance().getSessionManager().saveAuthRefresh(rp.getTokens().getRefresh());
                     MyApp.getInstance().getSessionManager().saveUserAddress(rp.getAddress());
                     MyApp.getInstance().getSessionManager().saveUserEmail(rp.getEmail());
                     MyApp.getInstance().getSessionManager().saveUserId(rp.getId());

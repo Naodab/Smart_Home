@@ -18,10 +18,10 @@ import retrofit2.http.Part;
 import retrofit2.http.PartMap;
 
 public interface ApiService {
-    @POST("api/homes/login/")
+    @POST("api/users/login/")
     Call<LoginResponse> login(@Body LoginRequest request);
 
-    @GET("api/homes/logout/")
+    @GET("api/users/logout/")
     Call<Void> logout();
 
     @POST("api/homes/changePassword/")

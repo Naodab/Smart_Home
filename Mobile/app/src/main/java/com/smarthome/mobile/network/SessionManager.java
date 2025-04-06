@@ -8,6 +8,7 @@ public class SessionManager {
     private final SharedPreferences.Editor editor;
     private static final String PREF_NAME = "AppPrefs";
     private static final String USER_TOKEN  = "UserToken";
+    private static final String USER_REFRESH_TOKEN  = "UserRefresh";
     private static final String USER_EMAIL = "UserEmail";
     private static final String USER_ID = "UserId";
     private static final String USER_ADDRESS =  "UserAddress";
@@ -19,6 +20,11 @@ public class SessionManager {
 
     public void saveAuthToken(String token) {
         editor.putString(USER_TOKEN, token);
+        editor.apply();
+    }
+
+    public void saveAuthRefresh(String refresh) {
+        editor.putString(USER_REFRESH_TOKEN, refresh);
         editor.apply();
     }
 

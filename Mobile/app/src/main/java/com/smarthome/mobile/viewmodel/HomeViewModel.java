@@ -7,11 +7,11 @@ import com.smarthome.mobile.repository.AuthRepository;
 
 public class HomeViewModel {
     private final AuthRepository authRepository;
-    private final MutableLiveData<Home> userLiveData;
+    private final MutableLiveData<Boolean> userLiveData;
     private static HomeViewModel _instance;
 
     private HomeViewModel() {
-        this.authRepository = AuthRepository.getInstance();
+        this.authRepository = new AuthRepository();
         userLiveData = this.authRepository.getLoginStatus();
     }
 
@@ -21,7 +21,7 @@ public class HomeViewModel {
         return _instance;
     }
 
-    public MutableLiveData<Home> getUserLiveData() {
+    public MutableLiveData<Boolean> getUserLiveData() {
         return this.userLiveData;
     }
 

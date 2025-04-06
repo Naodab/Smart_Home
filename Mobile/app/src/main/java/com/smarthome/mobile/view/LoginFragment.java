@@ -47,7 +47,8 @@ public class LoginFragment extends Fragment {
 
             long delay = i * 300L;
 
-            ObjectAnimator animator = ObjectAnimator.ofFloat(viewToAnimate, "alpha", 0f, 1f);
+            ObjectAnimator animator = ObjectAnimator
+                    .ofFloat(viewToAnimate, "alpha", 0f, 1f);
             animator.setStartDelay(delay);
             animator.setDuration(500);
             animator.start();
@@ -57,7 +58,7 @@ public class LoginFragment extends Fragment {
             String email = binding.email.getText().toString();
             String password = binding.password.getText().toString();
             if (email.isEmpty() || password.isEmpty()) {
-                Toast.makeText(v.getContext(), "Điền đủ thông tin đăng nhập!!!", Toast.LENGTH_SHORT).show();
+                CustomToast.showError(v.getContext(), "Vui lòng điền đầy đủ thông tin!");
             } else {
                 binding.loadingLayout.setVisibility(View.VISIBLE);
                 loginViewModel.login(email, password);
@@ -66,7 +67,7 @@ public class LoginFragment extends Fragment {
 
         loginViewModel.getUserLiveData().observe(getViewLifecycleOwner(), userAuthentication -> {
             if (userAuthentication != null) {
-                Toast.makeText(getContext(), "Chào mừng bạn trở lại", Toast.LENGTH_SHORT).show();
+                CustomToast.showSuccess(requireContext(), "Chào mưng bạn trở lại");
                 binding.loadingLayout.setVisibility(View.INVISIBLE);
                 Constants.LOGGED_IN = true;
                 NavController navController = Navigation.findNavController(view);
@@ -76,7 +77,7 @@ public class LoginFragment extends Fragment {
                 if (Constants.LOGGED_IN) {
                     Constants.LOGGED_IN = false;
                 } else {
-                    Toast.makeText(getContext(), "Tài khoản hoặc mật khẩu không chính xác", Toast.LENGTH_SHORT).show();
+                    CustomToast.showError(requireContext(), "Tài khoản hoặc mật khẩu không chính xác!");
                     binding.loadingLayout.setVisibility(View.INVISIBLE);
                 }
             }
