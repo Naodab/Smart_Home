@@ -1,4 +1,4 @@
-package com.smarthome.mobile.view;
+package com.smarthome.mobile.view.fragment;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -23,7 +23,6 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.OvershootInterpolator;
 import android.view.animation.ScaleAnimation;
-import android.widget.Toast;
 
 import com.smarthome.mobile.R;
 import com.smarthome.mobile.databinding.FragmentSpeechAuthBinding;

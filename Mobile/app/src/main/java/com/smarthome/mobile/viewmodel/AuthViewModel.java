@@ -1,19 +1,23 @@
 package com.smarthome.mobile.viewmodel;
 
+import android.app.Application;
+
+import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.MutableLiveData;
 
 import com.smarthome.mobile.repository.AuthRepository;
 
-public class AuthViewModel {
+public class AuthViewModel extends AndroidViewModel {
     private final AuthRepository authRepository;
     private final MutableLiveData<Boolean> loginStatus;
 
-    public AuthViewModel() {
+    public AuthViewModel(Application application) {
+        super(application);
         this.authRepository = new AuthRepository();
         loginStatus = this.authRepository.getLoginStatus();
     }
 
-    public MutableLiveData<Boolean> getUserLiveData() {
+    public MutableLiveData<Boolean> getLoginStatus() {
         return this.loginStatus;
     }
 
@@ -27,5 +31,9 @@ public class AuthViewModel {
 
     public void changePassword(String oldPassword, String newPassword) {
         this.authRepository.changePassword(oldPassword, newPassword);
+    }
+
+    public void refreshToken() {
+        authRepository.refresh();
     }
 }

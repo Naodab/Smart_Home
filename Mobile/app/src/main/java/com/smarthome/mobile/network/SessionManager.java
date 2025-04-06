@@ -3,6 +3,8 @@ package com.smarthome.mobile.network;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.smarthome.mobile.dto.response.LoginResponse;
+
 public class SessionManager {
     private final SharedPreferences sharedPreferences;
     private final SharedPreferences.Editor editor;
@@ -10,7 +12,6 @@ public class SessionManager {
     private static final String USER_TOKEN  = "UserToken";
     private static final String USER_REFRESH_TOKEN  = "UserRefresh";
     private static final String USER_EMAIL = "UserEmail";
-    private static final String USER_ID = "UserId";
     private static final String USER_ADDRESS =  "UserAddress";
 
     public SessionManager(Context context) {
@@ -38,17 +39,8 @@ public class SessionManager {
         editor.apply();
     }
 
-    public void saveUserId(String id) {
-        editor.putString(USER_TOKEN, id);
-        editor.apply();
-    }
-
     public String fetchAuthToken() {
         return sharedPreferences.getString(USER_TOKEN, null);
-    }
-
-    public String fetchUserId() {
-        return sharedPreferences.getString(USER_ID, null);
     }
 
     public String fetchUserEmail() {
@@ -59,11 +51,22 @@ public class SessionManager {
         return sharedPreferences.getString(USER_ADDRESS, null);
     }
 
+    public String fetchUserRefreshToken() {
+        return sharedPreferences.getString(USER_REFRESH_TOKEN, null);
+    }
+
+    public void saveAuthData(LoginResponse response) {
+        saveAuthToken(response.getTokens().getAccess());
+        saveAuthRefresh(response.getTokens().getRefresh());
+        saveUserAddress(response.getAddress());
+        saveUserEmail(response.getEmail());
+    }
+
     public void clear() {
         editor.remove(USER_TOKEN);
-        editor.remove(USER_ID);
         editor.remove(USER_ADDRESS);
         editor.remove(USER_EMAIL);
+        editor.remove(USER_REFRESH_TOKEN);
         editor.apply();
     }
 }

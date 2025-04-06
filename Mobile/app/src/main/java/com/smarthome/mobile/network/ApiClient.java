@@ -2,7 +2,13 @@ package com.smarthome.mobile.network;
 
 import static com.smarthome.mobile.BuildConfig.API_BASE_URL;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.smarthome.mobile.app.MyApp;
+import com.smarthome.mobile.enums.Status;
+import com.smarthome.mobile.enums.Type;
+import com.smarthome.mobile.network.gson.StatusDeserializer;
+import com.smarthome.mobile.network.gson.TypeDeserializer;
 
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
@@ -15,20 +21,22 @@ public class ApiClient {
     public static Retrofit getClient() {
         if (retrofit == null) {
             SessionManager sessionManager = MyApp.getInstance().getSessionManager();
+
             OkHttpClient client = new OkHttpClient.Builder()
                     .addInterceptor(new AuthInterceptor(sessionManager))
                     .build();
 
+            Gson gson = new GsonBuilder()
+                    .registerTypeAdapter(Status.class, new StatusDeserializer())
+                    .registerTypeAdapter(Type.class, new TypeDeserializer())
+                    .create();
+
             retrofit = new Retrofit.Builder()
                     .baseUrl(BASE_URL)
-                    .addConverterFactory(GsonConverterFactory.create())
+                    .addConverterFactory(GsonConverterFactory.create(gson))
                     .client(client)
                     .build();
         }
         return retrofit;
-    }
-
-    public static ApiService getApiService() {
-        return retrofit.create(ApiService.class);
     }
 }

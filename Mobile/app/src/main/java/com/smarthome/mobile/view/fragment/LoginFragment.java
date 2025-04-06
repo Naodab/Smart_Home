@@ -1,4 +1,4 @@
-package com.smarthome.mobile.view;
+package com.smarthome.mobile.view.fragment;
 
 import android.animation.ObjectAnimator;
 import android.os.Bundle;
@@ -6,17 +6,18 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.smarthome.mobile.R;
 import com.smarthome.mobile.databinding.FragmentLoginBinding;
 import com.smarthome.mobile.util.Constants;
+import com.smarthome.mobile.view.widget.CustomToast;
 import com.smarthome.mobile.viewmodel.AuthViewModel;
 
 public class LoginFragment extends Fragment {
@@ -29,9 +30,9 @@ public class LoginFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        loginViewModel = new AuthViewModel();
+        loginViewModel = new ViewModelProvider(this).get(AuthViewModel.class);
         binding = FragmentLoginBinding.inflate(inflater, container, false);
         return binding.getRoot();
     }
@@ -65,14 +66,14 @@ public class LoginFragment extends Fragment {
             }
         });
 
-        loginViewModel.getUserLiveData().observe(getViewLifecycleOwner(), userAuthentication -> {
+        loginViewModel.getLoginStatus().observe(getViewLifecycleOwner(), userAuthentication -> {
             if (userAuthentication != null) {
                 CustomToast.showSuccess(requireContext(), "Chào mưng bạn trở lại");
                 binding.loadingLayout.setVisibility(View.INVISIBLE);
                 Constants.LOGGED_IN = true;
                 NavController navController = Navigation.findNavController(view);
                 navController.navigate(R.id.action_loginFragment_to_homeFragment);
-                loginViewModel.getUserLiveData().removeObservers(getViewLifecycleOwner());
+                loginViewModel.getLoginStatus().removeObservers(getViewLifecycleOwner());
             } else {
                 if (Constants.LOGGED_IN) {
                     Constants.LOGGED_IN = false;

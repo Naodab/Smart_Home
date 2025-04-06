@@ -1,4 +1,4 @@
-package com.smarthome.mobile.view;
+package com.smarthome.mobile.view.fragment;
 
 import android.os.Bundle;
 
@@ -15,7 +15,8 @@ import android.view.ViewGroup;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.smarthome.mobile.R;
 import com.smarthome.mobile.databinding.FragmentMonitorBinding;
-import com.smarthome.mobile.enums.Category;
+import com.smarthome.mobile.enums.Status;
+import com.smarthome.mobile.enums.Type;
 import com.smarthome.mobile.model.Device;
 import com.smarthome.mobile.repository.AuthRepository;
 import com.smarthome.mobile.viewmodel.DeviceAdapter;
@@ -40,10 +41,10 @@ public class MonitorFragment extends Fragment {
         binding = FragmentMonitorBinding.inflate(inflater, container, false);
         binding.devicesList.setLayoutManager(new LinearLayoutManager(requireContext()));
         List<Device> devices = new ArrayList<>();
-        devices.add(new Device("abc", "Cửa chính", false, Category.DOOR));
-        devices.add(new Device("abc", "Đèn phòng khách", true, Category.LIGHT));
-        devices.add(new Device("abc", "Đèn phòng ngủ", false, Category.LIGHT));
-        devices.add(new Device("abc", "Đèn nhà bếp", true, Category.LIGHT));
+        devices.add(new Device(0, "Cửa chính", Status.OPEN, Type.DOOR, null));
+        devices.add(new Device(1, "Đèn phòng khách", Status.ON, Type.LIGHT, null));
+        devices.add(new Device(2, "Đèn phòng ngủ", Status.OFF, Type.LIGHT, null));
+        devices.add(new Device(3, "Đèn nhà bếp", Status.OFF, Type.LIGHT, null));
         bottomNav = binding.getRoot().findViewById(R.id.bottom_navigation);
         deviceAdapter = new DeviceAdapter(devices);
         binding.devicesList.setAdapter(deviceAdapter);

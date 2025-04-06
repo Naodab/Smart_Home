@@ -1,4 +1,4 @@
-package com.smarthome.mobile.view;
+package com.smarthome.mobile.view.widget;
 
 import android.content.Context;
 import android.view.Gravity;

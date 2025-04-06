@@ -2,7 +2,9 @@ package com.smarthome.mobile.network;
 
 import com.smarthome.mobile.dto.request.ChangePasswordRequest;
 import com.smarthome.mobile.dto.request.LoginRequest;
+import com.smarthome.mobile.dto.request.RefreshRequest;
 import com.smarthome.mobile.dto.response.LoginResponse;
+import com.smarthome.mobile.dto.response.TokenResponse;
 
 import java.util.Map;
 
@@ -24,8 +26,11 @@ public interface ApiService {
     @GET("api/users/logout/")
     Call<Void> logout();
 
-    @POST("api/homes/changePassword/")
+    @POST("api/changePassword/")
     Call<Void> changePassword(@Body ChangePasswordRequest request);
+
+    @POST("api/refresh/")
+    Call<TokenResponse> refreshToken(@Body RefreshRequest request);
 
     @Multipart
     @POST("api/speeches/upload/")

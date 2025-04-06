@@ -1,4 +1,4 @@
-package com.smarthome.mobile.view;
+package com.smarthome.mobile.view.fragment;
 
 import android.Manifest;
 import android.animation.AnimatorSet;

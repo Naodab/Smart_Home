@@ -8,7 +8,9 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.smarthome.mobile.app.MyApp;
 import com.smarthome.mobile.dto.request.LoginRequest;
+import com.smarthome.mobile.dto.request.RefreshRequest;
 import com.smarthome.mobile.dto.response.LoginResponse;
+import com.smarthome.mobile.dto.response.TokenResponse;
 import com.smarthome.mobile.network.ApiClient;
 import com.smarthome.mobile.network.ApiService;
 
@@ -38,14 +40,13 @@ public class AuthRepository {
                     @NonNull Response<LoginResponse> response) {
                 if (response.isSuccessful()) {
                     LoginResponse rp = response.body();
-                    assert rp != null;
-                    Log.i("LOGIN", "onResponse: " + rp.getTokens().toString());
-                    MyApp.getInstance().getSessionManager().saveAuthToken(rp.getTokens().getAccess());
-                    MyApp.getInstance().getSessionManager().saveAuthRefresh(rp.getTokens().getRefresh());
-                    MyApp.getInstance().getSessionManager().saveUserAddress(rp.getAddress());
-                    MyApp.getInstance().getSessionManager().saveUserEmail(rp.getEmail());
-                    MyApp.getInstance().getSessionManager().saveUserId(rp.getId());
-                    loginStatus.setValue(true);
+                    if (rp != null && rp.getTokens() != null) {
+                        Log.i("LOGIN STATUS", "onResponse: " + rp.getEmail());
+                        MyApp.getInstance().getSessionManager().saveAuthData(rp);
+                        loginStatus.setValue(true);
+                    } else {
+                        loginStatus.setValue(false);
+                    }
                 } else {
                     loginStatus.setValue(false);
                 }
@@ -59,9 +60,28 @@ public class AuthRepository {
     }
 
     public void logout() {
-
+        loginStatus.setValue(null);
+        MyApp.getInstance().getSessionManager().clear();
     }
 
     public void changePassword(String oldPassword, String newPassword) {
+    }
+
+    public void refresh() {
+        apiService.refreshToken(new RefreshRequest
+                (MyApp.getInstance().getSessionManager()
+                        .fetchUserRefreshToken())).enqueue(new Callback<TokenResponse>() {
+            @Override
+            public void onResponse(@NonNull Call<TokenResponse> call,
+                                   @NonNull Response<TokenResponse> response) {
+
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<TokenResponse> call,
+                                  @NonNull Throwable t) {
+
+            }
+        });
     }
 }

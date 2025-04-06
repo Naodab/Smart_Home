@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName;
 
 public class LoginResponse {
     @SerializedName("id")
-    private String id;
+    private int id;
 
     @SerializedName("email")
     private String email;
@@ -12,23 +12,23 @@ public class LoginResponse {
     @SerializedName("address")
     private String address;
 
-    @SerializedName("token")
+    @SerializedName("tokens")
     private TokenResponse tokens;
 
     public LoginResponse() {}
 
-    public LoginResponse(String id, String email, String address, TokenResponse tokens) {
+    public LoginResponse(int id, String email, String address, TokenResponse tokens) {
         this.id = id;
         this.email = email;
         this.address = address;
         this.tokens = tokens;
     }
 
-    public String getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(int id) {
         this.id = id;
     }
 
