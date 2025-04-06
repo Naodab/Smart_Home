@@ -1,6 +1,5 @@
 <resources>
     <string name="app_name">Smart Home</string>
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="project_name">SMART HOME</string>
     <string name="login">Đăng nhập</string>
@@ -24,4 +23,7 @@
     <string name="temperature">Nhiệt độ</string>
     <string name="icon_device">icon device</string>
     <string name="details">Xem chi tiết</string>
+    <string name="success">Thành công</string>
+    <string name="failure">Thất bại</string>
+    <string name="info">Thông tin</string>
 </resources>

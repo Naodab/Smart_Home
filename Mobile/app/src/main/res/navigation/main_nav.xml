@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/loginFragment"
-        android:name="com.smarthome.mobile.view.LoginFragment"
+        android:name="com.smarthome.mobile.view.fragment.LoginFragment"
         android:label="fragment_login"
         tools:layout="@layout/fragment_login" >
         <action
@@ -20,7 +20,7 @@
     </fragment>
     <fragment
         android:id="@+id/monitorFragment"
-        android:name="com.smarthome.mobile.view.MonitorFragment"
+        android:name="com.smarthome.mobile.view.fragment.MonitorFragment"
         android:label="fragment_monitor"
         tools:layout="@layout/fragment_monitor" >
         <action
@@ -33,7 +33,7 @@
     </fragment>
     <fragment
         android:id="@+id/homeFragment"
-        android:name="com.smarthome.mobile.view.HomeFragment"
+        android:name="com.smarthome.mobile.view.fragment.HomeFragment"
         android:label="fragment_home"
         tools:layout="@layout/fragment_home" >
         <action
@@ -63,7 +63,7 @@
     </fragment>
     <fragment
         android:id="@+id/faceAuthFragment"
-        android:name="com.smarthome.mobile.view.FaceAuthFragment"
+        android:name="com.smarthome.mobile.view.fragment.FaceAuthFragment"
         android:label="fragment_face_auth"
         tools:layout="@layout/fragment_face_auth" >
         <action
@@ -76,7 +76,7 @@
     </fragment>
     <fragment
         android:id="@+id/speechAuthFragment"
-        android:name="com.smarthome.mobile.view.SpeechAuthFragment"
+        android:name="com.smarthome.mobile.view.fragment.SpeechAuthFragment"
         android:label="fragment_speech_auth"
         tools:layout="@layout/fragment_speech_auth" >
         <action
@@ -89,7 +89,7 @@
     </fragment>
     <fragment
         android:id="@+id/remoteFragment"
-        android:name="com.smarthome.mobile.view.RemoteFragment"
+        android:name="com.smarthome.mobile.view.fragment.RemoteFragment"
         android:label="fragment_remote"
         tools:layout="@layout/fragment_remote" />
 </navigation>
