@@ -1,31 +1,27 @@
 package com.smarthome.mobile.viewmodel;
 
+import android.app.Application;
+
+import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.MutableLiveData;
 
 import com.smarthome.mobile.model.Home;
-import com.smarthome.mobile.repository.AuthRepository;
+import com.smarthome.mobile.repository.HomeRepository;
+import com.smarthome.mobile.util.Result;
 
-public class HomeViewModel {
-    private final AuthRepository authRepository;
-    private final MutableLiveData<Boolean> userLiveData;
-    private static HomeViewModel _instance;
+public class HomeViewModel extends AndroidViewModel {
+    private final HomeRepository homeRepository;
 
-    private HomeViewModel() {
-        this.authRepository = new AuthRepository();
-        userLiveData = this.authRepository.getLoginStatus();
+    public HomeViewModel(Application application) {
+        super(application);
+        this.homeRepository = new HomeRepository();
     }
 
-    public static HomeViewModel getInstance() {
-        if (_instance == null)
-            _instance = new HomeViewModel();
-        return _instance;
+    public MutableLiveData<Result<Home>> getHomeLiveData() {
+        return this.homeRepository.getHomeLiveData();
     }
 
-    public MutableLiveData<Boolean> getUserLiveData() {
-        return this.userLiveData;
-    }
-
-    public void logout() {
-        authRepository.logout();
+    public void fetchHome() {
+        this.homeRepository.getHome();
     }
 }

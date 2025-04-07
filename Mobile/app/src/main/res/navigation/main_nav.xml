@@ -6,19 +6,6 @@
     app:startDestination="@id/homeFragment">
 
     <fragment
-        android:id="@+id/loginFragment"
-        android:name="com.smarthome.mobile.view.fragment.LoginFragment"
-        android:label="fragment_login"
-        tools:layout="@layout/fragment_login" >
-        <action
-            android:id="@+id/action_loginFragment_to_homeFragment"
-            app:destination="@id/homeFragment"
-            app:enterAnim="@anim/fade_in"
-            app:exitAnim="@anim/fade_out"
-            app:popEnterAnim="@anim/fade_in"
-            app:popExitAnim="@anim/fade_out" />
-    </fragment>
-    <fragment
         android:id="@+id/monitorFragment"
         android:name="com.smarthome.mobile.view.fragment.MonitorFragment"
         android:label="fragment_monitor"
@@ -36,13 +23,6 @@
         android:name="com.smarthome.mobile.view.fragment.HomeFragment"
         android:label="fragment_home"
         tools:layout="@layout/fragment_home" >
-        <action
-            android:id="@+id/action_homeFragment_to_loginFragment"
-            app:destination="@id/loginFragment"
-            app:enterAnim="@anim/fade_in"
-            app:exitAnim="@anim/fade_out"
-            app:popEnterAnim="@anim/fade_in"
-            app:popExitAnim="@anim/fade_out"  />
         <action
             android:id="@+id/action_homeFragment_to_faceAuthFragment"
             app:destination="@id/faceAuthFragment"
@@ -92,4 +72,9 @@
         android:name="com.smarthome.mobile.view.fragment.RemoteFragment"
         android:label="fragment_remote"
         tools:layout="@layout/fragment_remote" />
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="com.smarthome.mobile.view.fragment.ProfileFragment"
+        android:label="fragment_profile"
+        tools:layout="@layout/fragment_profile" />
 </navigation>

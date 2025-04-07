@@ -15,7 +15,7 @@
     <string name="authentication">Xác thực</string>
     <string name="remote">Điều khiển</string>
     <string name="follow">Theo dõi</string>
-    <string name="logout">Đăng xuất</string>
+    <string name="profile">Hồ sơ</string>
     <string name="back">back</string>
     <string name="face_auth_manual">Vui lòng di chuyển mặt đến khung hình</string>
     <string name="audio_record_manual">Nhấn giữ để nói</string>
@@ -26,4 +26,5 @@
     <string name="success">Thành công</string>
     <string name="failure">Thất bại</string>
     <string name="info">Thông tin</string>
+    <string name="dot">.</string>
 </resources>

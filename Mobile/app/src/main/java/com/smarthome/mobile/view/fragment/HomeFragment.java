@@ -24,8 +24,6 @@ import com.smarthome.mobile.viewmodel.HomeViewModel;
 
 public class HomeFragment extends Fragment {
     private FragmentHomeBinding binding;
-    private AuthRepository authRepository;
-    private HomeViewModel homeViewModel;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -37,38 +35,22 @@ public class HomeFragment extends Fragment {
                              ViewGroup container,
                              Bundle savedInstanceState) {
         binding = FragmentHomeBinding.inflate(inflater, container, false);
-        homeViewModel = HomeViewModel.getInstance();
-        View view = binding.getRoot();
-        authRepository = new AuthRepository();
-        return view;
+        return binding.getRoot();
     }
 
     @Override
     public void onViewCreated(@NonNull View view,
                               @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        showBottomNav();
 
         binding.faceAuthBtn.setOnClickListener(v -> {
-            hideBottomNav();
             NavController navController = Navigation.findNavController(view);
             navController.navigate(R.id.action_homeFragment_to_faceAuthFragment);
         });
 
         binding.speechAuthBtn.setOnClickListener(v -> {
-            hideBottomNav();
             Navigation.findNavController(view)
                     .navigate(R.id.action_homeFragment_to_speechAuthFragment);
         });
-    }
-
-    public void showBottomNav() {
-        if (getActivity() instanceof MainActivity)
-            ((MainActivity) getActivity()).showBottomNav();
-    }
-
-    public void hideBottomNav() {
-        if (getActivity() instanceof MainActivity)
-            ((MainActivity) getActivity()).hideBottomNav();
     }
 }

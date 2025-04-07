@@ -7,12 +7,14 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.MutableLiveData;
 
 import com.smarthome.mobile.app.MyApp;
+import com.smarthome.mobile.dto.request.ChangePasswordRequest;
 import com.smarthome.mobile.dto.request.LoginRequest;
 import com.smarthome.mobile.dto.request.RefreshRequest;
 import com.smarthome.mobile.dto.response.LoginResponse;
 import com.smarthome.mobile.dto.response.TokenResponse;
 import com.smarthome.mobile.network.ApiClient;
 import com.smarthome.mobile.network.ApiService;
+import com.smarthome.mobile.util.Result;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -20,18 +22,19 @@ import retrofit2.Response;
 
 public class AuthRepository {
     private final ApiService apiService;
-    private final MutableLiveData<Boolean> loginStatus;
+    private final MutableLiveData<Result<Boolean>> loginStatus;
 
     public AuthRepository() {
         this.apiService = ApiClient.getClient().create(ApiService.class);
         this.loginStatus = new MutableLiveData<>();
     }
 
-    public MutableLiveData<Boolean> getLoginStatus() {
+    public MutableLiveData<Result<Boolean>> getLoginStatus() {
         return this.loginStatus;
     }
 
     public void login(String email, String password) {
+        loginStatus.setValue(Result.loading());
         LoginRequest request = new LoginRequest(email, password);
         apiService.login(request).enqueue(new Callback<LoginResponse>() {
             @Override
@@ -43,18 +46,19 @@ public class AuthRepository {
                     if (rp != null && rp.getTokens() != null) {
                         Log.i("LOGIN STATUS", "onResponse: " + rp.getEmail());
                         MyApp.getInstance().getSessionManager().saveAuthData(rp);
-                        loginStatus.setValue(true);
+                        loginStatus.setValue(Result.success(true));
                     } else {
-                        loginStatus.setValue(false);
+                        loginStatus.setValue(Result.error("Tài khoản hoặc mật khẩu không chính xác!"));
                     }
                 } else {
-                    loginStatus.setValue(false);
+                    loginStatus.setValue(Result.error("Tài khoản hoặc mật khẩu không chính xác!"));
                 }
             }
 
             @Override
-            public void onFailure(@NonNull Call<LoginResponse> call, @NonNull Throwable t) {
-                loginStatus.setValue(false);
+            public void onFailure(@NonNull Call<LoginResponse> call,
+                                  @NonNull Throwable t) {
+                loginStatus.setValue(Result.error("Không thể gửi yêu cầu đển server!"));
             }
         });
     }
@@ -65,6 +69,20 @@ public class AuthRepository {
     }
 
     public void changePassword(String oldPassword, String newPassword) {
+        apiService.changePassword(new ChangePasswordRequest(oldPassword, newPassword))
+                .enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(@NonNull Call<Void> call,
+                                   @NonNull Response<Void> response) {
+
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<Void> call,
+                                  @NonNull Throwable throwable) {
+
+            }
+        });
     }
 
     public void refresh() {
