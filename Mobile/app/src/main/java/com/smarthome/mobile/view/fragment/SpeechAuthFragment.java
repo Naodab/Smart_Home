@@ -11,7 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
-import androidx.navigation.Navigation;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.os.Handler;
 import android.os.Looper;
@@ -27,6 +27,7 @@ import android.view.animation.ScaleAnimation;
 import com.smarthome.mobile.R;
 import com.smarthome.mobile.databinding.FragmentSpeechAuthBinding;
 import com.smarthome.mobile.util.SpeechAuthCallBack;
+import com.smarthome.mobile.view.activity.MainActivity;
 import com.smarthome.mobile.viewmodel.SpeechAuthViewModel;
 
 public class SpeechAuthFragment extends Fragment {
@@ -68,8 +69,11 @@ public class SpeechAuthFragment extends Fragment {
     @SuppressLint("ClickableViewAccessibility")
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        binding.backBtn.setOnClickListener(v ->
-                Navigation.findNavController(v).navigate(R.id.action_speechAuthFragment_to_homeFragment));
+        binding.backBtn.setOnClickListener(v -> backToHome());
+
+        if (getActivity() instanceof MainActivity) {
+            ((MainActivity) getActivity()).hideBottomNav();
+        }
 
         speechAuthViewModel = new SpeechAuthViewModel(new SpeechAuthCallBack() {
             @Override
@@ -124,5 +128,21 @@ public class SpeechAuthFragment extends Fragment {
         animation.setFillAfter(true);
         animation.setDuration(300);
         view.startAnimation(animation);
+    }
+
+    private void backToHome() {
+        FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
+        transaction.replace(R.id.fragmentContainerView, new HomeFragment());
+        transaction.addToBackStack(null);
+        transaction.commit();
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+
+        if (getActivity() instanceof MainActivity) {
+            ((MainActivity) getActivity()).hideBottomNav();
+        }
     }
 }

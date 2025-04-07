@@ -5,6 +5,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
@@ -43,14 +44,14 @@ public class HomeFragment extends Fragment {
                               @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        binding.faceAuthBtn.setOnClickListener(v -> {
-            NavController navController = Navigation.findNavController(view);
-            navController.navigate(R.id.action_homeFragment_to_faceAuthFragment);
-        });
+        binding.faceAuthBtn.setOnClickListener(v -> navigateToFragment(new FaceAuthFragment()));
+        binding.speechAuthBtn.setOnClickListener(v -> navigateToFragment(new SpeechAuthFragment()));
+    }
 
-        binding.speechAuthBtn.setOnClickListener(v -> {
-            Navigation.findNavController(view)
-                    .navigate(R.id.action_homeFragment_to_speechAuthFragment);
-        });
+    private void navigateToFragment(Fragment fragment) {
+        FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
+        transaction.replace(R.id.fragmentContainerView, fragment);
+        transaction.addToBackStack(null);
+        transaction.commit();
     }
 }
