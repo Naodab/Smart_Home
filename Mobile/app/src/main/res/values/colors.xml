@@ -16,4 +16,5 @@
     <color name="alpha_green">#C0EBE4</color>
     <color name="alpha_red">#EA8183</color>
     <color name="alpha_blue">#9BBDF3</color>
+    <color name="setting_color_bg">#FF9F6C</color>
 </resources>

@@ -15,7 +15,7 @@
     <string name="authentication">Xác thực</string>
     <string name="remote">Điều khiển</string>
     <string name="follow">Theo dõi</string>
-    <string name="profile">Hồ sơ</string>
+    <string name="setting">Cài đặt</string>
     <string name="back">back</string>
     <string name="face_auth_manual">Vui lòng di chuyển mặt đến khung hình</string>
     <string name="audio_record_manual">Nhấn giữ để nói</string>
@@ -34,8 +34,10 @@
     <string name="text_email">testhome3@smarthome.com</string>
     <string name="text_address">123 Kiều Sơn Đen</string>
     <string name="logout">Đăng xuất</string>
-    <string name="change_password">Thay đổi mật khẩu</string>
+    <string name="change_password">Đổi mật khẩu</string>
     <string name="old_password">Mật khẩu cũ</string>
     <string name="new_password">Mật khẩu mới</string>
     <string name="confirm_password">Xác nhận mật khẩu</string>
+    <string name="exit">Thoát</string>
+    <string name="confirm">Xác nhận</string>
 </resources>
