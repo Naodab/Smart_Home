@@ -75,3 +75,11 @@ class History(models.Model):
 
   def __str__(self):
     return f"History: {self.id} - {self.device} - {self.status} - {self.time} - {self.person}"
+  
+class BlacklistedToken(models.Model):
+  jti = models.CharField(max_length=255, unique=True)
+  exp = models.DateTimeField()
+  created_at = models.DateTimeField(auto_now_add=True)
+
+  def __str__(self):
+    return f"BlacklistedToken: {self.jti} - {self.created_at}"

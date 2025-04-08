@@ -23,4 +23,6 @@ urlpatterns = [
 
   # Common urls
   path('token/refresh/', views.refresh_token_api_view), # /api/token/refresh/
+  path('logout/', views.logout_view), # /api/logout/
+  path('change-password/', views.change_password_api_view), # /api/change-password/
 ]

@@ -12,18 +12,26 @@ from api.tokens import get_tokens_for_user
 
 from .serializers import DeviceCreateSerializer, \
                           DeviceSerializer, \
-                          DeviceUpdateSerializer, PersonSaveSerializer, \
+                          DeviceUpdateSerializer, \
+                          HomeMobileSerializer, \
+                          PersonSaveSerializer, \
                           PersonSerializer, \
                           SpeechSerializer, \
                           LoginSerializer, \
                           RegisterSerializer, \
-                          HomeSerializer
+                          HomeSerializer, \
+                          HistorySerializer
+
+from api.models import History, BlacklistedToken
 
 from AI_Module.speech_recognition.speech_to_text import transfer_audio_to_text
 from AI_Module.speaker_recognition.test import identify_speaker
 
 from django.shortcuts import get_object_or_404
 from api.models import Device, Home, Person
+from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
+from datetime import datetime, timezone
 
 # MOBILE API
 # ONLY FOR USER
@@ -204,7 +212,7 @@ class PersonIdAPIView(APIView):
   
   def put(self, request, id, *args, **kwargs):
     person = get_object_or_404(Person, id=id)
-    serializer = PersonSaveSerializer(person, data=request.data)
+    serializer = PersonSaveSerializer(person, data=request.data, context={"request": request})
     if serializer.is_valid():
       serializer.save()
       return Response({"message": "Person updated successfully", "name": person.name})
@@ -264,7 +272,7 @@ class HistoryAPIView(APIView):
   permission_classes = [IsAuthenticated, IsAdmin]
   
   def post(self, request, *args, **kwargs):
-    serializer = HistoryCreateSerializer(data=request.data, context={"request": request})
+    serializer = HistorySerializer(data=request.data, context={"request": request})
     if serializer.is_valid():
       history = serializer.save()
       return Response(HistorySerializer(history).data, status=status.HTTP_201_CREATED)
@@ -310,3 +318,48 @@ class RefreshTokenAPIView(APIView):
     except Exception as e:
       return Response({"message": str(e)}, status=400)
 refresh_token_api_view = RefreshTokenAPIView.as_view()
+
+# api/logout/
+class LogoutView(APIView):
+  permission_classes = [IsAuthenticated]
+
+  def post(self, request):
+    auth = JWTAuthentication()
+    try:
+      header = auth.get_header(request)
+      raw_token = auth.get_raw_token(header)
+      validated_token = auth.get_validated_token(raw_token)
+
+      jti = validated_token.get("jti")
+      if not jti:
+          return Response({"detail": "Token does not contain jti"}, status=status.HTTP_400_BAD_REQUEST)
+
+      exp_timestamp = validated_token.get("exp")
+      exp_datetime = datetime.fromtimestamp(exp_timestamp, tz=timezone.utc)
+      BlacklistedToken.objects.create(jti=jti, exp=exp_datetime)
+
+      return Response({"detail": "Logged out successfully"}, status=status.HTTP_200_OK)
+
+    except TokenError as e:
+      return Response({"detail": "Invalid token"}, status=status.HTTP_400_BAD_REQUEST)
+    except Exception as e:
+      return Response({"detail": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+logout_view = LogoutView.as_view()
+
+# api/change-password/
+class ChangePasswordAPIView(APIView):
+  permission_classes = [IsAuthenticated]
+
+  def post(self, request):
+    user = request.user
+    old_password = request.data.get('old_password')
+    new_password = request.data.get('new_password')
+
+    if not user.check_password(old_password):
+      return Response({"error": "Old password is incorrect"}, status=status.HTTP_400_BAD_REQUEST)
+
+    user.set_password(new_password)
+    user.save()
+
+    return Response({"message": "Password changed successfully"}, status=status.HTTP_200_OK)
+change_password_api_view = ChangePasswordAPIView.as_view()
