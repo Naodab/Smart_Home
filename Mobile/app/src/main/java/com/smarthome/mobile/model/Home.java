@@ -1,24 +1,35 @@
 package com.smarthome.mobile.model;
 
+import java.util.List;
+
 public class Home {
-    private String uid;
+    private int id;
     private String email;
     private String address;
+    private float temperature;
+    private float humidity;
+    private List<Device> devices;
+    private List<Person> people;
 
-    public Home(String uid, String email, String address) {
-        this.uid = uid;
+    public Home(int id, String email, String address, float temperature,
+                float humidity, List<Device> devices, List<Person> people) {
+        this.id = id;
         this.email = email;
         this.address = address;
+        this.temperature = temperature;
+        this.humidity = humidity;
+        this.devices = devices;
+        this.people = people;
     }
 
     public Home() {}
 
-    public String getUid() {
-        return uid;
+    public int getId() {
+        return id;
     }
 
-    public void setUid(String uid) {
-        this.uid = uid;
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getEmail() {
@@ -35,5 +46,37 @@ public class Home {
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    public float getTemperature() {
+        return temperature;
+    }
+
+    public void setTemperature(float temperature) {
+        this.temperature = temperature;
+    }
+
+    public float getHumidity() {
+        return humidity;
+    }
+
+    public void setHumidity(float humidity) {
+        this.humidity = humidity;
+    }
+
+    public List<Device> getDevices() {
+        return devices;
+    }
+
+    public void setDevices(List<Device> devices) {
+        this.devices = devices;
+    }
+
+    public List<Person> getPeople() {
+        return people;
+    }
+
+    public void setPeople(List<Person> people) {
+        this.people = people;
     }
 }

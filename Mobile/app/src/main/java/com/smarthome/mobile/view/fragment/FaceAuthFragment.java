@@ -1,4 +1,4 @@
-package com.smarthome.mobile.view;
+package com.smarthome.mobile.view.fragment;
 
 import android.Manifest;
 import android.animation.AnimatorSet;
@@ -19,6 +19,7 @@ import androidx.camera.lifecycle.ProcessCameraProvider;
 import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.navigation.Navigation;
 
 import android.os.Looper;
@@ -36,6 +37,7 @@ import com.google.mlkit.vision.face.FaceDetectorOptions;
 import com.smarthome.mobile.R;
 import com.smarthome.mobile.databinding.FragmentFaceAuthBinding;
 import com.smarthome.mobile.util.FaceAuthCallback;
+import com.smarthome.mobile.view.activity.MainActivity;
 import com.smarthome.mobile.viewmodel.FaceAuthViewModel;
 
 import java.nio.ByteBuffer;
@@ -67,6 +69,10 @@ public class FaceAuthFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        if (getActivity() instanceof MainActivity) {
+            ((MainActivity) getActivity()).hideBottomNav();
+        }
+
         this.faceAuthViewModel = FaceAuthViewModel.getInstance();
         animatePreviewView();
 
@@ -94,7 +100,7 @@ public class FaceAuthFragment extends Fragment {
             if (isAnalyzing) {
                 isAnalyzing = false;
             }
-            Navigation.findNavController(view).navigate(R.id.action_faceAuthFragment_to_homeFragment);
+            backToHome();
         });
     }
 
@@ -154,9 +160,7 @@ public class FaceAuthFragment extends Fragment {
                 isAnalyzing = false;
                 takePhoto();
                 binding.cameraStatus.setText("Đã nhận được ảnh");
-                new android.os.Handler(Looper.getMainLooper()).postDelayed(() -> {
-                    Navigation.findNavController(requireView()).navigate(R.id.action_faceAuthFragment_to_homeFragment);
-                }, 2000);
+                new android.os.Handler(Looper.getMainLooper()).postDelayed(this::backToHome, 2000);
             }
         }).addOnFailureListener(e -> Log.d("Analyze Image", Objects.requireNonNull(e.getMessage())));
     }
@@ -247,7 +251,23 @@ public class FaceAuthFragment extends Fragment {
         animatorSet.start();
     }
 
-//    private String getRealPathFromURI(Uri contentUri) {
+    private void backToHome() {
+        FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
+        transaction.replace(R.id.fragmentContainerView, new HomeFragment());
+        transaction.addToBackStack(null);
+        transaction.commit();
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+
+        if (getActivity() instanceof MainActivity) {
+            ((MainActivity) getActivity()).showBottomNav();
+        }
+    }
+
+    //    private String getRealPathFromURI(Uri contentUri) {
 //        String result = null;
 //        String[] proj = {MediaStore.Images.Media.DATA};
 //        Cursor cursor = requireContext().getContentResolver().query(contentUri, proj, null, null, null);

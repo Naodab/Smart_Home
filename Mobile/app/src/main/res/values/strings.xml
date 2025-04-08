@@ -1,6 +1,5 @@
 <resources>
     <string name="app_name">Smart Home</string>
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="project_name">SMART HOME</string>
     <string name="login">Đăng nhập</string>
@@ -16,7 +15,7 @@
     <string name="authentication">Xác thực</string>
     <string name="remote">Điều khiển</string>
     <string name="follow">Theo dõi</string>
-    <string name="logout">Đăng xuất</string>
+    <string name="setting">Cài đặt</string>
     <string name="back">back</string>
     <string name="face_auth_manual">Vui lòng di chuyển mặt đến khung hình</string>
     <string name="audio_record_manual">Nhấn giữ để nói</string>
@@ -24,4 +23,21 @@
     <string name="temperature">Nhiệt độ</string>
     <string name="icon_device">icon device</string>
     <string name="details">Xem chi tiết</string>
+    <string name="success">Thành công</string>
+    <string name="failure">Thất bại</string>
+    <string name="info">Thông tin</string>
+    <string name="dot">.</string>
+    <string name="id_tv">ID:</string>
+    <string name="email_tv">Email:</string>
+    <string name="address_tv">Địa chỉ:</string>
+    <string name="temp_id">2</string>
+    <string name="text_email">testhome3@smarthome.com</string>
+    <string name="text_address">123 Kiều Sơn Đen</string>
+    <string name="logout">Đăng xuất</string>
+    <string name="change_password">Đổi mật khẩu</string>
+    <string name="old_password">Mật khẩu cũ</string>
+    <string name="new_password">Mật khẩu mới</string>
+    <string name="confirm_password">Xác nhận mật khẩu</string>
+    <string name="exit">Thoát</string>
+    <string name="confirm">Xác nhận</string>
 </resources>
