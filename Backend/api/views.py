@@ -12,7 +12,7 @@ from api.tokens import get_tokens_for_user
 
 from .serializers import DeviceCreateSerializer, \
                           DeviceSerializer, \
-                          DeviceUpdateSerializer, \
+                          DeviceUpdateSerializer, HomeMobileSerializer, \
                           PersonSaveSerializer, \
                           PersonSerializer, \
                           SpeechSerializer, \
