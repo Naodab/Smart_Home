@@ -20,6 +20,14 @@ public class AuthViewModel extends AndroidViewModel {
         return this.authRepository.getLoginStatus();
     }
 
+    public MutableLiveData<Result<Boolean>> getLogoutStatus() {
+        return this.authRepository.getLogoutStatus();
+    }
+
+    public MutableLiveData<Result<Boolean>> getChangePasswordStatus() {
+        return this.authRepository.getChangePasswordStatus();
+    }
+
     public void login(String email, String password) {
         authRepository.login(email, password);
     }

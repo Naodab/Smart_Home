@@ -13,6 +13,7 @@ public class SessionManager {
     private static final String USER_REFRESH_TOKEN  = "UserRefresh";
     private static final String USER_EMAIL = "UserEmail";
     private static final String USER_ADDRESS =  "UserAddress";
+    private static final String USER_ID = "UserID";
 
     public SessionManager(Context context) {
         this.sharedPreferences = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
@@ -39,6 +40,11 @@ public class SessionManager {
         editor.apply();
     }
 
+    public void saveUserId(int id) {
+        editor.putInt(USER_ID, id);
+        editor.apply();
+    }
+
     public String fetchAuthToken() {
         return sharedPreferences.getString(USER_TOKEN, null);
     }
@@ -51,6 +57,10 @@ public class SessionManager {
         return sharedPreferences.getString(USER_ADDRESS, null);
     }
 
+    public int fetchUserID() {
+        return sharedPreferences.getInt(USER_ID, 0);
+    }
+
     public String fetchUserRefreshToken() {
         return sharedPreferences.getString(USER_REFRESH_TOKEN, null);
     }
@@ -60,6 +70,7 @@ public class SessionManager {
         saveAuthRefresh(response.getTokens().getRefresh());
         saveUserAddress(response.getAddress());
         saveUserEmail(response.getEmail());
+        saveUserId(response.getId());
     }
 
     public void clear() {

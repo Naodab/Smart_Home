@@ -27,4 +27,15 @@
     <string name="failure">Thất bại</string>
     <string name="info">Thông tin</string>
     <string name="dot">.</string>
+    <string name="id_tv">ID:</string>
+    <string name="email_tv">Email:</string>
+    <string name="address_tv">Địa chỉ:</string>
+    <string name="temp_id">2</string>
+    <string name="text_email">testhome3@smarthome.com</string>
+    <string name="text_address">123 Kiều Sơn Đen</string>
+    <string name="logout">Đăng xuất</string>
+    <string name="change_password">Thay đổi mật khẩu</string>
+    <string name="old_password">Mật khẩu cũ</string>
+    <string name="new_password">Mật khẩu mới</string>
+    <string name="confirm_password">Xác nhận mật khẩu</string>
 </resources>

@@ -13,6 +13,9 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.smarthome.mobile.databinding.FragmentMonitorBinding;
+import com.smarthome.mobile.model.Home;
+import com.smarthome.mobile.view.widget.CustomLoadingDialog;
+import com.smarthome.mobile.view.widget.CustomToast;
 import com.smarthome.mobile.viewmodel.DeviceAdapter;
 import com.smarthome.mobile.viewmodel.HomeViewModel;
 
@@ -20,6 +23,7 @@ public class MonitorFragment extends Fragment {
     private FragmentMonitorBinding binding;
     private DeviceAdapter deviceAdapter;
     private HomeViewModel homeViewModel;
+    private CustomLoadingDialog loading;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -32,6 +36,7 @@ public class MonitorFragment extends Fragment {
         binding = FragmentMonitorBinding.inflate(inflater, container, false);
         binding.devicesList.setLayoutManager(new LinearLayoutManager(requireContext()));
         homeViewModel = new ViewModelProvider(requireActivity()).get(HomeViewModel.class);
+        loading = new CustomLoadingDialog(getContext());
         return binding.getRoot();
     }
 
@@ -42,8 +47,20 @@ public class MonitorFragment extends Fragment {
         homeViewModel.getHomeLiveData().observe(getViewLifecycleOwner(), result -> {
             switch (result.status) {
                 case ERROR:
+                    loading.dismiss();
+                    CustomToast.showError(getContext(),  "Có lỗi xảy ra");
+                    break;
                 case LOADING:
+                    loading.show();
+                    break;
                 case SUCCESS:
+                    Home home = result.data;
+                    binding.tvTemperature.setText(String.valueOf(home.getTemperature()));
+                    binding.tvHumidity.setText(String.valueOf(home.getHumidity()));
+                    binding.devicesList.setLayoutManager(new LinearLayoutManager(requireContext()));
+                    deviceAdapter =  new DeviceAdapter(home.getDevices());
+                    binding.devicesList.setAdapter(deviceAdapter);
+                    loading.dismiss();
             }
         });
     }

@@ -23,14 +23,26 @@ import retrofit2.Response;
 public class AuthRepository {
     private final ApiService apiService;
     private final MutableLiveData<Result<Boolean>> loginStatus;
+    private final MutableLiveData<Result<Boolean>> changePasswordStatus;
+    private final MutableLiveData<Result<Boolean>> logoutStatus;
 
     public AuthRepository() {
         this.apiService = ApiClient.getClient().create(ApiService.class);
         this.loginStatus = new MutableLiveData<>();
+        this.changePasswordStatus = new MutableLiveData<>();
+        this.logoutStatus = new MutableLiveData<>();
     }
 
     public MutableLiveData<Result<Boolean>> getLoginStatus() {
         return this.loginStatus;
+    }
+
+    public MutableLiveData<Result<Boolean>> getChangePasswordStatus() {
+        return changePasswordStatus;
+    }
+
+    public MutableLiveData<Result<Boolean>> getLogoutStatus() {
+        return logoutStatus;
     }
 
     public void login(String email, String password) {
@@ -64,23 +76,45 @@ public class AuthRepository {
     }
 
     public void logout() {
-        loginStatus.setValue(null);
-        MyApp.getInstance().getSessionManager().clear();
-    }
-
-    public void changePassword(String oldPassword, String newPassword) {
-        apiService.changePassword(new ChangePasswordRequest(oldPassword, newPassword))
-                .enqueue(new Callback<Void>() {
+        logoutStatus.setValue(Result.loading());
+        apiService.logout().enqueue(new Callback<Void>() {
             @Override
             public void onResponse(@NonNull Call<Void> call,
                                    @NonNull Response<Void> response) {
-
+                if (response.isSuccessful()) {
+                    logoutStatus.setValue(Result.success(true));
+                } else {
+                    logoutStatus.setValue(Result.error("Có một lỗi gì đó đã diễn ra"));
+                }
             }
 
             @Override
             public void onFailure(@NonNull Call<Void> call,
                                   @NonNull Throwable throwable) {
+                logoutStatus.setValue(Result.error("Không thể kết nối đến server"));
+            }
+        });
+        MyApp.getInstance().getSessionManager().clear();
+    }
 
+    public void changePassword(String oldPassword, String newPassword) {
+        changePasswordStatus.setValue(Result.loading());
+        apiService.changePassword(new ChangePasswordRequest(oldPassword, newPassword))
+                .enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(@NonNull Call<Void> call,
+                                   @NonNull Response<Void> response) {
+                if (response.isSuccessful()) {
+                    changePasswordStatus.setValue(Result.success(true));
+                } else {
+                    changePasswordStatus.setValue(Result.error("Có một lỗi gì đó đã diễn ra"));
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<Void> call,
+                                  @NonNull Throwable throwable) {
+                changePasswordStatus.setValue(Result.error("Không thể kết nối đến server"));
             }
         });
     }
