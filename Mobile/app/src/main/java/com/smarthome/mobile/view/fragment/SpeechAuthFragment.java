@@ -142,7 +142,7 @@ public class SpeechAuthFragment extends Fragment {
         super.onDestroyView();
 
         if (getActivity() instanceof MainActivity) {
-            ((MainActivity) getActivity()).hideBottomNav();
+            ((MainActivity) getActivity()).showBottomNav();
         }
     }
 }
