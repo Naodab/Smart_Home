@@ -1,3 +1,5 @@
+"use client"
+
 import { getAuthToken } from "@/lib/auth"
 import { toast } from "./ui/use-toast"
 import router from "next/router"
@@ -108,7 +110,6 @@ export async function apiCall<T>(
         title: "Unauthorized",
         description: "Please log in again.",
       })
-      router.push("/login")
       return Promise.reject({ status: 401, message: "Unauthorized" } as ApiError);
     }
 
@@ -163,4 +164,10 @@ export const HomePersonApi = {
     apiCall<any>(`/api/homes/${data.home_id}/persons/`, "PUT", data),
   deleteHomePersons: (data: { home_id: string; person_ids: string[] }) =>
     apiCall<any>(`/api/homes/${data.home_id}/persons/`, "DELETE", data),
+}
+
+export const AuthApi = {
+  logout: () => apiCall<void>("/api/logout/", "POST"),
+  changePassword: (oldPass: string, newPass: string) =>
+    apiCall<any>("/api/change-password/", "POST", { oldPass, newPass }),
 }
