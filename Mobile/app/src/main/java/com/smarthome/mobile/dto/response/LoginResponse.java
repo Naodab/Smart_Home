@@ -1,26 +1,35 @@
 package com.smarthome.mobile.dto.response;
 
+import com.google.gson.annotations.SerializedName;
+
 public class LoginResponse {
-    private String id;
-    private String token;
+    @SerializedName("id")
+    private int id;
+
+    @SerializedName("email")
     private String email;
+
+    @SerializedName("address")
     private String address;
 
-    public LoginResponse(String token, String email, String address, String id) {
-        this.token = token;
-        this.email = email;
-        this.address = address;
-        this.id = id;
-    }
+    @SerializedName("tokens")
+    private TokenResponse tokens;
 
     public LoginResponse() {}
 
-    public String getToken() {
-        return token;
+    public LoginResponse(int id, String email, String address, TokenResponse tokens) {
+        this.id = id;
+        this.email = email;
+        this.address = address;
+        this.tokens = tokens;
     }
 
-    public void setToken(String token) {
-        this.token = token;
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getEmail() {
@@ -39,11 +48,11 @@ public class LoginResponse {
         this.address = address;
     }
 
-    public String getId() {
-        return id;
+    public TokenResponse getTokens() {
+        return tokens;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setTokens(TokenResponse tokens) {
+        this.tokens = tokens;
     }
 }

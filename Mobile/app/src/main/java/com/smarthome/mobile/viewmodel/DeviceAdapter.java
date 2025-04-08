@@ -51,25 +51,25 @@ public class DeviceAdapter extends RecyclerView.Adapter<DeviceAdapter.ViewHolder
             binding.setDevice(device);
             binding.executePendingBindings();
 
-            switch (device.getCategory()) {
-                case DOOR:
-                    if (device.isState()) {
-                        binding.deviceIcon.setImageResource(R.drawable.ic_door_open);
-                        binding.deviceState.setText("Trạng thái: đang mở");
-                    } else {
-                        binding.deviceIcon.setImageResource(R.drawable.ic_door_close);
-                        binding.deviceState.setText("Trạng thái: đang đóng");
-                    }
-                    break;
-                case LIGHT:
-                    if (device.isState()) {
-                        binding.deviceIcon.setImageResource(R.drawable.ic_light_on);
-                        binding.deviceState.setText("Trạng thái: đang bật");
-                    } else {
-                        binding.deviceIcon.setImageResource(R.drawable.ic_light_off);
-                        binding.deviceState.setText("Trạng thái: đang tắt");
-                    }
-                    break;
+            switch (device.getType()) {
+//                case DOOR:
+//                    if (device.getType()) {
+//                        binding.deviceIcon.setImageResource(R.drawable.ic_door_open);
+//                        binding.deviceState.setText("Trạng thái: đang mở");
+//                    } else {
+//                        binding.deviceIcon.setImageResource(R.drawable.ic_door_close);
+//                        binding.deviceState.setText("Trạng thái: đang đóng");
+//                    }
+//                    break;
+//                case LIGHT:
+//                    if ("on".equals(device.getStatus())) {
+//                        binding.deviceIcon.setImageResource(R.drawable.ic_light_on);
+//                        binding.deviceState.setText("Trạng thái: đang bật");
+//                    } else {
+//                        binding.deviceIcon.setImageResource(R.drawable.ic_light_off);
+//                        binding.deviceState.setText("Trạng thái: đang tắt");
+//                    }
+//                    break;
             }
         }
     }

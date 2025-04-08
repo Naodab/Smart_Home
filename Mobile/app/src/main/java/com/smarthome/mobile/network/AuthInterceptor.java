@@ -1,5 +1,7 @@
 package com.smarthome.mobile.network;
 
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 
 import java.io.IOException;

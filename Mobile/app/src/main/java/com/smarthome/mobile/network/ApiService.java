@@ -2,7 +2,10 @@ package com.smarthome.mobile.network;
 
 import com.smarthome.mobile.dto.request.ChangePasswordRequest;
 import com.smarthome.mobile.dto.request.LoginRequest;
+import com.smarthome.mobile.dto.request.RefreshRequest;
 import com.smarthome.mobile.dto.response.LoginResponse;
+import com.smarthome.mobile.dto.response.TokenResponse;
+import com.smarthome.mobile.model.Home;
 
 import java.util.Map;
 
@@ -16,16 +19,23 @@ import retrofit2.http.Multipart;
 import retrofit2.http.POST;
 import retrofit2.http.Part;
 import retrofit2.http.PartMap;
+import retrofit2.http.Path;
 
 public interface ApiService {
-    @POST("api/homes/login/")
+    @POST("api/users/login/")
     Call<LoginResponse> login(@Body LoginRequest request);
 
-    @GET("api/homes/logout/")
+    @GET("api/users/logout/")
     Call<Void> logout();
 
-    @POST("api/homes/changePassword/")
+    @POST("api/changePassword/")
     Call<Void> changePassword(@Body ChangePasswordRequest request);
+
+    @POST("api/refresh/")
+    Call<TokenResponse> refreshToken(@Body RefreshRequest request);
+
+    @GET("api/mobile/homes/{email}")
+    Call<Home> getHome(@Path("email") String email);
 
     @Multipart
     @POST("api/speeches/upload/")
