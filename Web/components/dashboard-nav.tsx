@@ -26,12 +26,7 @@ const navItems = [
     title: "Thiết bị",
     href: "/dashboard/devices",
     icon: Cpu,
-  },
-  {
-    title: "Lịch sử",
-    href: "/dashboard/history",
-    icon: History,
-  },
+  }
 ]
 
 export function DashboardNav() {

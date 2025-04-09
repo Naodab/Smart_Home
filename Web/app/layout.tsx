@@ -10,7 +10,7 @@ const inter = Inter({ subsets: ["latin"] })
 export const metadata: Metadata = {
   title: "SmartHome - Quản lý",
   description: "Ứng dụng quản lý SmartHome",
-    generator: 'DUT - Destructors'
+  generator: 'DUT - Destructors'
 }
 
 export default function RootLayout({
@@ -29,7 +29,5 @@ export default function RootLayout({
     </html>
   )
 }
-
-
 
 import './globals.css'
