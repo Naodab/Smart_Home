@@ -82,15 +82,15 @@ export function PersonsList() {
       await PersonApi.delete(id)
       setPersons(persons.filter((person) => person.id !== id))
       toast({
-        title: "Success",
-        description: "Person deleted successfully",
+        title: "Thành công",
+        description: "Người dùng được xóa thành công",
         variant: "success",
       })
     } catch (error) {
       const apiError = error as ApiError
       toast({
-        title: "Error",
-        description: apiError.message || "Failed to delete person. Please try again.",
+        title: "Lỗi",
+        description: apiError.message || "Không thể xóa người dùng. Vui lòng thử lại.",
         variant: "destructive",
       })
     } finally {
@@ -107,15 +107,15 @@ export function PersonsList() {
       await PersonApi.update(updatedPerson.id, updatedPerson)
       setPersons(persons.map((person) => (person.id === updatedPerson.id ? updatedPerson : person)))
       toast({
-        title: "Success",
-        description: "Person updated successfully",
+        title: "Thành công",
+        description: "Người dùng được cập nhật thành công",
         variant: "success",
       })
     } catch (error) {
       const apiError = error as ApiError
       toast({
-        title: "Error",
-        description: apiError.message || "Failed to update person. Please try again.",
+        title: "Lỗi",
+        description: apiError.message || "Không thể cập nhật người dùng. Vui lòng thử lại.",
         variant: "destructive",
       })
     } finally {
@@ -173,13 +173,13 @@ export function PersonsList() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>All Persons</CardTitle>
-        <CardDescription>A list of all persons in your SmartHome system.</CardDescription>
+        <CardTitle>Tất cả người dùng</CardTitle>
+        <CardDescription>Danh sách của tất cả người dùng trong hệ thống SmartHome.</CardDescription>
       </CardHeader>
       <div className="px-6 mb-4">
         <div className="relative">
           <Input
-            placeholder="Search persons by name or home email..."
+            placeholder="Tìm kiếm người dùng theo tên hoặc email nhà..."
             value={searchTerm}
             onChange={handleSearchChange}
             className="pl-10"
@@ -198,7 +198,7 @@ export function PersonsList() {
               }}
             >
               <X className="h-4 w-4" />
-              <span className="sr-only">Clear search</span>
+              <span className="sr-only">Xóa tìm kiếm</span>
             </Button>
           )}
         </div>
@@ -207,10 +207,10 @@ export function PersonsList() {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>ID</TableHead>
-              <TableHead>Name</TableHead>
-              <TableHead>Home Email</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
+              <TableHead>Mã</TableHead>
+              <TableHead>Tên</TableHead>
+              <TableHead>Email nhà</TableHead>
+              <TableHead className="text-right">Hành động</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -259,7 +259,7 @@ export function PersonsList() {
             ) : (
               <TableRow>
                 <TableCell colSpan={4} className="text-center py-4 t  ext-muted-foreground">
-                  {searchTerm ? "No persons found matching your search" : "No persons available"}
+                  {searchTerm ? "Không tìm thấy người dùng" : "Không có người dùng nào"}
                 </TableCell>
               </TableRow>
             )}
@@ -270,7 +270,7 @@ export function PersonsList() {
         {totalItems > 0 && (
           <div className="mt-6 flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <span className="text-sm text-muted-foreground">Items per page:</span>
+              <span className="text-sm text-muted-foreground">Người dùng mỗi trang:</span>
               <Select
                 value={itemsPerPage.toString()}
                 onValueChange={(value) => {
@@ -289,7 +289,7 @@ export function PersonsList() {
                 </SelectContent>
               </Select>
               <span className="text-sm text-muted-foreground">
-                Showing {indexOfFirstItem + 1}-{Math.min(indexOfLastItem, totalItems)} of {totalItems}
+                Hiển thị {indexOfFirstItem + 1}-{Math.min(indexOfLastItem, totalItems)} của {totalItems}
               </span>
             </div>
 
@@ -348,8 +348,8 @@ export function PersonsList() {
       <Dialog open={isViewDialogOpen} onOpenChange={setIsViewDialogOpen}>
         <DialogContent className="sm:max-w-[725px]">
           <DialogHeader>
-            <DialogTitle>Person Details</DialogTitle>
-            <DialogDescription>Detailed information about this person.</DialogDescription>
+            <DialogTitle>Thông tin người dùng</DialogTitle>
+            <DialogDescription>Thông tin chi tiết về người dùng này.</DialogDescription>
           </DialogHeader>
           {selectedPerson && <PersonDetails person={selectedPerson} />}
         </DialogContent>
@@ -359,8 +359,8 @@ export function PersonsList() {
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
         <DialogContent className="sm:max-w-[525px]">
           <DialogHeader>
-            <DialogTitle>Edit Person</DialogTitle>
-            <DialogDescription>Make changes to the person details.</DialogDescription>
+            <DialogTitle>Chỉnh sửa người dùng</DialogTitle>
+            <DialogDescription>Thay đổi thông tin người dùng.</DialogDescription>
           </DialogHeader>
           {selectedPerson && (
             <PersonForm
@@ -378,14 +378,14 @@ export function PersonsList() {
       <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
-            <DialogTitle>Confirm Deletion</DialogTitle>
+            <DialogTitle>Xác nhận xóa</DialogTitle>
             <DialogDescription>
-              Are you sure you want to delete this person? This action cannot be undone.
+              Bạn có chắc muốn xóa người dùng này? Hành động này không thể hoàn lại.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
             <Button variant="outline" onClick={() => setIsDeleteDialogOpen(false)} disabled={isSubmitting}>
-              Cancel
+              Hủy
             </Button>
             <Button
               variant="destructive"
@@ -395,10 +395,10 @@ export function PersonsList() {
               {isSubmitting ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Deleting...
+                  Đang xóa...
                 </>
               ) : (
-                "Delete"
+                "Xóa"
               )}
             </Button>
           </DialogFooter>

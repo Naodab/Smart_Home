@@ -8,9 +8,9 @@ import { Toaster } from "@/components/ui/toaster"
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "SmartHome Management",
-  description: "A modern SmartHome management application",
-    generator: 'v0.dev'
+  title: "SmartHome - Quản lý",
+  description: "Ứng dụng quản lý SmartHome",
+  generator: 'DUT - Destructors'
 }
 
 export default function RootLayout({
@@ -29,7 +29,5 @@ export default function RootLayout({
     </html>
   )
 }
-
-
 
 import './globals.css'

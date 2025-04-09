@@ -5,8 +5,8 @@ import Link from "next/link"
 import type { Metadata } from "next"
 
 export const metadata: Metadata = {
-  title: "Homes - SmartHome Management",
-  description: "Manage your homes",
+  title: "Nhà - SmartHome",
+  description: "Quản lý nhà trong hệ thống SmartHome",
 }
 
 export default function HomesPage() {
@@ -14,13 +14,13 @@ export default function HomesPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-3xl font-bold tracking-tight">Homes</h2>
-          <p className="text-muted-foreground">Manage all registered homes</p>
+          <h2 className="text-3xl font-bold tracking-tight">Nhà</h2>
+          <p className="text-muted-foreground">Quản lý tất cả nhà đã đăng ký</p>
         </div>
         <Link href="/dashboard/homes/new">
           <Button className="bg-green-600 hover:bg-green-700">
             <Plus className="mr-2 h-4 w-4" />
-            Add Home
+            Thêm nhà
           </Button>
         </Link>
       </div>

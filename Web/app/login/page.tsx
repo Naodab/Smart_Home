@@ -2,8 +2,8 @@ import { LoginForm } from "@/components/login-form"
 import type { Metadata } from "next"
 
 export const metadata: Metadata = {
-  title: "Login - SmartHome Management",
-  description: "Login to the SmartHome management system",
+  title: "Đăng nhập - SmartHome",
+  description: "Đăng nhập vào hệ thống quản lý SmartHome",
 }
 
 export default function LoginPage() {
@@ -12,7 +12,7 @@ export default function LoginPage() {
       <div className="w-full max-w-md p-8 space-y-8 bg-white rounded-lg shadow-lg">
         <div className="text-center">
           <h1 className="text-3xl font-bold text-green-700">SmartHome</h1>
-          <p className="mt-2 text-gray-600">Admin Login</p>
+          <p className="mt-2 text-gray-600">Đăng nhập quản trị</p>
         </div>
         <LoginForm />
       </div>

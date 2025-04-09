@@ -43,13 +43,13 @@ export default function NewDevicePage() {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-3xl font-bold tracking-tight">Add New Device</h2>
-        <p className="text-muted-foreground">Create a new device in SmartHome system</p>
+        <h2 className="text-3xl font-bold tracking-tight">Thêm thiết bị mới</h2>
+        <p className="text-muted-foreground">Tạo mới một thiết bị trong hệ thống SmartHome</p>
       </div>
       <Card>
         <CardHeader>
-          <CardTitle>Device Details</CardTitle>
-          <CardDescription>Enter the details for the new device</CardDescription>
+          <CardTitle>Thông tin thiết bị</CardTitle>
+          <CardDescription>Nhập thông tin cho thiết bị mới</CardDescription>
         </CardHeader>
         <CardContent>
           <DeviceForm onSubmit={handleSubmit} onCancel={handleCancel} isSubmitting={isSubmitting} />

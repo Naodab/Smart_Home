@@ -25,8 +25,8 @@ export function PersonHomeForm({ allPersons, selectedPersons, setSelectedPersons
         <TableHeader>
           <TableRow>
             <TableHead className="w-[50px]"></TableHead>
-            <TableHead>ID</TableHead>
-            <TableHead>Name</TableHead>
+            <TableHead>Mã</TableHead>
+            <TableHead>Tên</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -46,7 +46,7 @@ export function PersonHomeForm({ allPersons, selectedPersons, setSelectedPersons
           ) : (
             <TableRow>
               <TableCell colSpan={3} className="text-center py-4 text-muted-foreground">
-                No persons available to add
+                Không có người dùng nào
               </TableCell>
             </TableRow>
           )}

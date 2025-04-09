@@ -352,14 +352,14 @@ class ChangePasswordAPIView(APIView):
 
   def post(self, request):
     user = request.user
-    old_password = request.data.get('old_password')
-    new_password = request.data.get('new_password')
+    old_password = request.data.get('oldPass')
+    new_password = request.data.get('newPass')
 
     if not user.check_password(old_password):
-      return Response({"error": "Old password is incorrect"}, status=status.HTTP_400_BAD_REQUEST)
+      return Response({"error": "Old password is incorrect", "success": False}, status=status.HTTP_400_BAD_REQUEST)
 
     user.set_password(new_password)
     user.save()
 
-    return Response({"message": "Password changed successfully"}, status=status.HTTP_200_OK)
+    return Response({"message": "Password changed successfully", "success": True}, status=status.HTTP_200_OK)
 change_password_api_view = ChangePasswordAPIView.as_view()

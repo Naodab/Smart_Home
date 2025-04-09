@@ -65,14 +65,14 @@ export function PersonForm({ initialData, onSubmit, onCancel, isSubmitting = fal
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div className="space-y-2">
-        <Label htmlFor="name">Full Name</Label>
+        <Label htmlFor="name">Tên đầy đủ</Label>
         <Input id="name" name="name" value={formData.name} onChange={handleChange} required disabled={isSubmitting} />
       </div>
       <div className="space-y-2">
-        <Label htmlFor="homeId">Home</Label>
+        <Label htmlFor="homeId">Nhà</Label>
         <Select value={formData.home.email} onValueChange={handleHomeChange} disabled={isSubmitting}>
           <SelectTrigger id="homeId">
-            <SelectValue placeholder="Select a home" />
+            <SelectValue placeholder="Chọn một nhà" />
           </SelectTrigger>
           <SelectContent>
             {homes.map((home) => (
@@ -85,16 +85,16 @@ export function PersonForm({ initialData, onSubmit, onCancel, isSubmitting = fal
       </div>
       <div className="flex justify-end gap-2">
         <Button type="button" variant="outline" onClick={onCancel} disabled={isSubmitting}>
-          Cancel
+          Hủy
         </Button>
         <Button type="submit" className="bg-green-600 hover:bg-green-700" disabled={isSubmitting}>
         {isSubmitting ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              {initialData?.id ? "Updating..." : "Creating..."}
+              {initialData?.id ? "Đang cập nhật..." : "Đang tạo..."}
             </>
           ) : (
-            <>{initialData?.id ? "Update" : "Create"} Person</>
+            <>{initialData?.id ? "Cập nhật" : "Tạo"} người dùng</>
           )}
         </Button>
       </div>

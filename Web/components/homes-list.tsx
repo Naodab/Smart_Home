@@ -68,15 +68,15 @@ export function HomesList() {
       await HomeApi.delete(id)
       setHomes(homes.filter((home) => home.id !== id))
       toast({
-        title: "Success",
-        description: "Home deleted successfully",
+        title: "Thành công",
+        description: "Đã xóa nhà thành công",
         variant: "success",
       })
     } catch (error) {
       const apiError = error as ApiError
       toast({
-        title: "Error",
-        description: apiError.message || "Failed to delete home. Please try again.",
+        title: "Lỗi",
+        description: apiError.message || "Không thể xóa nhà. Vui lòng thử lại.",
         variant: "destructive",
       })
     } finally {
@@ -91,15 +91,15 @@ export function HomesList() {
       await HomeApi.update(updatedHome.id, updatedHome)
       setHomes(homes.map((home) => (home.id === updatedHome.id ? updatedHome : home)))
       toast({
-        title: "Success",
-        description: "Home updated successfully",
+        title: "Thành công",
+        description: "Đã cập nhật nhà thành công",
         variant: "success",
       })
     } catch (error) {
       const apiError = error as ApiError
       toast({
-        title: "Error",
-        description: apiError.message || "Failed to update home. Please try again.",
+        title: "Lỗi",
+        description: apiError.message || "Không thể cập nhật nhà. Vui lòng thử lại.",
         variant: "destructive",
       })
     } finally {
@@ -157,13 +157,13 @@ export function HomesList() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>All Homes</CardTitle>
-        <CardDescription>A list of all homes in your SmartHome system.</CardDescription>
+        <CardTitle>Tất cả nhà</CardTitle>
+        <CardDescription>Danh sách tất cả nhà trong hệ thống SmartHome.</CardDescription>
       </CardHeader>
       <div className="px-6 mb-4">
         <div className="relative">
           <Input
-            placeholder="Search homes by email or address..."
+            placeholder="Tìm kiếm theo email hoặc địa chỉ..."
             value={searchTerm}
             onChange={handleSearchChange}
             className="pl-10"
@@ -182,7 +182,7 @@ export function HomesList() {
               }}
             >
               <X className="h-4 w-4" />
-              <span className="sr-only">Clear search</span>
+              <span className="sr-only">Xóa tìm kiếm</span>
             </Button>
           )}
         </div>
@@ -191,12 +191,12 @@ export function HomesList() {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>ID</TableHead>
+              <TableHead>Mã</TableHead>
               <TableHead>Email</TableHead>
-              <TableHead>Address</TableHead>
-              <TableHead>Temperature (°C)</TableHead>
-              <TableHead>Humidity (%)</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
+              <TableHead>Địa chỉ</TableHead>
+              <TableHead>Nhiệt độ (°C)</TableHead>
+              <TableHead>Độ ẩm (%)</TableHead>
+              <TableHead className="text-right">Hành động</TableHead>
             </TableRow>
           </TableHeader>  
           <TableBody>
@@ -247,7 +247,7 @@ export function HomesList() {
             ) : (
               <TableRow>
                 <TableCell colSpan={6} className="text-center py-4 text-muted-foreground">
-                  {searchTerm ? "No homes found matching your search" : "No homes available"}
+                  {searchTerm ? "Không có nhà phù hợp với tìm kiếm" : "Hiện không có  nhà nào"}
                 </TableCell>
               </TableRow>
             )}
@@ -258,7 +258,7 @@ export function HomesList() {
         {totalItems > 0 && (
           <div className="mt-6 flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <span className="text-sm text-muted-foreground">Items per page:</span>
+              <span className="text-sm text-muted-foreground">Số nhà mỗi trang:</span>
               <Select
                 value={itemsPerPage.toString()}
                 onValueChange={(value) => {
@@ -277,7 +277,7 @@ export function HomesList() {
                 </SelectContent>
               </Select>
               <span className="text-sm text-muted-foreground">
-                Showing {indexOfFirstItem + 1}-{Math.min(indexOfLastItem, totalItems)} of {totalItems}
+                Hiển thị {indexOfFirstItem + 1}-{Math.min(indexOfLastItem, totalItems)} của {totalItems}
               </span>
             </div>
 
@@ -336,8 +336,8 @@ export function HomesList() {
       <Dialog open={isViewDialogOpen} onOpenChange={setIsViewDialogOpen}>
         <DialogContent className="sm:max-w-[725px]">
           <DialogHeader>
-            <DialogTitle>Home Details</DialogTitle>
-            <DialogDescription>Detailed information about this home.</DialogDescription>
+            <DialogTitle>Chi tiết nhà</DialogTitle>
+            <DialogDescription>Thông tin chi tiết về nhà này.</DialogDescription>
           </DialogHeader>
           {selectedHome && <HomeDetails home={selectedHome} />}
         </DialogContent>
@@ -347,8 +347,8 @@ export function HomesList() {
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
         <DialogContent className="sm:max-w-[525px]">
           <DialogHeader>
-            <DialogTitle>Edit Home</DialogTitle>
-            <DialogDescription>Make changes to the home details.</DialogDescription>
+            <DialogTitle>Cập nhật nhà</DialogTitle>
+            <DialogDescription>Cập nhật thông tin của nhà này.</DialogDescription>
           </DialogHeader>
           {selectedHome && (
             <HomeForm
@@ -365,14 +365,14 @@ export function HomesList() {
       <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
-            <DialogTitle>Confirm Deletion</DialogTitle>
+            <DialogTitle>Xác nhận xóa</DialogTitle>
             <DialogDescription>
-              Are you sure you want to delete this home? This action cannot be undone.
+              Bạn muốn xóa nhà này không? Hành động này không thể hoàn lại.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
             <Button variant="outline" onClick={() => setIsDeleteDialogOpen(false)} disabled={isSubmitting}>
-              Cancel
+              Hủy
             </Button>
             <Button
               variant="destructive"
@@ -382,10 +382,10 @@ export function HomesList() {
               {isSubmitting ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Deleting...
+                  Đang xóa...
                 </>
               ) : (
-                "Delete"
+                "Xóa"
               )}
             </Button>
           </DialogFooter>

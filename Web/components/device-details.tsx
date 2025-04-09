@@ -49,7 +49,7 @@ export function DeviceDetails({ device, onStatusChange }: DeviceDetailsProps) {
 
     setIsSubmitting(true)
     try {
-      await DeviceApi.updateStatus(device.id, newStatus ? "Activate" : "Inactivate", selectedPerson)
+      await DeviceApi.updateStatus(device.id, newStatus ? "Hoạt động" : "Không hoạt động", selectedPerson)
 
       onStatusChange(device.id, newStatus)
 
@@ -64,15 +64,15 @@ export function DeviceDetails({ device, onStatusChange }: DeviceDetailsProps) {
       setDeviceHistory([newHistoryEntry, ...deviceHistory])
 
       toast({
-        title: "Success",
-        description: `Device status changed to ${newStatus}`,
+        title: "Thành công",
+        description: `Thiết bị được thay đổi đến ${newStatus}`,
         variant: "success",
       })
     } catch (error) {
       const apiError = error as ApiError
       toast({
-        title: "Error",
-        description: apiError.message || "Failed to update device status. Please try again.",
+        title: "Thất bị",
+        description: apiError.message || "Không thể thay đổi trạng thái của thiết bị. Vui lòng thử lại.",
         variant: "destructive",
       })
     } finally {
@@ -110,15 +110,15 @@ export function DeviceDetails({ device, onStatusChange }: DeviceDetailsProps) {
 
         <div className="grid grid-cols-4 gap-4 mb-6">
           <div className="space-y-1">
-            <p className="text-sm text-muted-foreground">ID</p>
+            <p className="text-sm text-muted-foreground">Mã thiết bị</p>
             <p className="font-medium">{device.id}</p>
           </div>
           <div className="space-y-1">
-            <p className="text-sm text-muted-foreground">Type</p>
+            <p className="text-sm text-muted-foreground">Loại</p>
             <p className="font-medium">{getDeviceTypeDisplay()}</p>
           </div>
           <div className="space-y-1">
-            <p className="text-sm text-muted-foreground">Status</p>
+            <p className="text-sm text-muted-foreground">Trạng thái</p>
             {device.type === "fan" ? (
               <Badge
                 variant={device.status === "0" ? "secondary" : "default"}
@@ -132,19 +132,19 @@ export function DeviceDetails({ device, onStatusChange }: DeviceDetailsProps) {
                         : "bg-green-700"
                 }
               >
-                Level {device.status}
+                Mức độ {device.status}
               </Badge>
             ) : (
               <Badge
                 variant={device.status === "on" ? "default" : "secondary"}
-                className={device.status === "on" ? "bg-green-500" : "bg-gray-500"}
+                className={device.status === "off" ? "bg-green-500" : "bg-gray-500"}
               >
-                {device.status === "on" ? "On" : "Off"}
+                {device.status === "on" ? "bật" : "tắt"}
               </Badge>
             )}
           </div>
           <div className="space-y-1">
-            <p className="text-sm text-muted-foreground">Home Email</p>
+            <p className="text-sm text-muted-foreground">Email nhà</p>
             <p className="font-medium">{device.home.email}</p>
           </div>
         </div>
@@ -163,7 +163,7 @@ export function DeviceDetails({ device, onStatusChange }: DeviceDetailsProps) {
           <TabsList className="grid w-full grid-cols-1">
             <TabsTrigger value="history" className="flex items-center gap-2">
               <History className="h-4 w-4" />
-              Status Change History
+              Lịch sử thay đổi trạng thái
             </TabsTrigger>
           </TabsList>
 
@@ -171,9 +171,9 @@ export function DeviceDetails({ device, onStatusChange }: DeviceDetailsProps) {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Person</TableHead>
-                  <TableHead>New Status</TableHead>
-                  <TableHead>Timestamp</TableHead>
+                  <TableHead>Người dùng</TableHead>
+                  <TableHead>Trạng thái thay đổi</TableHead>
+                  <TableHead>Thời gian</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -198,14 +198,14 @@ export function DeviceDetails({ device, onStatusChange }: DeviceDetailsProps) {
                                     : "bg-green-700"
                             }
                           >
-                            Level {history.newStatus}
+                            Mức độ {history.newStatus}
                           </Badge>
                         ) : (
                           <Badge
                             variant={history.newStatus === "on" ? "default" : "secondary"}
-                            className={history.newStatus === "on" ? "bg-green-500" : "bg-gray-500"}
+                            className={history.newStatus === "off" ? "bg-green-500" : "bg-gray-500"}
                           >
-                            {history.newStatus === "on" ? "On" : "Off"}
+                            {history.newStatus === "on" ? "bật" : "tắt"}
                           </Badge>
                         )}
                       </TableCell>
@@ -215,7 +215,7 @@ export function DeviceDetails({ device, onStatusChange }: DeviceDetailsProps) {
                 ) : (
                   <TableRow>
                     <TableCell colSpan={3} className="text-center py-4 text-muted-foreground">
-                      No status change history for this device
+                      Không có lịch sử thay đổi trạng thái
                     </TableCell>
                   </TableRow>
                 )}
@@ -228,44 +228,44 @@ export function DeviceDetails({ device, onStatusChange }: DeviceDetailsProps) {
         <Dialog open={isChangeStatusDialogOpen} onOpenChange={setIsChangeStatusDialogOpen}>
           <DialogContent className="sm:max-w-[425px]">
             <DialogHeader>
-              <DialogTitle>Change Device Status</DialogTitle>
-              <DialogDescription>Update the status of this device.</DialogDescription>
+              <DialogTitle>Thay đổi trạng thái thiết bị</DialogTitle>
+              <DialogDescription>Cập nhật trạng thái của thiết bị này.</DialogDescription>
             </DialogHeader>
             <div className="grid gap-4 py-4">
               <div className="space-y-2">
-                <Label htmlFor="status">New Status</Label>
+                <Label htmlFor="status">Trạng thái mới.</Label>
                 {device.type === "fan" ? (
                   <Select value={newStatus} onValueChange={setNewStatus}>
                     <SelectTrigger>
-                      <SelectValue placeholder="Select fan level" />
+                      <SelectValue placeholder="Chọn mức độ  của quạt" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="0">Level 0 (Off)</SelectItem>
-                      <SelectItem value="1">Level 1 (Low)</SelectItem>
-                      <SelectItem value="2">Level 2 (Medium)</SelectItem>
-                      <SelectItem value="3">Level 3 (High)</SelectItem>
+                      <SelectItem value="0">Level 0 (Tắt)</SelectItem>
+                      <SelectItem value="1">Level 1 (Thấp)</SelectItem>
+                      <SelectItem value="2">Level 2 (Trung bình)</SelectItem>
+                      <SelectItem value="3">Level 3 (Cao)</SelectItem>
                     </SelectContent>
                   </Select>
                 ) : (
                   <Select value={newStatus} onValueChange={setNewStatus}>
                     <SelectTrigger>
-                      <SelectValue placeholder="Select status" />
+                      <SelectValue placeholder="Chọn trạng thái" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="on">On</SelectItem>
-                      <SelectItem value="off">Off</SelectItem>
+                      <SelectItem value="on">Bật</SelectItem>
+                      <SelectItem value="off">Tắt</SelectItem>
                     </SelectContent>
                   </Select>
                 )}
               </div>
               <div className="space-y-2">
-                <Label htmlFor="person">Person Making Change</Label>
+                <Label htmlFor="person">Người thay đổi</Label>
                 <Select
                   value={selectedPerson}
                   onValueChange={setSelectedPerson}
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder="Select person" />
+                    <SelectValue placeholder="Chọn người" />
                   </SelectTrigger>
                   <SelectContent>
                     {persons.map((person) => (
@@ -293,10 +293,10 @@ export function DeviceDetails({ device, onStatusChange }: DeviceDetailsProps) {
                 {isSubmitting ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Updating...
+                    Đang cập nhật trang thái...
                   </>
                 ) : (
-                  "Update Status"
+                  "Cập nhật trạng thái"
                 )}
               </Button>
             </DialogFooter>
