@@ -52,12 +52,12 @@ export function ChangePasswordDialog({ open, onOpenChange }: ChangePasswordDialo
 
     // Validate passwords
     if (newPassword.length < 8) {
-      setError("New password must be at least 8 characters long")
+      setError("Mật khẩu mới phải có ít nhất 8 ký tự")
       return
     }
 
     if (newPassword !== confirmPassword) {
-      setError("New passwords do not match")
+      setError("Mật khẩu mới không khớp")
       return
     }
 
@@ -69,18 +69,18 @@ export function ChangePasswordDialog({ open, onOpenChange }: ChangePasswordDialo
 
       if (!response?.success) {
         const data = await response.json()
-        throw new Error(data.message || "Failed to change password")
+        throw new Error(data.message || "Không thể thay đổi mật khẩu")
       }
 
       toast({
-        title: "Success",
-        description: "Your password has been changed successfully",
+        title: "Thành công",
+        description: "Mật khẩu được thay đổi thành công",
         variant: "success",
       })
 
       handleClose()
     } catch (error) {
-      setError(error instanceof Error ? error.message : "An error occurred while changing your password")
+      setError(error instanceof Error ? error.message : "Đã xảy ra lỗi khi thay đổi mật khẩu")
     } finally {
       setIsSubmitting(false)
     }
@@ -90,8 +90,8 @@ export function ChangePasswordDialog({ open, onOpenChange }: ChangePasswordDialo
     <Dialog open={open} onOpenChange={handleClose}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Change Password</DialogTitle>
-          <DialogDescription>Enter your current password and a new password below.</DialogDescription>
+          <DialogTitle>Đổi mật khẩu</DialogTitle>
+          <DialogDescription>Nhập mật khẩu hiện tại và  mật khẩu mới bên dưới.</DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit}>
           {error && (
@@ -102,7 +102,7 @@ export function ChangePasswordDialog({ open, onOpenChange }: ChangePasswordDialo
           )}
           <div className="grid gap-4 py-4">
             <div className="grid gap-2">
-              <Label htmlFor="current-password">Current Password</Label>
+              <Label htmlFor="current-password">Mật khẩu hiện tại</Label>
               <Input
                 id="current-password"
                 type="password"
@@ -113,7 +113,7 @@ export function ChangePasswordDialog({ open, onOpenChange }: ChangePasswordDialo
               />
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="new-password">New Password</Label>
+              <Label htmlFor="new-password">Mật khẩu mới</Label>
               <Input
                 id="new-password"
                 type="password"
@@ -124,7 +124,7 @@ export function ChangePasswordDialog({ open, onOpenChange }: ChangePasswordDialo
               />
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="confirm-password">Confirm New Password</Label>
+              <Label htmlFor="confirm-password">Xác nhận mật khẩu mới</Label>
               <Input
                 id="confirm-password"
                 type="password"
@@ -137,16 +137,16 @@ export function ChangePasswordDialog({ open, onOpenChange }: ChangePasswordDialo
           </div>
           <DialogFooter>
             <Button type="button" variant="outline" onClick={handleClose} disabled={isSubmitting}>
-              Cancel
+              Hủy
             </Button>
             <Button type="submit" className="bg-green-600 hover:bg-green-700" disabled={isSubmitting}>
               {isSubmitting ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Changing...
+                  Đang thay đổi mật khẩu...
                 </>
               ) : (
-                "Change Password"
+                "Thay đổi mật khẩu"
               )}
             </Button>
           </DialogFooter>

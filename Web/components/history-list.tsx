@@ -95,48 +95,48 @@ export function HistoryList() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Device Status Change History</CardTitle>
-        <CardDescription>A record of all device status changes in your SmartHome system.</CardDescription>
+        <CardTitle>Lịch sử thay đổi trạng thái thiết bị</CardTitle>
+        <CardDescription>Bản ghi tất cả thay đổi trạng thái thiết bị trong hệ thống SmartHome.</CardDescription>
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
           <div className="space-y-2">
-            <Label htmlFor="deviceName">Device Name</Label>
+            <Label htmlFor="deviceName">Tên thiết bị</Label>
             <Input
               id="deviceName"
-              placeholder="Filter by device name"
+              placeholder="Lọc theo tên thiết bị"
               value={filters.deviceName}
               onChange={(e) => handleFilterChange("deviceName", e.target.value)}
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="personName">Person Name</Label>
+            <Label htmlFor="personName">Tên người thay đổi</Label>
             <Input
               id="personName"
-              placeholder="Filter by person name"
+              placeholder="Lọc theo tên người thay đổi"
               value={filters.personName}
               onChange={(e) => handleFilterChange("personName", e.target.value)}
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="homeName">Home Email</Label>
+            <Label htmlFor="homeName">Email nhà</Label>
             <Input
               id="homeName"
-              placeholder="Filter by home email"
+              placeholder="Lọc theo email nhà"
               value={filters.homeName}
               onChange={(e) => handleFilterChange("homeName", e.target.value)}
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="status">Status</Label>
+            <Label htmlFor="status">Trạng thái</Label>
             <Select value={filters.status} onValueChange={(value) => handleFilterChange("status", value)}>
               <SelectTrigger>
-                <SelectValue placeholder="All statuses" />
+                <SelectValue placeholder="Tất cả trạng thái" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All statuses</SelectItem>
-                <SelectItem value="Online">Online</SelectItem>
-                <SelectItem value="Offline">Offline</SelectItem>
+                <SelectItem value="all">Tất cả</SelectItem>
+                <SelectItem value="on">Bật</SelectItem>
+                <SelectItem value="off">Tắt</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -145,11 +145,11 @@ export function HistoryList() {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Device</TableHead>
-              <TableHead>Person</TableHead>
-              <TableHead>Home Email</TableHead>
-              <TableHead>New Status</TableHead>
-              <TableHead>Timestamp</TableHead>
+              <TableHead>Thiết bị</TableHead>
+              <TableHead>Người dùng</TableHead>
+              <TableHead>Email nhà</TableHead>
+              <TableHead>Trạng thái thay đổi</TableHead>
+              <TableHead>Thời gian</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -173,7 +173,7 @@ export function HistoryList() {
             ) : (
               <TableRow>
                 <TableCell colSpan={5} className="text-center py-4 text-muted-foreground">
-                  No history records found matching your filters
+                  Không có kết quả nào phù hợp với bộ lọc hiện tại.
                 </TableCell>
               </TableRow>
             )}

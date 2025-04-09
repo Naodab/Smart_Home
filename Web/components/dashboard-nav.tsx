@@ -8,27 +8,27 @@ import { Home, Users, Cpu, LayoutDashboard, History } from "lucide-react"
 
 const navItems = [
   {
-    title: "Dashboard",
+    title: "Bảng điều khiển",
     href: "/dashboard",
     icon: LayoutDashboard,
   },
   {
-    title: "Homes",
+    title: "Nhà",
     href: "/dashboard/homes",
     icon: Home,
   },
   {
-    title: "Persons",
+    title: "Người dùng",
     href: "/dashboard/persons",
     icon: Users,
   },
   {
-    title: "Devices",
+    title: "Thiết bị",
     href: "/dashboard/devices",
     icon: Cpu,
   },
   {
-    title: "History",
+    title: "Lịch sử",
     href: "/dashboard/history",
     icon: History,
   },

@@ -2,26 +2,24 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import type { Metadata } from "next"
 
 export const metadata: Metadata = {
-  title: "Profile - SmartHome Management",
-  description: "Manage profile settings",
+  title: "Hồ sơ - SmartHome",
+  description: "Quản lý cài đặt hồ sơ của bạn",
 }
 
 export default function ProfilePage() {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-3xl font-bold tracking-tight">Profile</h2>
-        <p className="text-muted-foreground">Manage your account settings and preferences</p>
+        <h2 className="text-3xl font-bold tracking-tight">Hồ sơ</h2>
+        <p className="text-muted-foreground">Quản lý cài đặt tài khoản và tùy chọn của bạn</p>
       </div>
       <Card>
         <CardHeader>
-          <CardTitle>User Profile</CardTitle>
-          <CardDescription>View and update your personal information</CardDescription>
+          <CardTitle>Hồ sơ người dùng</CardTitle>
+          <CardDescription>Xem và cập nhật thông tin cá nhân của bạn</CardDescription>
         </CardHeader>
         <CardContent>
           <p className="text-muted-foreground">
-            This is a placeholder for the user profile page. In a real application, you would be able to update your
-            profile information here.
           </p>
         </CardContent>
       </Card>

@@ -64,16 +64,16 @@ export function UserNav() {
           <DropdownMenuSeparator />
           <DropdownMenuItem>
             <User className="mr-2 h-4 w-4" />
-            <span>Profile</span>
+            <span>Hồ sơ</span>
           </DropdownMenuItem>
           <DropdownMenuItem onClick={() => setIsChangePasswordOpen(true)}>
               <Lock className="mr-2 h-4 w-4" />
-              <span>Change Password</span>
+              <span>Đổi mật khẩu</span>
             </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem onClick={handleLogout}>
             <LogOut className="mr-2 h-4 w-4" />
-            <span>Log out</span>
+            <span>Đăng xuất</span>
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu><ChangePasswordDialog 

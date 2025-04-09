@@ -51,11 +51,11 @@ export function HomeDetails({ home }: HomeDetailsProps) {
 
         <div className="grid grid-cols-2 gap-4 mb-6">
           <div className="space-y-1">
-            <p className="text-sm text-muted-foreground">ID</p>
+            <p className="text-sm text-muted-foreground">Mã</p>
             <p className="font-medium">{home.id}</p>
           </div>
           <div className="space-y-1">
-            <p className="text-sm text-muted-foreground">Address</p>
+            <p className="text-sm text-muted-foreground">Địa chỉ</p>
             <p className="font-medium">{home.address}</p>
           </div>
         </div>
@@ -64,14 +64,14 @@ export function HomeDetails({ home }: HomeDetailsProps) {
           <div className="flex items-center gap-2">
             <Thermometer className="h-5 w-5 text-orange-500" />
             <div>
-              <p className="text-sm text-muted-foreground">Temperature</p>
+              <p className="text-sm text-muted-foreground">Nhiệt độ</p>
               <p className="font-medium">{home.temperature}°C</p>
             </div>
           </div>
           <div className="flex items-center gap-2">
             <Droplets className="h-5 w-5 text-blue-500" />
             <div>
-              <p className="text-sm text-muted-foreground">Humidity</p>
+              <p className="text-sm text-muted-foreground">Độ ẩm</p>
               <p className="font-medium">{home.humidity}%</p>
             </div>
           </div>
@@ -82,23 +82,23 @@ export function HomeDetails({ home }: HomeDetailsProps) {
           <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="persons" className="flex items-center gap-2">
               <Users className="h-4 w-4" />
-              Persons
+              Người dùng
             </TabsTrigger>
             <TabsTrigger value="devices" className="flex items-center gap-2">
               <Cpu className="h-4 w-4" />
-              Devices
+              Thiết bị
             </TabsTrigger>
           </TabsList>
 
           <TabsContent value="persons" className="mt-4">
             <div className="flex justify-between items-center mb-4">
-              <h4 className="text-lg font-semibold">Persons in this Home</h4>
+              <h4 className="text-lg font-semibold">Người dùng trong nhà này</h4>
             </div>
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>ID</TableHead>
-                  <TableHead>Name</TableHead>
+                  <TableHead>Mã</TableHead>
+                  <TableHead>Tên</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -112,7 +112,7 @@ export function HomeDetails({ home }: HomeDetailsProps) {
                 ) : (
                   <TableRow>
                     <TableCell colSpan={3} className="text-center py-4 text-muted-foreground">
-                      No persons associated with this home
+                      Không có người dùng nào trong nhà này
                     </TableCell>
                   </TableRow>
                 )}
@@ -122,14 +122,14 @@ export function HomeDetails({ home }: HomeDetailsProps) {
 
           <TabsContent value="devices" className="mt-4">
             <div className="flex justify-between items-center mb-4">
-              <h4 className="text-lg font-semibold">Devices in this Home</h4>
+              <h4 className="text-lg font-semibold">Các thiết bị trong nhà này</h4>
             </div>
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>ID</TableHead>
-                  <TableHead>Name</TableHead>
-                  <TableHead>Status</TableHead>
+                  <TableHead>Mã</TableHead>
+                  <TableHead>Tên</TableHead>
+                  <TableHead>Trạng thái</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -151,7 +151,7 @@ export function HomeDetails({ home }: HomeDetailsProps) {
                 ) : (
                   <TableRow>
                     <TableCell colSpan={3} className="text-center py-4 text-muted-foreground">
-                      No devices in this home
+                      Không có thiết bị nào trong nhà này
                     </TableCell>
                   </TableRow>
                 )}

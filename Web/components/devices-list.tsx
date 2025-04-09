@@ -84,15 +84,15 @@ export function DevicesList() {
       await DeviceApi.delete(id)
       setDevices(devices.filter((device) => device.id !== id))
       toast({
-        title: "Success",
-        description: "Device deleted successfully",
+        title: "Thành công",
+        description: "Xóa thiết bị thành công",
         variant: "success",
       })
     } catch (error) {
       const apiError = error as ApiError
       toast({
-        title: "Error",
-        description: apiError.message || "Failed to delete device. Please try again.",
+        title: "Lỗi",
+        description: apiError.message || "Không thể xóa thiết bị. Vui lòng thử lại.",
         variant: "destructive",
       })
     } finally {
@@ -108,15 +108,15 @@ export function DevicesList() {
       await DeviceApi.update(updatedDevice.id, updatedDevice)
       setDevices(devices.map((device) => (device.id === updatedDevice.id ? updatedDevice : device)))
       toast({
-        title: "Success",
-        description: "Device updated successfully",
+        title: "Thành công",
+        description: "Thiết bị đã được cập nhật thành công",
         variant: "success",
       })
     } catch (error) {
       const apiError = error as ApiError
       toast({
-        title: "Error",
-        description: apiError.message || "Failed to update device. Please try again.",
+        title: "Lỗi",
+        description: apiError.message || "Không thể cập nhật thiết bị. Vui lòng thử lại.",
         variant: "destructive",
       })
     } finally {
@@ -196,14 +196,14 @@ export function DevicesList() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>All Devices</CardTitle>
-        <CardDescription>A list of all devices in your SmartHome system.</CardDescription>
+        <CardTitle>Tất cả thiết bị</CardTitle>
+        <CardDescription>Danh sách tất cả thiết bị trong hệ thống SmartHome.</CardDescription>
       </CardHeader>
       <div className="px-6 mb-4">
         <div className="flex flex-col md:flex-row gap-4">
           <div className="relative flex-1">
             <Input
-              placeholder="Search devices by name or home email..."
+              placeholder="Tìm kiếm thiết bị theo tên hoặc email nhà..."
               value={searchTerm}
               onChange={handleSearchChange}
               className="pl-10"
@@ -222,37 +222,37 @@ export function DevicesList() {
                 }}
               >
                 <X className="h-4 w-4" />
-                <span className="sr-only">Clear search</span>
+                <span className="sr-only">Xóa tìm kiếm</span>
               </Button>
             )}
           </div>
           <div className="w-full md:w-[200px]">
             <Select value={typeFilter} onValueChange={handleTypeFilterChange}>
               <SelectTrigger>
-                <SelectValue placeholder="Filter by type" />
+                <SelectValue placeholder="Lọc theo  loại" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All Types</SelectItem>
-                <SelectItem value="door">Door</SelectItem>
-                <SelectItem value="light">Light</SelectItem>
-                <SelectItem value="curtain">Curtain</SelectItem>
-                <SelectItem value="fan">Fan</SelectItem>
+                <SelectItem value="all">Tất cả</SelectItem>
+                <SelectItem value="door">Cửa</SelectItem>
+                <SelectItem value="light">Đèn</SelectItem>
+                <SelectItem value="curtain">Rèm</SelectItem>
+                <SelectItem value="fan">Quạt</SelectItem>
               </SelectContent>
             </Select>
           </div>
           <div className="w-full md:w-[150px]">
             <Select value={statusFilter} onValueChange={handleStatusFilterChange}>
               <SelectTrigger>
-                <SelectValue placeholder="Filter by status" />
+                <SelectValue placeholder="Lọc theo trạng thái" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All Status</SelectItem>
-                <SelectItem value="on">On</SelectItem>
-                <SelectItem value="off">Off</SelectItem>
-                <SelectItem value="0">Fan - Level 0</SelectItem>
-                <SelectItem value="1">Fan - Level 1</SelectItem>
-                <SelectItem value="2">Fan - Level 2</SelectItem>
-                <SelectItem value="3">Fan - Level 3</SelectItem>
+                <SelectItem value="all">Tất cả</SelectItem>
+                <SelectItem value="on">Bật</SelectItem>
+                <SelectItem value="off">Tắt</SelectItem>
+                <SelectItem value="0">Quạt - Tắt</SelectItem>
+                <SelectItem value="1">Quạt - Thấp</SelectItem>
+                <SelectItem value="2">Quạt - Trung bình</SelectItem>
+                <SelectItem value="3">Quạt - Cao</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -262,12 +262,12 @@ export function DevicesList() {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>ID</TableHead>
-              <TableHead>Name</TableHead>
-              <TableHead>Type</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Home Email</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
+              <TableHead>Mã</TableHead>
+              <TableHead>Tên</TableHead>
+              <TableHead>Loại</TableHead>
+              <TableHead>Trạng thái</TableHead>
+              <TableHead>Email nhà</TableHead>
+              <TableHead className="text-right">Hành động</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -291,14 +291,14 @@ export function DevicesList() {
                                 : "bg-green-700"
                         }
                       >
-                        Level {device.status}
+                        Mức {device.status}
                       </Badge>
                     ) : (
                       <Badge
                         variant={device.status === "on" ? "default" : "secondary"}
                         className={device.status === "on" ? "bg-green-500" : "bg-gray-500"}
                       >
-                        {device.status === "on" ? "On" : "Off"}
+                        {device.status === "on" ? "Bật" : "Tắt"}
                       </Badge>
                     )}
                   </TableCell>
@@ -343,8 +343,8 @@ export function DevicesList() {
               <TableRow>
                 <TableCell colSpan={5} className="text-center py-4 text-muted-foreground">
                   {searchTerm || typeFilter !== "all" || statusFilter !== "all" 
-                    ? "No devices found matching your search" 
-                    : "No devices available"}
+                    ? "Không có thiết bị phù hợp với tìm kiếm" 
+                    : "Không có thiết bị nào trong danh sách"}
                 </TableCell>
               </TableRow>
             )}
@@ -355,7 +355,7 @@ export function DevicesList() {
         {totalItems > 0 && (
           <div className="mt-6 flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <span className="text-sm text-muted-foreground">Items per page:</span>
+              <span className="text-sm text-muted-foreground">Số thiết bị mỗi trang:</span>
               <Select
                 value={itemsPerPage.toString()}
                 onValueChange={(value) => {
@@ -374,7 +374,7 @@ export function DevicesList() {
                 </SelectContent>
               </Select>
               <span className="text-sm text-muted-foreground">
-                Showing {indexOfFirstItem + 1}-{Math.min(indexOfLastItem, totalItems)} of {totalItems}
+                Hiển thị {indexOfFirstItem + 1}-{Math.min(indexOfLastItem, totalItems)} của {totalItems}
               </span>
             </div>
 
@@ -433,8 +433,8 @@ export function DevicesList() {
       <Dialog open={isViewDialogOpen} onOpenChange={setIsViewDialogOpen}>
         <DialogContent className="sm:max-w-[725px]">
           <DialogHeader>
-            <DialogTitle>Device Details</DialogTitle>
-            <DialogDescription>Detailed information about this device.</DialogDescription>
+            <DialogTitle>Chi tiết thiết bị</DialogTitle>
+            <DialogDescription>Thông tin chi tiết của thiết bị này.</DialogDescription>
           </DialogHeader>
           {selectedDevice && <DeviceDetails device={selectedDevice} onStatusChange={handleStatusChange} />}
         </DialogContent>
@@ -444,8 +444,8 @@ export function DevicesList() {
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
         <DialogContent className="sm:max-w-[525px]">
           <DialogHeader>
-            <DialogTitle>Edit Device</DialogTitle>
-            <DialogDescription>Make changes to the device details.</DialogDescription>
+            <DialogTitle>Chỉnh sửa thiết bị</DialogTitle>
+            <DialogDescription>Cập nhật thông tin của thiết bị.</DialogDescription>
           </DialogHeader>
           {selectedDevice && (
             <DeviceForm
@@ -462,17 +462,17 @@ export function DevicesList() {
       <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
-            <DialogTitle>Confirm Deletion</DialogTitle>
+            <DialogTitle>Xác nhận xóa</DialogTitle>
             <DialogDescription>
-              Are you sure you want to delete this device? This action cannot be undone.
+              Bạn chắc chắn muốn xóa thiết bị này? Hành động này sẽ không được hoàn lại.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
             <Button variant="outline" onClick={() => setIsDeleteDialogOpen(false)}>
-              Cancel
+              Hủy
             </Button>
             <Button variant="destructive" onClick={() => selectedDevice && handleDelete(selectedDevice.id)}>
-              Delete
+              Xóa
             </Button>
           </DialogFooter>
         </DialogContent>

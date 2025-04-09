@@ -17,8 +17,8 @@ export default function NewHomePage() {
       await HomeApi.create(data)
 
       toast({
-        title: "Success",
-        description: "Home created successfully",
+        title: "Thành công",
+        description: "Nhà được tạo thành công",
         variant: "success",
       })
 
@@ -26,8 +26,8 @@ export default function NewHomePage() {
     } catch (error) {
       const apiError = error as ApiError
       toast({
-        title: "Error",
-        description: apiError.message || "Failed to create home. Please try again.",
+        title: "Lỗi",
+        description: apiError.message || "Không thể tạo nhà. Vui lòng thử lại.",
         variant: "destructive",
       })
     } finally {
@@ -42,13 +42,13 @@ export default function NewHomePage() {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-3xl font-bold tracking-tight">Add New Home</h2>
-        <p className="text-muted-foreground">Create a new home with email in SmartHome system</p>
+        <h2 className="text-3xl font-bold tracking-tight">Thêm nhà mới</h2>
+        <p className="text-muted-foreground">Tạo một ngôi nhà mới với email trong hệ thống SmartHome</p>
       </div>
       <Card>
         <CardHeader>
-          <CardTitle>Home Details</CardTitle>
-          <CardDescription>Enter the details for the new home</CardDescription>
+          <CardTitle>Thông tin nhà</CardTitle>
+          <CardDescription>Nhập thông tin cho nhà mới</CardDescription>
         </CardHeader>
         <CardContent>
           <HomeForm onSubmit={handleSubmit} onCancel={handleCancel} isSubmitting={isSubmitting} />

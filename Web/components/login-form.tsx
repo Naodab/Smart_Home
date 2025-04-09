@@ -33,8 +33,8 @@ export function LoginForm() {
       })
       if (result.success) {
         toast({
-          title: "Success",
-          description: "Home deleted successfully",
+          title: "Thành công",
+          description: "Đăng nhập thành công",
           variant: "success",
         })
         saveAuthData(result.data)
@@ -43,15 +43,15 @@ export function LoginForm() {
       } else {
         toast({
           variant: "destructive",
-          title: "Login failed",
-          description: result.error ?? "Please check your credentials and try again.",
+          title: "Thất bại",
+          description: result.error ?? "Kiểm tra thông tin và đăng nhập lại.",
         })
       }
     } catch (error) {
       toast({
         variant: "destructive",
-        title: "Something went wrong",
-        description: "Please try again later.",
+        title: "Thất bại",
+        description: "Vui lòng thử lại.",
       })
     } finally {
       setIsLoading(false)
@@ -71,25 +71,25 @@ export function LoginForm() {
           <Label htmlFor="email">Email</Label>
           <Input
             id="email"
-            placeholder="Enter your Email"
+            placeholder="Nhập email của bạn"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
           />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="password">Password</Label>
+          <Label htmlFor="password">Mật khẩu</Label>
           <Input
             id="password"
             type="password"
-            placeholder="Enter your password"
+            placeholder="Nhập mật khẩu của bạn"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
           />
         </div>
         <Button type="submit" className="w-full bg-green-600 hover:bg-green-700" disabled={isLoading}>
-          {isLoading ? "Logging in..." : "Login"}
+          {isLoading ? "Đang đăng nhập..." : "Đăng nhập"}
         </Button>
       </div>
     </form>

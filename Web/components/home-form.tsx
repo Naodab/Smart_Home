@@ -44,7 +44,7 @@ export function HomeForm({ initialData, onSubmit, onCancel, isSubmitting = false
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div className="space-y-2">
-        <Label htmlFor="email">Home Email</Label>
+        <Label htmlFor="email">Email nhà</Label>
         <Input
           id="email"
           name="email"
@@ -56,7 +56,7 @@ export function HomeForm({ initialData, onSubmit, onCancel, isSubmitting = false
         />
       </div>
       <div className="space-y-2">
-        <Label htmlFor="address">Address</Label>
+        <Label htmlFor="address">Địa chỉ</Label>
         <Input
           id="address"
           name="address"
@@ -68,16 +68,16 @@ export function HomeForm({ initialData, onSubmit, onCancel, isSubmitting = false
       </div>
       <div className="flex justify-end gap-2">
         <Button type="button" variant="outline" onClick={onCancel} disabled={isSubmitting}>
-          Cancel
+          Hủy
         </Button>
         <Button type="submit" className="bg-green-600 hover:bg-green-700" disabled={isSubmitting}>
           {isSubmitting ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              {initialData?.id ? "Updating..." : "Creating..."}
+              {initialData?.id ? "Đang cập nhật..." : "Đang tạo..."}
             </>
           ) : (
-            <>{initialData?.id ? "Update" : "Create"} Home</>
+            <>{initialData?.id ? "Cập nhật" : "Tạo"} nhà</>
           )}
         </Button>
       </div>

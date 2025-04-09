@@ -34,8 +34,8 @@ export default function NewPersonPage() {
       await PersonApi.create(data)
 
       toast({
-        title: "Success",
-        description: "Person created successfully",
+        title: "Thành công",
+        description: "Người dùng đã được tạo thành công",
         variant: "success",
       })
 
@@ -43,8 +43,8 @@ export default function NewPersonPage() {
     } catch (error) {
       const apiError = error as ApiError
       toast({
-        title: "Error",
-        description: apiError.message || "Failed to create person. Please try again.",
+        title: "Thất bại",
+        description: apiError.message || "Không thể tạo người dùng. Vui lòng thử lại.",
         variant: "destructive",
       })
     } finally {
@@ -59,13 +59,13 @@ export default function NewPersonPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-3xl font-bold tracking-tight">Add New Person</h2>
-        <p className="text-muted-foreground">Create a new person in SmartHome system</p>
+        <h2 className="text-3xl font-bold tracking-tight">Thêm người dùng mới</h2>
+        <p className="text-muted-foreground">Tạo một người dùng mới trong hệ thống SmartHome</p>
       </div>
       <Card>
         <CardHeader>
-          <CardTitle>Person Details</CardTitle>
-          <CardDescription>Enter the details for the new person</CardDescription>
+          <CardTitle>Thông tin người dùng</CardTitle>
+          <CardDescription>Nhập thông tin cho người dùng</CardDescription>
         </CardHeader>
         <CardContent>
           <PersonForm
