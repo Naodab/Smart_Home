@@ -81,13 +81,18 @@ class UserLoginAPIView(APIView):
         return Response({"message": "Permission denied, user required"}, status=403)
       if home.check_password(password):
         tokens = get_tokens_for_user(home)
-        return Response({"message": "Login successful", "email": email, "tokens": tokens})
+        return Response({
+          "message": "Login successful", 
+          "email": email,
+          "tokens": tokens,
+          "address": home.address,
+          "id": home.id
+        })
       return Response({"message": "Invalid credentials"}, status=401)
     return Response(serializer.errors, status=400)
-  
 user_login_api_view = UserLoginAPIView.as_view()
 
-# /api/mobile/homes/<email>/
+# /api/users/homes/<email>/
 class HomeMobileAPIView(APIView):
   def get(self, request, email, *args, **kwargs):
     home = get_object_or_404(Home, email=email)
@@ -101,10 +106,22 @@ class HomeMobileAPIView(APIView):
       serializer.save()
       return Response(serializer.data, status=status.HTTP_200_OK)
     return Response(serializer.errors, status=400)
-
 home_mobile_api_view = HomeMobileAPIView.as_view()
 
-# BACKEND API
+# /api/users/devices/<id>/
+class DeviceUsersAPIView(APIView):
+  permission_classes = [IsAuthenticated]
+
+  def get(self, request, id, *args, **kwargs):
+    device = get_object_or_404(Device, id=id)
+    serializer = DeviceSerializer(device)
+    device = serializer.data
+    if request.user.id != device['home']['id']:
+      return Response({"message": "Permission denied"}, status=403)
+    return Response(device, status=status.HTTP_200_OK)
+device_mobile_api_view = DeviceUsersAPIView.as_view()
+
+# ADMIN API
 # ONLY FOR ADMIN
 class AdminLoginAPIView(APIView):
   permission_classes = [AllowAny]

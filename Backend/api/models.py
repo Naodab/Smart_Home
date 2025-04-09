@@ -57,9 +57,28 @@ class Device(models.Model):
     ('curtain', 'Curtain'),
   ]
 
+  LOCATIONS = [
+    ('living_room', 'Living Room'),
+    ('bedroom', 'Bedroom'),
+    ('kitchen', 'Kitchen'),
+    ('bathroom', 'Bathroom')
+  ]
+
+  DEVICE_STATUSES = [
+    ('on', 'On'),
+    ('off', 'Off'),
+    ('locked', 'Locked'),
+    ('unlocked', 'Unlocked'),
+    ('0', '0'),
+    ('1', '1'),
+    ('2', '2'),
+    ('3', '3')
+  ]
+
   id = models.AutoField(primary_key=True)
   name = models.CharField(max_length=120)
-  status = models.CharField(max_length=10, default="off")
+  location = models.CharField(max_length=120, choices=LOCATIONS, default="living_room")
+  status = models.CharField(max_length=10, choices=DEVICE_STATUSES, default="off")
   type = models.CharField(max_length=120, choices=DEVICE_TYPES, default="door")
   home = models.ForeignKey(Home, on_delete=models.CASCADE, related_name='devices', null=True, blank=True)
 

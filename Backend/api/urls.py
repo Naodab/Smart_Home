@@ -6,7 +6,8 @@ urlpatterns = [
   # User urls
   path('speeches/upload/', views.speech_create_api_view), # /api/speeches/upload/
   path('users/login/', views.user_login_api_view), # /api/users/login/
-  path('mobile/homes/<str:email>/', views.home_mobile_api_view), # /api/mobile/homes/<email>
+  path('users/homes/<str:email>/', views.home_mobile_api_view), # /api/mobile/homes/<email>
+  path('users/devices/<str:id>/', views.device_mobile_api_view), # /api/mobile/homes/<email>/devices/
   
   # Admin urls
   path('admins/login/', views.admin_login_api_view), # /api/admins/login/
