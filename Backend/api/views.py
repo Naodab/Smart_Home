@@ -365,7 +365,7 @@ logout_view = LogoutView.as_view()
 
 # api/change-password/
 class ChangePasswordAPIView(APIView):
-  permission_classes = [IsAuthenticated]
+  permission_classes = [AllowAny]
 
   def post(self, request):
     user = request.user

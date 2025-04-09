@@ -25,16 +25,16 @@ public interface ApiService {
     @POST("api/users/login/")
     Call<LoginResponse> login(@Body LoginRequest request);
 
-    @GET("api/users/logout/")
+    @POST("api/logout/")
     Call<Void> logout();
 
-    @POST("api/changePassword/")
+    @POST("api/change-password/")
     Call<Void> changePassword(@Body ChangePasswordRequest request);
 
     @POST("api/refresh/")
     Call<TokenResponse> refreshToken(@Body RefreshRequest request);
 
-    @GET("api/mobile/homes/{email}")
+    @GET("api/users/homes/{email}")
     Call<Home> getHome(@Path("email") String email);
 
     @Multipart
