@@ -81,12 +81,39 @@ class DeviceUpdateSerializer(serializers.ModelSerializer):
         model = Device
         fields = ['id', 'name', 'location', 'status', 'type']
 
+class LocationSerializer(serializers.ModelSerializer):
+    home = serializers.SerializerMethodField()
+    devices = serializers.SerializerMethodField()
+    def get_devices(self, obj):
+        devices = obj.devices.all()
+        return [
+            {
+                "id": d.id,
+                "name": d.name,
+                "status": d.status,
+                "type": d.type
+            } for d in devices if d.home == obj.home and d.location == obj
+        ]
+    
+    def get_home(self, obj):
+        return {
+            "id": obj.home.id,
+            "email": obj.home.email,
+            "address": obj.home.address,
+            "temperature": obj.home.temperature,
+            "humidity": obj.home.humidity
+        }
+
+    class Meta:
+        model = Device
+        fields = ['id', 'name', 'home', 'devices']
+
 class HomeSerializer(serializers.ModelSerializer):
     persons = serializers.SerializerMethodField()
-    devices = serializers.SerializerMethodField()
+    locations = serializers.SerializerMethodField()
     class Meta:
         model = Home
-        fields = ['id', 'email', 'address', 'persons', 'devices', 'temperature', 'humidity']
+        fields = ['id', 'email', 'address', 'persons', 'locations', 'temperature', 'humidity']
 
     def get_persons(self, obj):
         persons = obj.people.all()
@@ -95,32 +122,34 @@ class HomeSerializer(serializers.ModelSerializer):
             "name": hp.name
         } for hp in persons]
     
-    def get_devices(self, obj):
-        devices = obj.devices.all()
+    def get_locations(self, obj):
+        locations = obj.locations.all()
         return [{
-            "id": d.id,
-            "name": d.name,
-            "location": d.location,
-            "status": d.status,
-            "type": d.type
-        } for d in devices]
+            "id": hl.id,
+            "name": hl.name
+        } for hl in locations]
 
 class HomeMobileSerializer(serializers.ModelSerializer):
-    devices = serializers.SerializerMethodField()
+    locations = serializers.SerializerMethodField()
 
-    def get_devices(self, obj):
-        devices = obj.devices.all()
+    def get_locations(self, obj):
+        locations = obj.locations.all()
         return [{
-            "id": d.id,
-            "name": d.name,
-            "location": d.location,
-            "status": d.status,
-            "type": d.type
-        } for d in devices]
+            "id": hl.id,
+            "name": hl.name,
+            "devices": [
+                {
+                    "id": d.id,
+                    "name": d.name,
+                    "status": d.status,
+                    "type": d.type
+                } for d in hl.devices.all() if d.home == obj
+            ]
+        } for hl in locations]
 
     class Meta:
         model = Home
-        fields = ['id', 'email', 'address', 'temperature', 'humidity', 'devices']
+        fields = ['id', 'email', 'address', 'temperature', 'humidity', 'locations']
 
 class PersonSaveSerializer(serializers.ModelSerializer):
     def create(self, validated_data):

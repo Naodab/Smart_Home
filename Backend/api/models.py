@@ -49,19 +49,20 @@ class Person(models.Model):
   def __str__(self):
     return f"Person: {self.id} - {self.name}"
 
+class Location(models.Model):
+  id = models.AutoField(primary_key=True)
+  name = models.CharField(max_length=120)
+  home = models.ForeignKey(Home, on_delete=models.CASCADE, related_name='locations', null=True, blank=True)
+
+  def __str__(self):
+    return f"Location: {self.id} - {self.name} - {self.home}"
+
 class Device(models.Model):
   DEVICE_TYPES = [
     ('door', 'Door'),
     ('fan', 'Fan'),
     ('light', 'Light'),
     ('curtain', 'Curtain'),
-  ]
-
-  LOCATIONS = [
-    ('living_room', 'Living Room'),
-    ('bedroom', 'Bedroom'),
-    ('kitchen', 'Kitchen'),
-    ('bathroom', 'Bathroom')
   ]
 
   DEVICE_STATUSES = [
@@ -77,10 +78,9 @@ class Device(models.Model):
 
   id = models.AutoField(primary_key=True)
   name = models.CharField(max_length=120)
-  location = models.CharField(max_length=120, choices=LOCATIONS, default="living_room")
+  location = models.ForeignKey(Location, on_delete=models.CASCADE, related_name='devices', null=True, blank=True)
   status = models.CharField(max_length=10, choices=DEVICE_STATUSES, default="off")
   type = models.CharField(max_length=120, choices=DEVICE_TYPES, default="door")
-  home = models.ForeignKey(Home, on_delete=models.CASCADE, related_name='devices', null=True, blank=True)
 
   def __str__(self):
     return f"Device: {self.id} - {self.name} - {self.type} - {self.home}"
