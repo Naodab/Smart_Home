@@ -6,17 +6,14 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:layout_marginHorizontal="20dp"
-    android:background="@drawable/bg_setting"
+    android:background="@drawable/home_rounded_main_square"
     android:padding="20dp">
 
     <LinearLayout
         android:id="@+id/face_auth_btn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/bg_profile_setting"
-        android:orientation="horizontal"
-        android:paddingHorizontal="12dp"
-        android:paddingVertical="12dp">
+        android:orientation="horizontal">
 
         <androidx.cardview.widget.CardView
             android:layout_width="90dp"
@@ -147,7 +144,7 @@
             android:layout_weight="1"
             android:layout_marginStart="0dp"
             android:layout_marginEnd="6dp"
-            android:background="@drawable/home_rounded_square"
+            android:background="@drawable/bg_green_button"
             android:padding="8dp">
 
             <ImageView
@@ -206,7 +203,7 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:layout_marginTop="12dp"
-        android:background="@drawable/home_rounded_square"
+        android:background="@drawable/bg_green_button"
         android:padding="8dp">
 
         <TextView

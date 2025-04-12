@@ -45,23 +45,23 @@ public class MonitorFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         homeViewModel.fetchHome();
         homeViewModel.getHomeLiveData().observe(getViewLifecycleOwner(), result -> {
-            switch (result.status) {
-                case ERROR:
-                    loading.dismiss();
-                    CustomToast.showError(getContext(),  "Có lỗi xảy ra");
-                    break;
-                case LOADING:
-                    loading.show();
-                    break;
-                case SUCCESS:
-                    Home home = result.data;
-                    binding.tvTemperature.setText(String.valueOf(home.getTemperature()));
-                    binding.tvHumidity.setText(String.valueOf(home.getHumidity()));
-                    binding.devicesList.setLayoutManager(new LinearLayoutManager(requireContext()));
-                    deviceAdapter =  new DeviceAdapter(home.getDevices());
-                    binding.devicesList.setAdapter(deviceAdapter);
-                    loading.dismiss();
-            }
+//            switch (result.status) {
+//                case ERROR:
+//                    loading.dismiss();
+//                    CustomToast.showError(getContext(),  "Có lỗi xảy ra");
+//                    break;
+//                case LOADING:
+//                    loading.show();
+//                    break;
+//                case SUCCESS:
+//                    Home home = result.data;
+//                    binding.tvTemperature.setText(String.valueOf(home.getTemperature()));
+//                    binding.tvHumidity.setText(String.valueOf(home.getHumidity()));
+//                    binding.devicesList.setLayoutManager(new LinearLayoutManager(requireContext()));
+//                    deviceAdapter =  new DeviceAdapter(home.getDevices());
+//                    binding.devicesList.setAdapter(deviceAdapter);
+//                    loading.dismiss();
+//            }
         });
     }
 }

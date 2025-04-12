@@ -13,7 +13,7 @@
         android:layout_height="match_parent"
         android:contentDescription="@string/background"
         android:scaleType="centerCrop"
-        android:src="@drawable/back_home"/>
+        android:src="@drawable/back_login"/>
 
     <TextView
         android:id="@+id/title"
@@ -22,11 +22,11 @@
         android:fontFamily="@font/title"
         android:gravity="center"
         android:text="@string/project_name"
-        android:textColor="@color/orange"
+        android:textColor="@color/main_color"
         android:textSize="40sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.023"
+        app:layout_constraintVertical_bias="0.046"
         tools:layout_editor_absoluteX="0dp" />
 
     <androidx.fragment.app.FragmentContainerView

@@ -8,17 +8,17 @@ public class Home {
     private String address;
     private float temperature;
     private float humidity;
-    private List<Device> devices;
+    private List<Location> locations;
     private List<Person> people;
 
     public Home(int id, String email, String address, float temperature,
-                float humidity, List<Device> devices, List<Person> people) {
+                float humidity, List<Location> locations, List<Person> people) {
         this.id = id;
         this.email = email;
         this.address = address;
         this.temperature = temperature;
         this.humidity = humidity;
-        this.devices = devices;
+        this.locations = locations;
         this.people = people;
     }
 
@@ -64,12 +64,12 @@ public class Home {
         this.humidity = humidity;
     }
 
-    public List<Device> getDevices() {
-        return devices;
+    public List<Location> getRooms() {
+        return locations;
     }
 
-    public void setDevices(List<Device> devices) {
-        this.devices = devices;
+    public void setRooms(List<Location> locations) {
+        this.locations = locations;
     }
 
     public List<Person> getPeople() {

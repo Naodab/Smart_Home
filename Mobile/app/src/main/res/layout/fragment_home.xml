@@ -23,7 +23,7 @@
             android:layout_width="match_parent"
             android:layout_height="130dp"
             android:layout_marginBottom="16dp"
-            android:background="@drawable/home_rounded_orange_square"
+            android:background="@drawable/home_rounded_main_square"
             android:orientation="horizontal"
             android:paddingVertical="20dp">
 
@@ -56,7 +56,7 @@
             android:id="@+id/speech_auth_btn"
             android:layout_width="match_parent"
             android:layout_height="130dp"
-            android:background="@drawable/home_rounded_orange_square"
+            android:background="@drawable/home_rounded_main_square"
             android:orientation="horizontal"
             android:paddingVertical="20dp">
 

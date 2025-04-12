@@ -8,16 +8,16 @@ public class Device {
     private String name;
     private Status status;
     private Type type;
-    private Home home;
+    private Location location;
 
     public Device() {}
 
-    public Device(int id, String name, Status status, Type type, Home home) {
+    public Device(int id, String name, Status status, Type type, Location location) {
         this.id = id;
         this.name = name;
         this.status = status;
         this.type = type;
-        this.home = home;
+        this.location = location;
     }
 
     public int getId() {
@@ -52,11 +52,11 @@ public class Device {
         this.type = type;
     }
 
-    public Home getHome() {
-        return home;
+    public Location getRoom() {
+        return location;
     }
 
-    public void setHome(Home home) {
-        this.home = home;
+    public void setRoom(Location location) {
+        this.location = location;
     }
 }
