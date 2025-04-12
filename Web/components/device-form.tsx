@@ -13,7 +13,7 @@ import {
   SelectTrigger,
   SelectValue
 } from "@/components/ui/select"
-import { Device, HomeApi, HomeToSelect } from "./api-service"
+import { Device, HomeApi, HomeToSelect, LocationApi } from "./api-service"
 import { Loader2 } from "lucide-react"
 
 interface DeviceFormProps {
@@ -46,10 +46,26 @@ export function DeviceForm({
   const [formData, setFormData] = useState({
     id: initialData?.id ?? "",
     name: initialData?.name ?? "",
-    homeEmail: initialData?.home?.email ?? "",
+    locationName: initialData?.location?.name ?? "",
+    homeEmail: initialData?.location?.home?.email ?? "",
     type: initialData?.type ?? "light",
     status: initialData?.status ?? (initialData?.type === "quạt" ? "0" : "off"),
   })
+  const [availableLocations, setAvailableLocations] = useState<{ id: string; name: string }[]>([])
+  if (formData.homeEmail) {
+    useEffect(() => {
+      const fetchLocations = async () => {
+        try {
+          const locations = await LocationApi.getByHomeEmail(formData.homeEmail)
+          setAvailableLocations(locations)
+        } catch (error) {
+          console.error("Failed to fetch locations:", error)
+        }
+      }
+      fetchLocations()
+    })
+  }
+
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
@@ -123,6 +139,34 @@ export function DeviceForm({
             {homes.map((home) => (
               <SelectItem key={home.email} value={home.email}>
                 {home.email}
+              
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+      <div className="space-y-2">
+        <Label htmlFor="locationId">Vị trí</Label>
+        <Select
+          value={formData.locationName}
+          onValueChange={(value) => handleSelectChange("locationId", value)}
+          disabled={!formData.homeEmail || availableLocations.length === 0}
+        >
+          <SelectTrigger>
+            <SelectValue
+              placeholder={
+                !formData.homeEmail
+                  ? "Chọn nhà trước"
+                  : availableLocations.length === 0
+                    ? "Không có vị trí"
+                    : "Chọn vị trí"
+              }
+            />
+          </SelectTrigger>
+          <SelectContent>
+            {availableLocations.map((location) => (
+              <SelectItem key={location.id} value={location.id}>
+                {location.name}
               </SelectItem>
             ))}
           </SelectContent>

@@ -4,21 +4,8 @@ import type React from "react"
 
 import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from "@/components/ui/card"
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow
-} from "@/components/ui/table"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import {
   Dialog,
   DialogContent,
@@ -27,10 +14,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
-import { Badge } from "@/components/ui/badge"
 import { Edit, Eye, Trash2, Search, X } from "lucide-react"
-import { DeviceForm } from "./device-form"
-import { DeviceDetails } from "./device-details"
+import { LocationForm } from "./location-form"
 import { Input } from "@/components/ui/input"
 import {
   Pagination,
@@ -41,58 +26,59 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue
-} from "@/components/ui/select"
-import { ApiError, Device, DeviceApi } from "./api-service"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Location, LocationApi, type ApiError } from "@/components/api-service"
 import { useToast } from "@/hooks/use-toast"
+import { Loader2 } from "lucide-react"
+import { LocationDetails } from "./location-details"
 
-export function DevicesList() {
+export function LocationsList() {
   const { toast } = useToast()
-  const [devices, setDevices] = useState<Device[]>([])
-  const [selectedDevice, setSelectedDevice] = useState<Device | null>(null)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [locations, setLocations] = useState<Location[]>([])
+  const [selectedLocation, setSelectedLocation] = useState<any>(null)
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
   const [isViewDialogOpen, setIsViewDialogOpen] = useState(false)
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
   const [searchTerm, setSearchTerm] = useState("")
-  const [isSubmitting, setIsSubmitting] = useState(false)
   const [typeFilter, setTypeFilter] = useState("all")
-  const [statusFilter, setStatusFilter] = useState("all")
-
-  useEffect(() => {
-    const fetchDevices = async () => {
-      try {
-        const response = await DeviceApi.getAll()
-        setDevices(response)
-      } catch (error) {
-        console.error("Error fetching devices:", error)
-      }
-    }
-    fetchDevices()
-  }, [])
+  const [homeFilter, setHomeFilter] = useState("all")
 
   const [currentPage, setCurrentPage] = useState(1)
   const [itemsPerPage, setItemsPerPage] = useState(5)
 
+  useEffect(() => {
+    const fetchLocations = async () => {
+      try {
+        const response = await LocationApi.getAll()
+        setLocations(response)
+      } catch (error) {
+        const apiError = error as ApiError
+        toast({
+            title: "Lỗi",
+            description: apiError.message || "Không thể tải vị trí. Vui lòng thử lại.",
+            variant: "destructive",
+        })
+      }
+    }
+    fetchLocations()
+  }, [])
+
   const handleDelete = async (id: string) => {
     setIsSubmitting(true)
     try {
-      await DeviceApi.delete(id)
-      setDevices(devices.filter((device) => device.id !== id))
+      await LocationApi.delete(id)
+      setLocations(locations.filter((location) => location.id !== id))
       toast({
         title: "Thành công",
-        description: "Xóa thiết bị thành công",
+        description: "Vị trí đã được xóa thành công",
         variant: "success",
       })
     } catch (error) {
       const apiError = error as ApiError
       toast({
         title: "Lỗi",
-        description: apiError.message || "Không thể xóa thiết bị. Vui lòng thử lại.",
+        description: apiError.message || "Không thể xóa vị trí. Vui lòng thử lại.",
         variant: "destructive",
       })
     } finally {
@@ -101,22 +87,21 @@ export function DevicesList() {
     }
   }
 
-  const handleEdit = async (updatedDevice: Device) => {
-    console.log(updatedDevice)
+  const handleEdit = async (updatedLocation: any) => {
     setIsSubmitting(true)
     try {
-      await DeviceApi.update(updatedDevice.id, updatedDevice)
-      setDevices(devices.map((device) => (device.id === updatedDevice.id ? updatedDevice : device)))
+      await LocationApi.update(updatedLocation.id, updatedLocation)
+      setLocations(locations.map((location) => (location.id === updatedLocation.id ? updatedLocation : location)))
       toast({
         title: "Thành công",
-        description: "Thiết bị đã được cập nhật thành công",
+        description: "Vị trí đã được cập nhật thành công",
         variant: "success",
       })
     } catch (error) {
       const apiError = error as ApiError
       toast({
         title: "Lỗi",
-        description: apiError.message || "Không thể cập nhật thiết bị. Vui lòng thử lại.",
+        description: apiError.message || "Không thể cập nhật vị trí. Vui lòng thử lại.",
         variant: "destructive",
       })
     } finally {
@@ -124,39 +109,30 @@ export function DevicesList() {
       setIsEditDialogOpen(false)
     }
   }
-  
-  const handleStatusChange = (deviceId: string, newStatus: string) => {
-    setDevices(devices.map((device) => (device.id === deviceId ? { ...device, status: newStatus } : device)))
-  }
 
-  const filteredDevices = devices.filter((device) => {
-    const matchesSearch =
-      device.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      device.location.home.email.toLowerCase().includes(searchTerm.toLowerCase())
-
-    const matchesType = typeFilter === "all" || device.type === typeFilter
-
-    return matchesSearch && matchesType
+  const uniqueHomes = Array.from(new Set(locations.map((location) => location.home.email))).map((homeEmail) => {
+    const location = locations.find((r) => r.home.email === homeEmail)
+    return { id: homeEmail, name: location?.home?.email || "" }
   })
 
-  const totalItems = filteredDevices.length
+  const filteredLocations = locations.filter((location) => {
+    const matchesSearch =
+      location.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      location.home.email.toLowerCase().includes(searchTerm.toLowerCase())
+
+    const matchesHome = homeFilter === "all" || location.home.email === homeFilter
+
+    return matchesSearch && matchesHome
+  })
+
+  const totalItems = filteredLocations.length
   const totalPages = Math.ceil(totalItems / itemsPerPage)
   const indexOfLastItem = currentPage * itemsPerPage
   const indexOfFirstItem = indexOfLastItem - itemsPerPage
-  const currentItems = filteredDevices.slice(indexOfFirstItem, indexOfLastItem)
+  const currentItems = filteredLocations.slice(indexOfFirstItem, indexOfLastItem)
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value)
-    setCurrentPage(1)
-  }
-
-  const handleTypeFilterChange = (value: string) => {
-    setTypeFilter(value)
-    setCurrentPage(1)
-  }
-  
-  const handleStatusFilterChange = (value: string) => {
-    setStatusFilter(value)
     setCurrentPage(1)
   }
 
@@ -166,7 +142,7 @@ export function DevicesList() {
     }
   }
 
-  const pageNumbers: number[] = []
+  const pageNumbers : number[] = []
   for (let i = 1; i <= totalPages; i++) {
     pageNumbers.push(i)
   }
@@ -188,22 +164,18 @@ export function DevicesList() {
   }
 
   const visiblePageNumbers = getVisiblePageNumbers()
-  
-  const getDeviceTypeDisplay = (type: string) => {
-    return type.charAt(0).toUpperCase() + type.slice(1)
-  }
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Tất cả thiết bị</CardTitle>
-        <CardDescription>Danh sách tất cả thiết bị trong hệ thống SmartHome.</CardDescription>
+        <CardTitle>Tất cả vị trí</CardTitle>
+        <CardDescription>Danh sách tất cả các vị trí trong hệ thống SmartHome.</CardDescription>
       </CardHeader>
       <div className="px-6 mb-4">
         <div className="flex flex-col md:flex-row gap-4">
           <div className="relative flex-1">
             <Input
-              placeholder="Tìm kiếm thiết bị theo tên hoặc email nhà..."
+              placeholder="Tìm kiếm vị trí theo tên hoặc email nhà..."
               value={searchTerm}
               onChange={handleSearchChange}
               className="pl-10"
@@ -226,33 +198,24 @@ export function DevicesList() {
               </Button>
             )}
           </div>
-          <div className="w-full md:w-[200px]">
-            <Select value={typeFilter} onValueChange={handleTypeFilterChange}>
+          <div className="w-full md:w-[180px]">
+            <Select
+              value={homeFilter}
+              onValueChange={(value) => {
+                setHomeFilter(value)
+                setCurrentPage(1)
+              }}
+            >
               <SelectTrigger>
-                <SelectValue placeholder="Lọc theo  loại" />
+                <SelectValue placeholder="Lọc theo nhà" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">Tất cả</SelectItem>
-                <SelectItem value="door">Cửa</SelectItem>
-                <SelectItem value="light">Đèn</SelectItem>
-                <SelectItem value="curtain">Rèm</SelectItem>
-                <SelectItem value="fan">Quạt</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          <div className="w-full md:w-[150px]">
-            <Select value={statusFilter} onValueChange={handleStatusFilterChange}>
-              <SelectTrigger>
-                <SelectValue placeholder="Lọc theo trạng thái" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Tất cả</SelectItem>
-                <SelectItem value="on">Bật</SelectItem>
-                <SelectItem value="off">Tắt</SelectItem>
-                <SelectItem value="0">Quạt - Tắt</SelectItem>
-                <SelectItem value="1">Quạt - Thấp</SelectItem>
-                <SelectItem value="2">Quạt - Trung bình</SelectItem>
-                <SelectItem value="3">Quạt - Cao</SelectItem>
+                <SelectItem value="all">Tất cả nhà</SelectItem>
+                {uniqueHomes.map((home) => (
+                  <SelectItem key={home.id} value={home.id}>
+                    {home.name}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
           </div>
@@ -262,56 +225,26 @@ export function DevicesList() {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Mã</TableHead>
-              <TableHead>Tên</TableHead>
-              <TableHead>Loại</TableHead>
-              <TableHead>Trạng thái</TableHead>
+              <TableHead>ID</TableHead>
+              <TableHead>Tên vị trí</TableHead>
               <TableHead>Email nhà</TableHead>
-              <TableHead>Vị trí</TableHead>
-              <TableHead className="text-right">Hành động</TableHead>
+              <TableHead className="text-right">Thao tác</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {currentItems.length > 0 ? (
-              currentItems.map((device) => (
-                <TableRow key={device.id}>
-                  <TableCell>{device.id}</TableCell>
-                  <TableCell className="font-medium">{device.name}</TableCell>
-                  <TableCell>{getDeviceTypeDisplay(device.type)}</TableCell>
-                  <TableCell>
-                    {device.type === "fan" ? (
-                      <Badge
-                        variant={device.status === "0" ? "secondary" : "default"}
-                        className={
-                          device.status === "0"
-                            ? "bg-gray-500"
-                            : device.status === "1"
-                              ? "bg-green-300"
-                              : device.status === "2"
-                                ? "bg-green-500"
-                                : "bg-green-700"
-                        }
-                      >
-                        Mức {device.status}
-                      </Badge>
-                    ) : (
-                      <Badge
-                        variant={device.status === "on" ? "default" : "secondary"}
-                        className={device.status === "on" ? "bg-green-500" : "bg-gray-500"}
-                      >
-                        {device.status === "on" ? "Bật" : "Tắt"}
-                      </Badge>
-                    )}
-                  </TableCell>
-                  <TableCell>{device.location.home.email}</TableCell>
-                  <TableCell>{device.location.name || "Chưa gán"}</TableCell>
+              currentItems.map((location) => (
+                <TableRow key={location.id}>
+                  <TableCell>{location.id}</TableCell>
+                  <TableCell className="font-medium">{location.name}</TableCell>
+                  <TableCell>{location.home.email}</TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end gap-2">
                       <Button
                         variant="outline"
                         size="icon"
                         onClick={() => {
-                          setSelectedDevice(device)
+                          setSelectedLocation(location)
                           setIsViewDialogOpen(true)
                         }}
                       >
@@ -321,7 +254,7 @@ export function DevicesList() {
                         variant="outline"
                         size="icon"
                         onClick={() => {
-                          setSelectedDevice(device)
+                          setSelectedLocation(location)
                           setIsEditDialogOpen(true)
                         }}
                       >
@@ -331,7 +264,7 @@ export function DevicesList() {
                         variant="outline"
                         size="icon"
                         onClick={() => {
-                          setSelectedDevice(device)
+                          setSelectedLocation(location)
                           setIsDeleteDialogOpen(true)
                         }}
                       >
@@ -343,10 +276,10 @@ export function DevicesList() {
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={5} className="text-center py-4 text-muted-foreground">
-                  {searchTerm || typeFilter !== "all" || statusFilter !== "all" 
-                    ? "Không có thiết bị phù hợp với tìm kiếm" 
-                    : "Không có thiết bị nào trong danh sách"}
+                <TableCell colSpan={6} className="text-center py-4 text-muted-foreground">
+                  {searchTerm || typeFilter !== "all" || homeFilter !== "all"
+                    ? "Không tìm thấy vị trí phù hợp với tìm kiếm của bạn"
+                    : "Không có vị trí nào"}
                 </TableCell>
               </TableRow>
             )}
@@ -357,7 +290,7 @@ export function DevicesList() {
         {totalItems > 0 && (
           <div className="mt-6 flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <span className="text-sm text-muted-foreground">Số thiết bị mỗi trang:</span>
+              <span className="text-sm text-muted-foreground">Số mục mỗi trang:</span>
               <Select
                 value={itemsPerPage.toString()}
                 onValueChange={(value) => {
@@ -431,27 +364,27 @@ export function DevicesList() {
         )}
       </CardContent>
 
-      {/* View Device Dialog */}
+      {/* View Location Dialog */}
       <Dialog open={isViewDialogOpen} onOpenChange={setIsViewDialogOpen}>
         <DialogContent className="sm:max-w-[725px]">
           <DialogHeader>
-            <DialogTitle>Chi tiết thiết bị</DialogTitle>
-            <DialogDescription>Thông tin chi tiết của thiết bị này.</DialogDescription>
+            <DialogTitle>Thông tin vị trí</DialogTitle>
+            <DialogDescription>Thông tin chi tiết về vị trí này.</DialogDescription>
           </DialogHeader>
-          {selectedDevice && <DeviceDetails device={selectedDevice} onStatusChange={handleStatusChange} />}
+          {selectedLocation && <LocationDetails location={selectedLocation} />}
         </DialogContent>
       </Dialog>
 
-      {/* Edit Device Dialog */}
+      {/* Edit Location Dialog */}
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
         <DialogContent className="sm:max-w-[525px]">
           <DialogHeader>
-            <DialogTitle>Chỉnh sửa thiết bị</DialogTitle>
-            <DialogDescription>Cập nhật thông tin của thiết bị.</DialogDescription>
+            <DialogTitle>Chỉnh sửa vị trí</DialogTitle>
+            <DialogDescription>Thay đổi thông tin vị trí.</DialogDescription>
           </DialogHeader>
-          {selectedDevice && (
-            <DeviceForm
-              initialData={selectedDevice}
+          {selectedLocation && (
+            <LocationForm
+              initialData={selectedLocation}
               onSubmit={handleEdit}
               onCancel={() => setIsEditDialogOpen(false)}
               isSubmitting={isSubmitting}
@@ -466,15 +399,26 @@ export function DevicesList() {
           <DialogHeader>
             <DialogTitle>Xác nhận xóa</DialogTitle>
             <DialogDescription>
-              Bạn chắc chắn muốn xóa thiết bị này? Hành động này sẽ không được hoàn lại.
+              Bạn có chắc chắn muốn xóa vị trí này? Hành động này không thể hoàn tác.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setIsDeleteDialogOpen(false)}>
+            <Button variant="outline" onClick={() => setIsDeleteDialogOpen(false)} disabled={isSubmitting}>
               Hủy
             </Button>
-            <Button variant="destructive" onClick={() => selectedDevice && handleDelete(selectedDevice.id)}>
-              Xóa
+            <Button
+              variant="destructive"
+              onClick={() => selectedLocation && handleDelete(selectedLocation.id)}
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Đang xóa...
+                </>
+              ) : (
+                "Xóa"
+              )}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -482,4 +426,3 @@ export function DevicesList() {
     </Card>
   )
 }
-

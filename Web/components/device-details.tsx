@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Blinds, Cpu, DoorOpen, Fan, History, LightbulbIcon, Loader2, Power } from "lucide-react"
+import { Blinds, Cpu, DoorOpen, Fan, History, LightbulbIcon, Loader2, MapPin, Power } from "lucide-react"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -145,7 +145,20 @@ export function DeviceDetails({ device, onStatusChange }: DeviceDetailsProps) {
           </div>
           <div className="space-y-1">
             <p className="text-sm text-muted-foreground">Email nhà</p>
-            <p className="font-medium">{device.home.email}</p>
+            <p className="font-medium">{device.location.home.email}</p>
+          </div>
+          <div className="space-y-1">
+            <p className="text-sm text-muted-foreground">Vị trí</p>
+            <div className="flex items-center gap-2">
+              {device.location.name ? (
+                <>
+                  <MapPin className="h-4 w-4 text-green-600" />
+                  <p className="font-medium">{device.location.name}</p>
+                </>
+              ) : (
+                <p className="text-muted-foreground italic">Chưa gán vị trí</p>
+              )}
+            </div>
           </div>
         </div>
         

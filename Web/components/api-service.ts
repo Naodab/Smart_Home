@@ -2,7 +2,6 @@
 
 import { getAuthToken } from "@/lib/auth"
 import { toast } from "./ui/use-toast"
-import router from "next/router"
 
 const API_BASE_URL = "http://localhost:8088"
 
@@ -18,7 +17,25 @@ export type Home = {
   temperature: number
   humidity: number
   persons: PersonInHome[]
-  devices: DeviceInHome[]
+  locations: LocationInHome[]
+}
+
+export type Location = {
+  id: string
+  name: string
+  home: HomeInLocation
+  devices: DeviceInLocation[]
+}
+
+export type LocationInHome = {
+  id: string
+  name: string
+  address: string
+}
+
+export type HomeInLocation = {
+  id: string
+  email: string
 }
 
 export type PersonInHome = {
@@ -27,11 +44,11 @@ export type PersonInHome = {
   homeIds: string[]
 }
 
-export type DeviceInHome = {
+export type DeviceInLocation = {
   id: string
   name: string
-  status: boolean
-  homeId: string
+  status: string
+  type: string
 }
 
 export type HomeInPerson = {
@@ -65,10 +82,10 @@ export type HistoryInDevice = {
   timestamp: string
 }
 
-export type HomeInDevice = {
+export type LocationInDevice = {
   id: string
-  email: string
-  address: string
+  name: string
+  home: HomeInLocation
 }
 
 export type PersonToSelect = {
@@ -86,7 +103,7 @@ export type Device = {
   name: string
   status: string
   type: string
-  home: HomeInDevice
+  location: LocationInDevice
   histories: HistoryInDevice[]
 }
 
@@ -147,6 +164,15 @@ export const PersonApi = {
   update: (id: string, data: Person) => apiCall<Person>(`/api/people/${id}/`, "PUT", data),
   delete: (id: string) => apiCall<void>(`/api/people/${id}/`, "DELETE"),
   getPeopleToAdd: () => apiCall<PersonToSelect[]>("/api/people/select/"),
+}
+
+export const LocationApi = {
+  getAll: () => apiCall<Location[]>("/api/locations/"),
+  getById: (id: string) => apiCall<Location>(`/api/locations/${id}/`),
+  create: (data: Location) => apiCall<Location>("/api/locations/", "POST", data),
+  update: (id: string, data: Location) => apiCall<Location>(`/api/locations/${id}/`, "PUT", data),
+  delete: (id: string) => apiCall<void>(`/api/locations/${id}/`, "DELETE"),
+  getByHomeEmail: (email: string) => apiCall<Location[]>(`/api/homes/${email}/locations/`),
 }
 
 export const DeviceApi = {
