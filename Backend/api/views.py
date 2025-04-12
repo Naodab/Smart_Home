@@ -20,9 +20,11 @@ from .serializers import DeviceCreateSerializer, \
                           LoginSerializer, \
                           RegisterSerializer, \
                           HomeSerializer, \
-                          HistorySerializer
+                          HistorySerializer, \
+                          LocationSaveSerializer, \
+                          LocationSerializer
 
-from api.models import History, BlacklistedToken
+from api.models import History, BlacklistedToken, Location
 
 from AI_Module.speech_recognition.speech_to_text import transfer_audio_to_text
 from AI_Module.speaker_recognition.test import identify_speaker
@@ -240,6 +242,46 @@ class PersonIdAPIView(APIView):
     person.delete()
     return Response({"message": "Person deleted successfully"})
 person_id_api_view = PersonIdAPIView.as_view()
+
+# /api/locations/
+class LocationAPIView(APIView):
+  permission_classes = [IsAuthenticated, IsAdmin]
+  
+  def post(self, request, *args, **kwargs):
+    serializer = LocationSaveSerializer(data=request.data, context={"request": request})
+    if serializer.is_valid():
+      location = serializer.save()
+      return Response({"message": "Location registered successfully", "name": location.name})
+    return Response(serializer.errors, status=400)
+  
+  def get(self, request, *args, **kwargs):
+    locations = Location.objects.all()
+    serializer = LocationSerializer(locations, many=True)
+    return Response(serializer.data)
+  
+location_api_view = LocationAPIView.as_view()
+
+# /api/locations/<id>/
+class LocationIdAPIView(APIView):
+  permission_classes = [IsAuthenticated, IsAdmin]
+  def get(self, request, id, *args, **kwargs):
+    location = get_object_or_404(Location, id=id)
+    serializer = LocationSerializer(location)
+    return Response(serializer.data)
+  
+  def put(self, request, id, *args, **kwargs):
+    location = get_object_or_404(Location, id=id)
+    serializer = LocationSaveSerializer(location, data=request.data, context={"request": request})
+    if serializer.is_valid():
+      serializer.save()
+      return Response({"message": "Location updated successfully", "name": location.name})
+    return Response(serializer.errors, status=400)
+  
+  def delete(self, request, id, *args, **kwargs):
+    location = get_object_or_404(Location, id=id)
+    location.delete()
+    return Response({"message": "Location deleted successfully"})
+location_id_api_view = LocationIdAPIView.as_view()
 
 # /api/devices/
 class DeviceAPIView(APIView):

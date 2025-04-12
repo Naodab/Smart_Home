@@ -1,6 +1,6 @@
 from django.db.models import Q
 from rest_framework import serializers
-from api.models import Device, History, Home, Person
+from api.models import Device, History, Home, Person, Location
 
 class SpeechSerializer(serializers.Serializer):
     file = serializers.FileField()
@@ -107,6 +107,38 @@ class LocationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Device
         fields = ['id', 'name', 'home', 'devices']
+
+class LocationSaveSerializer(serializers.ModelSerializer):
+    def create(self, validated_data):
+        home_data = self.context["request"].data.get('home', None)
+        home_email = home_data.get("email") if home_data else None
+        if not home_email:  
+            raise serializers.ValidationError({"home": "Home email is required"})
+        try:
+            home = Home.objects.get(email=home_email)
+        except Home.DoesNotExist:
+            raise serializers.ValidationError({"home": f"Home with email {home_email} does not exist"})
+        location = Location.objects.create(home=home, **validated_data)
+        return location
+    
+    def update(self, instance, validated_data):
+        home_data = self.context["request"].data.get('home', None)
+        home_email = home_data.get("email") if home_data else None
+        if not home_email:  
+            raise serializers.ValidationError({"home": "Home email is required"})
+        try:
+            home = Home.objects.get(email=home_email)
+        except Home.DoesNotExist:
+            raise serializers.ValidationError({"home": f"Home with email {home_email} does not exist"})
+        instance.home = home
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        instance.save()
+        return instance
+
+    class Meta:
+        model = Device
+        fields = ['id', 'name']
 
 class HomeSerializer(serializers.ModelSerializer):
     persons = serializers.SerializerMethodField()

@@ -21,6 +21,8 @@ urlpatterns = [
   path('devices/<str:id>/', views.device_id_api_view), # /api/devices/<id>
   path('histories/', views.history_api_view), # /api/histories/
   path('histories/<str:id>/', views.history_id_api_view), # /api/histories/<id>
+  path('locations/', views.location_api_view), # /api/locations/
+  path('locations/<str:id>/', views.location_id_api_view), # /api/locations/<id>
 
   # Common urls
   path('token/refresh/', views.refresh_token_api_view), # /api/token/refresh/
