@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Home, Users, Cpu, Thermometer, Droplets } from "lucide-react"
+import { Home, Users, Cpu, Thermometer, Droplets, DoorOpen } from "lucide-react"
 import {
   Table,
   TableBody,
@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
 import { 
-  DeviceInHome,
+  LocationInHome,
   PersonInHome,
 } from "./api-service"
 
@@ -24,7 +24,7 @@ interface HomeDetailsProps {
     email: string
     address: string
     persons: PersonInHome[]
-    devices: DeviceInHome[]
+    locations: LocationInHome[]
     temperature: number
     humidity: number
   }
@@ -32,11 +32,11 @@ interface HomeDetailsProps {
 
 export function HomeDetails({ home }: HomeDetailsProps) {
   const [personsInHome, setPersonsInHome] = useState<any[]>([])
-  const [devicesInHome, setDevicesInHome] = useState<any[]>([])
+  const [locationsInHome, setLocationsInHome] = useState<any[]>([])
 
   useEffect(() => {
     setPersonsInHome(home.persons || [])
-    setDevicesInHome(home.devices || [])
+    setLocationsInHome(home.locations || [])
   }, [home.id])
 
   return (
@@ -85,8 +85,8 @@ export function HomeDetails({ home }: HomeDetailsProps) {
               Người dùng
             </TabsTrigger>
             <TabsTrigger value="devices" className="flex items-center gap-2">
-              <Cpu className="h-4 w-4" />
-              Thiết bị
+              <DoorOpen className="h-4 w-4" />
+              Vị trí
             </TabsTrigger>
           </TabsList>
 
@@ -122,31 +122,22 @@ export function HomeDetails({ home }: HomeDetailsProps) {
 
           <TabsContent value="devices" className="mt-4">
             <div className="flex justify-between items-center mb-4">
-              <h4 className="text-lg font-semibold">Các thiết bị trong nhà này</h4>
+              <h4 className="text-lg font-semibold">Các vị trí trong nhà này</h4>
             </div>
             <Table>
               <TableHeader>
                 <TableRow>
                   <TableHead>Mã</TableHead>
                   <TableHead>Tên</TableHead>
-                  <TableHead>Trạng thái</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {devicesInHome.length > 0 ? (
-                  devicesInHome.map((device) => (
-                    <TableRow key={device.id}>
-                      <TableCell>{device.id}</TableCell>
-                      <TableCell>{device.name}</TableCell>
-                      <TableCell>
-                        <Badge
-                          variant={device.status ? "default" : "secondary"}
-                          className={device.status ? "bg-green-500" : "bg-gray-500"}
-                        >
-                          {device.status ? "Active" : "Inactive"}
-                        </Badge>
-                      </TableCell>
-                    </TableRow>
+                {locationsInHome.length > 0 ? (
+                  locationsInHome.map((location) => (
+                    <TableRow key={location.id}>
+                      <TableCell>{location.id}</TableCell>
+                      <TableCell>{location.name}</TableCell>
+                      </TableRow>
                   ))
                 ) : (
                   <TableRow>

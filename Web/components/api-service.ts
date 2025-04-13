@@ -172,7 +172,7 @@ export const LocationApi = {
   create: (data: Location) => apiCall<Location>("/api/locations/", "POST", data),
   update: (id: string, data: Location) => apiCall<Location>(`/api/locations/${id}/`, "PUT", data),
   delete: (id: string) => apiCall<void>(`/api/locations/${id}/`, "DELETE"),
-  getByHomeEmail: (email: string) => apiCall<Location[]>(`/api/homes/${email}/locations/`),
+  getByHomeEmail: (email: string) => apiCall<Location[]>(`/api/homes/locations/${email}/`),
 }
 
 export const DeviceApi = {

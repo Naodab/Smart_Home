@@ -1,10 +1,10 @@
 "use client"
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { LocationApi, type ApiError } from "@/components/api-service"
-import { useToast } from "@/hooks/use-toast"
 import { LocationForm } from "@/components/location-form"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Location, LocationApi, type ApiError } from "@/components/api-service"
+import { useToast } from "@/hooks/use-toast"
 
 export default function NewLocationPage() {
   const router = useRouter()

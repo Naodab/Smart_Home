@@ -190,7 +190,8 @@ class HomeEmailsAPIView(APIView):
   permission_classes = [IsAuthenticated, IsAdmin]
 
   def get(self, request, *args, **kwargs):
-    homes = Home.objects.values('id', 'email')
+    homes = Home.objects.all()
+    homes = [{"id": home.id, "email": home.email} for home in homes if home.is_staff == False]
     return Response(homes)
 home_emails_api_view = HomeEmailsAPIView.as_view()
 
@@ -283,14 +284,25 @@ class LocationIdAPIView(APIView):
     return Response({"message": "Location deleted successfully"})
 location_id_api_view = LocationIdAPIView.as_view()
 
+# /api/homes/<email>/locations/
+class LocationInHomeAPIView(APIView):
+  permission_classes = [IsAuthenticated, IsAdmin]
+  
+  def get(self, request, email, *args, **kwargs):
+    home = get_object_or_404(Home, email=email)
+    locations = home.locations.all()
+    serializer = LocationSerializer(locations, many=True)
+    return Response(serializer.data)
+
+location_in_home_api_view = LocationInHomeAPIView.as_view()
 # /api/devices/
 class DeviceAPIView(APIView):
   permission_classes = [IsAuthenticated, IsAdmin]
   
   def post(self, request, *args, **kwargs):
-    print(request.data)
     serializer = DeviceCreateSerializer(data=request.data, context={"request": request})
     if serializer.is_valid():
+      print(serializer.validated_data)
       device = serializer.save()
       return Response(DeviceSerializer(device).data, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=400)

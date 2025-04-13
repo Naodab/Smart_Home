@@ -161,16 +161,6 @@ export function DeviceDetails({ device, onStatusChange }: DeviceDetailsProps) {
             </div>
           </div>
         </div>
-        
-        <div className="flex justify-end mb-6">
-          <Button
-            className="bg-green-600 hover:bg-green-700"
-            onClick={() => setIsChangeStatusDialogOpen(true)}
-          >
-            <Power className="mr-2 h-4 w-4" />
-            Change Status
-          </Button>
-        </div>
 
         <Tabs defaultValue="history" className="mt-6">
           <TabsList className="grid w-full grid-cols-1">

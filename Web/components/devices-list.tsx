@@ -303,8 +303,8 @@ export function DevicesList() {
                       </Badge>
                     )}
                   </TableCell>
-                  <TableCell>{device.location.home.email}</TableCell>
-                  <TableCell>{device.location.name || "Chưa gán"}</TableCell>
+                  <TableCell>{device.location?.home.email}</TableCell>
+                  <TableCell>{device.location?.name || "Chưa gán"}</TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end gap-2">
                       <Button

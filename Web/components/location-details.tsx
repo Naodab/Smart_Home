@@ -16,7 +16,7 @@ export function LocationDetails({ location }: LocationDetailsProps) {
   const [devicesInLocation, setDevicesInLocation] = useState<DeviceInLocation[]>([])
 
   useEffect(() => {
-    setDevicesInLocation(location.devices)
+    setDevicesInLocation(location.devices || [])
   }, [location.id])
 
   return (

@@ -13,6 +13,7 @@ urlpatterns = [
   path('admins/login/', views.admin_login_api_view), # /api/admins/login/
   path('homes/', views.home_api_view), # /api/homes/
   path('homes/emails/', views.home_emails_api_view), # /api/homes/emails/
+  path('homes/locations/<str:email>/', views.location_in_home_api_view), # /api/homes/select/
   path('homes/<str:id>/', views.home_id_api_view), # /api/homes/<id>
   path('people/', views.person_api_view), # /api/people/
   path('people/select/', views.person_select_api_view), # /api/people/select/

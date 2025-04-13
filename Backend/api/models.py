@@ -28,7 +28,6 @@ class Home(AbstractUser):
   username = None
   id = models.AutoField(primary_key=True)
   email = models.EmailField(max_length=120, unique=True)
-  password = models.CharField(max_length=120, default=DEFAULT_PASSWORD)
   address = models.CharField(max_length=120, default="123 Kieu Son Den")
   temperature = models.FloatField(default=27)
   humidity = models.FloatField(default=50)

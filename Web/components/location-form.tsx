@@ -54,11 +54,14 @@ export function LocationForm({ initialData, onSubmit, onCancel, isSubmitting = f
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    const selectedHome = homes.find((home) => home.email === formData.homeEmail)
-    onSubmit({
-      ...formData,
-      homeName: selectedHome?.email,
-    })
+    const formattedData = {
+      id: formData?.id,
+      name: formData?.name,
+      home: {
+        email: formData?.homeEmail,
+      }
+    } as Location
+    onSubmit(formattedData)
   }
 
   return (

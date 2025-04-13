@@ -11,16 +11,22 @@ class LoginSerializer(serializers.Serializer):
     password = serializers.CharField()
 
 class DeviceSerializer(serializers.ModelSerializer):
-    home = serializers.SerializerMethodField()
+    location = serializers.SerializerMethodField()
     histories = serializers.SerializerMethodField()
 
-    def get_home(self, obj):
+    def get_location(self, obj):
+        if obj.location is None:
+            return None
         return {
-            "id": obj.home.id,
-            "email": obj.home.email,
-            "address": obj.home.address,
-            "temperature": obj.home.temperature,
-            "humidity": obj.home.humidity
+            "id": obj.location.id,
+            "name": obj.location.name,
+            "home": {
+                "id": obj.location.home.id,
+                "email": obj.location.home.email,
+                "address": obj.location.home.address,
+                "temperature": obj.location.home.temperature,
+                "humidity": obj.location.home.humidity
+            }
         }
 
     def get_histories(self, obj):
@@ -35,41 +41,59 @@ class DeviceSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Device
-        fields = ['id', 'name', 'location', 'status', 'type', 'home', 'histories']
+        fields = ['id', 'name', 'location', 'status', 'type', 'histories']
 
 class DeviceCreateSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
-        home_data = self.context["request"].data.get('home', None)
-        home_email = home_data.get('email') if home_data else None
-        
+        request_data = self.context["request"].data
+        print(request_data)
+
+        home_data = request_data.get('home', None)
+        home_email = home_data.get('email')
         if not home_email:
             raise serializers.ValidationError({"home": "Home email is required"})
+        
         try:
             home = Home.objects.get(email=home_email)
         except Home.DoesNotExist:
             raise serializers.ValidationError({"home": f"Home with email {home_email} does not exist"})
 
-        device = Device.objects.create(home=home, **validated_data)
+        location_data = request_data.get('location', None)
+        print(location_data)
+        location_name = location_data.get('name')
+        location = None
+        if location_name:
+            location, _ = Location.objects.get_or_create(name=location_name, home=home)
+
+        device = Device.objects.create(
+            location=location,
+            **validated_data
+        )
         return device
 
     class Meta:
         model = Device
-        fields = ['id', 'name', 'location', 'status', 'type']
+        fields = ['id', 'name', 'status', 'type']
+
 
 class DeviceUpdateSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
-        home_data = self.context["request"].data.get('home', None)
+        request_data = self.context["request"].data
 
-        if home_data:
-            home_email = home_data.get("email")
-            if not home_email:
-                raise serializers.ValidationError({"home": "Home email is required"})
+        home_data = request_data.get('home', {})
+        home_email = home_data.get('email')
+        if home_email:
             try:
                 home = Home.objects.get(email=home_email)
+                instance.home = home
             except Home.DoesNotExist:
                 raise serializers.ValidationError({"home": f"Home with email {home_email} does not exist"})
-            
-            instance.home = home
+
+        location_data = request_data.get('location', {})
+        location_name = location_data.get('name')
+        if location_name and instance.home:
+            location, _ = Location.objects.get_or_create(name=location_name, home=instance.home)
+            instance.location = location
 
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
@@ -79,7 +103,8 @@ class DeviceUpdateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Device
-        fields = ['id', 'name', 'location', 'status', 'type']
+        fields = ['id', 'name', 'status', 'type']
+
 
 class LocationSerializer(serializers.ModelSerializer):
     home = serializers.SerializerMethodField()
@@ -92,7 +117,7 @@ class LocationSerializer(serializers.ModelSerializer):
                 "name": d.name,
                 "status": d.status,
                 "type": d.type
-            } for d in devices if d.home == obj.home and d.location == obj
+            } for d in devices
         ]
     
     def get_home(self, obj):
@@ -259,3 +284,10 @@ class RegisterSerializer(serializers.ModelSerializer):
         if Home.objects.filter(email=value).exists():
             raise serializers.ValidationError("Email already exists")
         return value
+    
+    def create(self, validated_data):
+        email = validated_data['email']
+        address = validated_data.get('address', '')
+
+        user = Home.objects.create_user(email=email, address=address)
+        return user

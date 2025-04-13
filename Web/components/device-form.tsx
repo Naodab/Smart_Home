@@ -52,19 +52,21 @@ export function DeviceForm({
     status: initialData?.status ?? (initialData?.type === "quạt" ? "0" : "off"),
   })
   const [availableLocations, setAvailableLocations] = useState<{ id: string; name: string }[]>([])
-  if (formData.homeEmail) {
-    useEffect(() => {
-      const fetchLocations = async () => {
-        try {
-          const locations = await LocationApi.getByHomeEmail(formData.homeEmail)
-          setAvailableLocations(locations)
-        } catch (error) {
-          console.error("Failed to fetch locations:", error)
-        }
+  useEffect(() => {
+    if (!formData.homeEmail) {
+      setAvailableLocations([])
+      return
+    }
+    const fetchLocations = async () => {
+      try {
+        const locations = await LocationApi.getByHomeEmail(formData.homeEmail)
+        setAvailableLocations(locations)
+      } catch (error) {
+        console.error("Failed to fetch locations:", error)
       }
-      fetchLocations()
-    })
-  }
+    }
+    fetchLocations()
+  }, [])
 
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -75,7 +77,15 @@ export function DeviceForm({
     })
   }
 
-  const handleSelectChange = (field: string, value: any) => {
+  const handleSelectChange = async (field: string, value: any) => {
+    if (field === "homeEmail") {
+      try {
+        const locations = await LocationApi.getByHomeEmail(value)
+        setAvailableLocations(locations)
+      } catch (error) {
+        console.error("Failed to fetch homes:", error)
+      }
+    }
     console.log(field, ":", value)
     setFormData({
       ...formData,
@@ -99,6 +109,9 @@ export function DeviceForm({
       id: initialData?.id ?? "",
       name: formData.name,
       type: formData.type,
+      location: {
+        name: formData.locationName,
+      },
       home: {
         email: selectedHome?.email
       }
@@ -149,7 +162,7 @@ export function DeviceForm({
         <Label htmlFor="locationId">Vị trí</Label>
         <Select
           value={formData.locationName}
-          onValueChange={(value) => handleSelectChange("locationId", value)}
+          onValueChange={(value) => handleSelectChange("locationName", value)}
           disabled={!formData.homeEmail || availableLocations.length === 0}
         >
           <SelectTrigger>
@@ -165,7 +178,7 @@ export function DeviceForm({
           </SelectTrigger>
           <SelectContent>
             {availableLocations.map((location) => (
-              <SelectItem key={location.id} value={location.id}>
+              <SelectItem key={location.name} value={location.name}>
                 {location.name}
               </SelectItem>
             ))}
