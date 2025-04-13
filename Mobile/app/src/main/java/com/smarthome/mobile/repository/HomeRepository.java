@@ -1,5 +1,7 @@
 package com.smarthome.mobile.repository;
 
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 import androidx.lifecycle.MutableLiveData;
 

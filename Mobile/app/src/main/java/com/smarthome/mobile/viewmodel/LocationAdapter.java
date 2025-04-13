@@ -34,6 +34,12 @@ public class LocationAdapter extends RecyclerView.Adapter<LocationAdapter.ViewHo
         holder.bind(locations.get(position));
     }
 
+    public void updateData(List<Location> newLocations) {
+        this.locations.clear();
+        this.locations.addAll(newLocations);
+        notifyDataSetChanged();
+    }
+
     @Override
     public int getItemCount() {
         return locations.size();
@@ -44,15 +50,16 @@ public class LocationAdapter extends RecyclerView.Adapter<LocationAdapter.ViewHo
 
         public ViewHolder (LocationItemBinding binding) {
             super(binding.getRoot());
+            this.binding = binding;
         }
 
         public void bind(Location location) {
             binding.setLocation(location);
             binding.executePendingBindings();
 
-            DeviceAdapter deviceAdapter = new DeviceAdapter(location.getDevices());
-            binding.devices.setLayoutManager(new LinearLayoutManager(binding.devices.getContext()));
-            binding.devices.setAdapter(deviceAdapter);
+//            DeviceAdapter deviceAdapter = new DeviceAdapter(location.getDevices());
+//            binding.devices.setLayoutManager(new LinearLayoutManager(binding.devices.getContext()));
+//            binding.devices.setAdapter(deviceAdapter);
         }
     }
 }

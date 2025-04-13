@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +20,8 @@ import com.smarthome.mobile.view.widget.CustomToast;
 import com.smarthome.mobile.viewmodel.DeviceAdapter;
 import com.smarthome.mobile.viewmodel.HomeViewModel;
 import com.smarthome.mobile.viewmodel.LocationAdapter;
+
+import java.util.ArrayList;
 
 public class RemoteFragment extends Fragment {
     private FragmentRemoteBinding binding;
@@ -37,6 +40,9 @@ public class RemoteFragment extends Fragment {
         binding = FragmentRemoteBinding.inflate(inflater, container, false);
         binding.locationList.setLayoutManager(new LinearLayoutManager(requireContext()));
         homeViewModel = new ViewModelProvider(requireActivity()).get(HomeViewModel.class);
+        locationAdapter = new LocationAdapter(new ArrayList<>());
+        binding.locationList.setAdapter(locationAdapter);
+        Log.d("Remote Fragment", "onCreateView: change to view");
         loading = new CustomLoadingDialog(getContext());
         return binding.getRoot();
     }
@@ -44,7 +50,6 @@ public class RemoteFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
         homeViewModel.fetchHome();
         homeViewModel.getHomeLiveData().observe(getViewLifecycleOwner(), result -> {
             switch (result.status) {
@@ -59,8 +64,8 @@ public class RemoteFragment extends Fragment {
                     Home home = result.data;
                     binding.tvTemperature.setText(String.valueOf(home.getTemperature()));
                     binding.tvHumidity.setText(String.valueOf(home.getHumidity()));
-                    locationAdapter =  new LocationAdapter(home.getRooms());
-                    binding.locationList.setAdapter(locationAdapter);
+                    locationAdapter.updateData(home.getLocations());
+//                    binding.locationList.setAdapter(locationAdapter);
                     loading.dismiss();
             }
         });

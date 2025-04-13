@@ -64,11 +64,11 @@ public class Home {
         this.humidity = humidity;
     }
 
-    public List<Location> getRooms() {
+    public List<Location> getLocations() {
         return locations;
     }
 
-    public void setRooms(List<Location> locations) {
+    public void setLocations(List<Location> locations) {
         this.locations = locations;
     }
 

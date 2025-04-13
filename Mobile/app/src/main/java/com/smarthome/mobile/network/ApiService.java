@@ -34,7 +34,7 @@ public interface ApiService {
     @POST("api/refresh/")
     Call<TokenResponse> refreshToken(@Body RefreshRequest request);
 
-    @GET("api/users/homes/{email}")
+    @GET("api/users/homes/{email}/")
     Call<Home> getHome(@Path("email") String email);
 
     @Multipart

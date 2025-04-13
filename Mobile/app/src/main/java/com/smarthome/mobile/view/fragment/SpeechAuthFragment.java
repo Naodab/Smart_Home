@@ -87,20 +87,20 @@ public class SpeechAuthFragment extends Fragment {
             }
         });
 
-        binding.btnMic.setOnTouchListener((v, event) -> {
+        binding.micBtn.btnMic.setOnTouchListener((v, event) -> {
             Log.d("record", "1");
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
                     Log.d("record", "2");
                     int duration = playSound();
-                    scaleView(binding.btnMic, 1.0f, SCALE);
+                    scaleView(binding.micBtn.btnMic, 1.0f, SCALE);
                     new Handler(Looper.getMainLooper()).postDelayed(
                             () -> speechAuthViewModel.startRecording(), duration);
                     return true;
 
                 case MotionEvent.ACTION_UP:
                 case MotionEvent.ACTION_CANCEL:
-                    scaleView(binding.btnMic, SCALE, 1.0f);
+                    scaleView(binding.micBtn.btnMic, SCALE, 1.0f);
                     speechAuthViewModel.stopRecording();
                     return true;
             }
