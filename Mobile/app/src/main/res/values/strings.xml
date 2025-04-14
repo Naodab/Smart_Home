@@ -31,7 +31,8 @@
     <string name="id_tv">ID:</string>
     <string name="email_tv">Email:</string>
     <string name="address_tv">Địa chỉ:</string>
-    <string name="temp_id">2</string>
+    <string name="temp_id">25°C</string>
+    <string name="test_humidity">50%</string>
     <string name="text_email">testhome3@smarthome.com</string>
     <string name="text_address">123 Kiều Sơn Đen</string>
     <string name="logout">Đăng xuất</string>
@@ -43,4 +44,6 @@
     <string name="confirm">Xác nhận</string>
     <string name="more">More</string>
     <string name="location">Vị trí</string>
+    <string name="little">little</string>
+    <string name="detail">Chi tiết</string>
 </resources>

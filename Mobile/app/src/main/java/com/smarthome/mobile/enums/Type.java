@@ -1,10 +1,10 @@
 package com.smarthome.mobile.enums;
 
 public enum Type {
-    LIGHT("đèn"),
-    DOOR("cửa"),
-    FAN("quạt"),
-    CURTAIN("rèm");
+    LIGHT("Đèn"),
+    DOOR("Cửa"),
+    FAN("Quạt"),
+    CURTAIN("Rèm");
 
     private final String vietnamese;
 

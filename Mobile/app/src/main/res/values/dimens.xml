@@ -2,4 +2,5 @@
 <resources>
     <dimen name="dot_size">100sp</dimen>
     <dimen name="text_size_profile">12sp</dimen>
+    <dimen name="temp_humi_title">12sp</dimen>
 </resources>

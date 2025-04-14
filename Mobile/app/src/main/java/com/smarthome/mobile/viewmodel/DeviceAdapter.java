@@ -39,6 +39,12 @@ public class DeviceAdapter extends RecyclerView.Adapter<DeviceAdapter.ViewHolder
         return devices.size();
     }
 
+    public void updateDevices(List<Device> devices) {
+        this.devices.clear();
+        this.devices.addAll(devices);
+        notifyDataSetChanged();
+    }
+
     public class ViewHolder extends RecyclerView.ViewHolder{
         DeviceItemBinding binding;
 
@@ -52,24 +58,18 @@ public class DeviceAdapter extends RecyclerView.Adapter<DeviceAdapter.ViewHolder
             binding.executePendingBindings();
 
             switch (device.getType()) {
-//                case DOOR:
-//                    if (device.getType()) {
-//                        binding.deviceIcon.setImageResource(R.drawable.ic_door_open);
-//                        binding.deviceState.setText("Trạng thái: đang mở");
-//                    } else {
-//                        binding.deviceIcon.setImageResource(R.drawable.ic_door_close);
-//                        binding.deviceState.setText("Trạng thái: đang đóng");
-//                    }
-//                    break;
-//                case LIGHT:
-//                    if ("on".equals(device.getStatus())) {
-//                        binding.deviceIcon.setImageResource(R.drawable.ic_light_on);
-//                        binding.deviceState.setText("Trạng thái: đang bật");
-//                    } else {
-//                        binding.deviceIcon.setImageResource(R.drawable.ic_light_off);
-//                        binding.deviceState.setText("Trạng thái: đang tắt");
-//                    }
-//                    break;
+                case DOOR:
+                    binding.deviceIcon.setBackgroundResource(R.drawable.ic_door_open);
+                    break;
+                case FAN:
+                    binding.deviceIcon.setBackgroundResource(R.drawable.ic_fan_on);
+                    break;
+                case LIGHT:
+                    binding.deviceIcon.setBackgroundResource(R.drawable.ic_light_on);
+                    break;
+                case CURTAIN:
+                    binding.deviceIcon.setBackgroundResource(R.drawable.ic_curtain_on);
+                    break;
             }
         }
     }

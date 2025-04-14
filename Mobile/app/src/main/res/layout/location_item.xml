@@ -15,7 +15,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:paddingHorizontal="20dp"
+            android:paddingHorizontal="12dp"
             android:background="@android:color/transparent"
             android:paddingVertical="12dp">
 
@@ -23,22 +23,36 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:textSize="20sp"
+                android:textSize="16sp"
                 android:textColor="@color/black"
                 android:text="@{location.name}"
                 android:fontFamily="@font/minor_title" />
 
             <ImageView
                 android:id="@+id/more_btn"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
                 android:contentDescription="@string/more"
                 android:src="@drawable/ic_down" />
+
+            <ImageView
+                android:id="@+id/little_btn"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:contentDescription="@string/little"
+                android:src="@drawable/ic_up"
+                android:visibility="gone"/>
         </LinearLayout>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/devices"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="18dp"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:background="@color/stroke_shadow"/>
     </LinearLayout>
 </layout>

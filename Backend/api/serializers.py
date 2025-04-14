@@ -200,7 +200,7 @@ class HomeMobileSerializer(serializers.ModelSerializer):
                     "name": d.name,
                     "status": d.status,
                     "type": d.type
-                } for d in hl.devices.all() if d.home == obj
+                } for d in hl.devices.all()
             ]
         } for hl in locations]
 

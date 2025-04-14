@@ -65,7 +65,6 @@ public class RemoteFragment extends Fragment {
                     binding.tvTemperature.setText(String.valueOf(home.getTemperature()));
                     binding.tvHumidity.setText(String.valueOf(home.getHumidity()));
                     locationAdapter.updateData(home.getLocations());
-//                    binding.locationList.setAdapter(locationAdapter);
                     loading.dismiss();
             }
         });

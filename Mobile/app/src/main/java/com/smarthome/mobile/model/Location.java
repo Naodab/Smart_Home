@@ -7,6 +7,7 @@ public class Location {
     private String name;
     private List<Device> devices;
     private Home home;
+    private boolean isExpanded = false;
 
     public Location(int id, String name, List<Device> devices, Home home) {
         this.id = id;
@@ -47,5 +48,13 @@ public class Location {
 
     public void setHome(Home home) {
         this.home = home;
+    }
+
+    public boolean isExpanded() {
+        return isExpanded;
+    }
+
+    public void setExpanded(boolean expanded) {
+        isExpanded = expanded;
     }
 }

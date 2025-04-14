@@ -1,6 +1,7 @@
 package com.smarthome.mobile.viewmodel;
 
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
@@ -11,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.smarthome.mobile.R;
 import com.smarthome.mobile.databinding.LocationItemBinding;
 import com.smarthome.mobile.model.Location;
+import com.smarthome.mobile.view.widget.CustomToast;
 
 import java.util.List;
 
@@ -45,21 +47,46 @@ public class LocationAdapter extends RecyclerView.Adapter<LocationAdapter.ViewHo
         return locations.size();
     }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder {
+    public class ViewHolder extends RecyclerView.ViewHolder {
         LocationItemBinding binding;
+        DeviceAdapter deviceAdapter;
 
         public ViewHolder (LocationItemBinding binding) {
             super(binding.getRoot());
             this.binding = binding;
+
+            binding.moreBtn.setOnClickListener(v -> {
+                int pos = getAdapterPosition();
+                if (pos != RecyclerView.NO_POSITION) {
+                    Location loc = locations.get(pos);
+                    loc.setExpanded(true);
+                    notifyItemChanged(pos);
+                }
+            });
+
+            binding.littleBtn.setOnClickListener(v -> {
+                int pos = getAdapterPosition();
+                if (pos != RecyclerView.NO_POSITION) {
+                    Location loc = locations.get(pos);
+                    loc.setExpanded(false);
+                    notifyItemChanged(pos);
+                }
+            });
         }
 
         public void bind(Location location) {
             binding.setLocation(location);
             binding.executePendingBindings();
 
-//            DeviceAdapter deviceAdapter = new DeviceAdapter(location.getDevices());
-//            binding.devices.setLayoutManager(new LinearLayoutManager(binding.devices.getContext()));
-//            binding.devices.setAdapter(deviceAdapter);
+            DeviceAdapter deviceAdapter = new DeviceAdapter(location.getDevices());
+            binding.devices.setLayoutManager(new LinearLayoutManager(binding.getRoot().getContext()));
+            binding.devices.setAdapter(deviceAdapter);
+
+            boolean isExpanded = location.isExpanded();
+            binding.devices.setVisibility(isExpanded ? View.VISIBLE : View.GONE);
+            binding.moreBtn.setVisibility(isExpanded ? View.GONE : View.VISIBLE);
+            binding.littleBtn.setVisibility(isExpanded ? View.VISIBLE : View.GONE);
         }
+
     }
 }

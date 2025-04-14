@@ -20,4 +20,5 @@
     <color name="mic_color">#FFF76A63</color>
     <color name="mic_color_second">#88F76A63</color>
     <color name="mic_color_third">#44F76A63</color>
+    <color name="gray">#494550</color>
 </resources>

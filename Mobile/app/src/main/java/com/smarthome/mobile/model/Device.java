@@ -1,5 +1,7 @@
 package com.smarthome.mobile.model;
 
+import androidx.annotation.NonNull;
+
 import com.smarthome.mobile.enums.Type;
 import com.smarthome.mobile.enums.Status;
 
@@ -58,5 +60,11 @@ public class Device {
 
     public void setRoom(Location location) {
         this.location = location;
+    }
+
+    @NonNull
+    @Override
+    public String toString() {
+        return this.getType().getVietnamese() + ": " + this.getName();
     }
 }

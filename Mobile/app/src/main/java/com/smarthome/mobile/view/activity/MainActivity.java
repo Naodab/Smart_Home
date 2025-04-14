@@ -110,12 +110,6 @@ public class MainActivity extends AppCompatActivity {
                 else
                     slideInLeft();
                 fragmentTransaction.replace(R.id.fragmentContainerView, new RemoteFragment());
-            } else if (itemId == R.id.navigation_monitor) {
-                if (prevFragment == R.id.navigation_profile)
-                    slideInLeft();
-                else
-                    slideInRight();
-                fragmentTransaction.replace(R.id.fragmentContainerView, new MonitorFragment());
             }
             fragmentTransaction.commit();
             return true;
