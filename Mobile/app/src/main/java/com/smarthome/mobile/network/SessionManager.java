@@ -14,6 +14,7 @@ public class SessionManager {
     private static final String USER_EMAIL = "UserEmail";
     private static final String USER_ADDRESS =  "UserAddress";
     private static final String USER_ID = "UserID";
+    private static final String PERSON_ID = "PersonID";
 
     public SessionManager(Context context) {
         this.sharedPreferences = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
@@ -43,6 +44,15 @@ public class SessionManager {
     public void saveUserId(int id) {
         editor.putInt(USER_ID, id);
         editor.apply();
+    }
+
+    public void savePersonID(int id) {
+        editor.putInt(PERSON_ID, id);
+        editor.apply();
+    }
+
+    public int fetchPersonID() {
+        return sharedPreferences.getInt(PERSON_ID, 0);
     }
 
     public String fetchAuthToken() {

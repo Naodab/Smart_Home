@@ -1,8 +1,10 @@
 package com.smarthome.mobile.network;
 
+import com.smarthome.mobile.dto.request.ChangeDeviceRequest;
 import com.smarthome.mobile.dto.request.ChangePasswordRequest;
 import com.smarthome.mobile.dto.request.LoginRequest;
 import com.smarthome.mobile.dto.request.RefreshRequest;
+import com.smarthome.mobile.dto.response.ChangeDeviceResponse;
 import com.smarthome.mobile.dto.response.LoginResponse;
 import com.smarthome.mobile.dto.response.TokenResponse;
 import com.smarthome.mobile.model.Home;
@@ -36,6 +38,9 @@ public interface ApiService {
 
     @GET("api/users/homes/{email}/")
     Call<Home> getHome(@Path("email") String email);
+
+    @POST("api/users/change-device/")
+    Call<ChangeDeviceResponse> changeStatusDevice(@Body ChangeDeviceRequest request);
 
     @Multipart
     @POST("api/speeches/upload/")

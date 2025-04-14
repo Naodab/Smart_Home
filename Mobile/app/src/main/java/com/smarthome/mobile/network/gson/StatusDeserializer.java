@@ -13,7 +13,7 @@ public class StatusDeserializer implements JsonDeserializer<Status> {
     public Status deserialize(JsonElement json, Type typeOfT,
                               JsonDeserializationContext context) throws JsonParseException {
         try {
-            return Status.valueOf(json.getAsString().toUpperCase());
+            return Status.fromApiValue(json.getAsString());
         } catch (IllegalArgumentException e) {
             throw new JsonParseException("Unknown type: " + json.getAsString());
         }

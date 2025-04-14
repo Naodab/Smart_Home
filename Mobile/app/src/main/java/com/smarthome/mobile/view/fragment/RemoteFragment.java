@@ -17,10 +17,10 @@ import com.smarthome.mobile.databinding.FragmentRemoteBinding;
 import com.smarthome.mobile.model.Home;
 import com.smarthome.mobile.view.widget.CustomLoadingDialog;
 import com.smarthome.mobile.view.widget.CustomToast;
-import com.smarthome.mobile.viewmodel.DeviceAdapter;
 import com.smarthome.mobile.viewmodel.HomeViewModel;
 import com.smarthome.mobile.viewmodel.LocationAdapter;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 
 public class RemoteFragment extends Fragment {
@@ -40,7 +40,7 @@ public class RemoteFragment extends Fragment {
         binding = FragmentRemoteBinding.inflate(inflater, container, false);
         binding.locationList.setLayoutManager(new LinearLayoutManager(requireContext()));
         homeViewModel = new ViewModelProvider(requireActivity()).get(HomeViewModel.class);
-        locationAdapter = new LocationAdapter(new ArrayList<>());
+        locationAdapter = new LocationAdapter(new ArrayList<>(), loading);
         binding.locationList.setAdapter(locationAdapter);
         Log.d("Remote Fragment", "onCreateView: change to view");
         loading = new CustomLoadingDialog(getContext());
@@ -62,8 +62,8 @@ public class RemoteFragment extends Fragment {
                     break;
                 case SUCCESS:
                     Home home = result.data;
-                    binding.tvTemperature.setText(String.valueOf(home.getTemperature()));
-                    binding.tvHumidity.setText(String.valueOf(home.getHumidity()));
+                    binding.tvTemperature.setText(MessageFormat.format("{0}°C", (int) home.getTemperature()));
+                    binding.tvHumidity.setText(MessageFormat.format("{0}%C", (int) home.getTemperature()));
                     locationAdapter.updateData(home.getLocations());
                     loading.dismiss();
             }
