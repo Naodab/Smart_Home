@@ -46,4 +46,12 @@
     <string name="location">Vị trí</string>
     <string name="little">little</string>
     <string name="detail">Chi tiết</string>
+    <string name="on">bật</string>
+    <string name="off">tắt</string>
+    <string name="fan_off">0</string>
+    <string name="fan_high">3</string>
+    <string name="fan_medium">2</string>
+    <string name="fan_low">1</string>
+    <string name="open">mở</string>
+    <string name="close">đóng</string>
 </resources>

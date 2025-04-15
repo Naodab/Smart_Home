@@ -12,15 +12,20 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.smarthome.mobile.R;
 import com.smarthome.mobile.databinding.LocationItemBinding;
 import com.smarthome.mobile.model.Location;
-import com.smarthome.mobile.view.widget.CustomToast;
+import com.smarthome.mobile.repository.DeviceRepository;
+import com.smarthome.mobile.view.widget.CustomLoadingDialog;
 
 import java.util.List;
 
 public class LocationAdapter extends RecyclerView.Adapter<LocationAdapter.ViewHolder> {
     private final List<Location> locations;
+    private final CustomLoadingDialog loading;
+    private final DeviceViewModel deviceViewModel;
 
-    public LocationAdapter(List<Location> locations) {
+    public LocationAdapter(List<Location> locations, CustomLoadingDialog loading) {
         this.locations = locations;
+        this.loading = loading;
+        this.deviceViewModel = new DeviceViewModel();
     }
 
     @NonNull
@@ -78,7 +83,7 @@ public class LocationAdapter extends RecyclerView.Adapter<LocationAdapter.ViewHo
             binding.setLocation(location);
             binding.executePendingBindings();
 
-            DeviceAdapter deviceAdapter = new DeviceAdapter(location.getDevices());
+            DeviceAdapter deviceAdapter = new DeviceAdapter(location.getDevices(), loading, deviceViewModel);
             binding.devices.setLayoutManager(new LinearLayoutManager(binding.getRoot().getContext()));
             binding.devices.setAdapter(deviceAdapter);
 
