@@ -4,9 +4,11 @@ import com.smarthome.mobile.dto.request.ChangeDeviceRequest;
 import com.smarthome.mobile.dto.request.ChangePasswordRequest;
 import com.smarthome.mobile.dto.request.LoginRequest;
 import com.smarthome.mobile.dto.request.RefreshRequest;
+import com.smarthome.mobile.dto.response.AuthResponse;
 import com.smarthome.mobile.dto.response.ChangeDeviceResponse;
 import com.smarthome.mobile.dto.response.LoginResponse;
 import com.smarthome.mobile.dto.response.TokenResponse;
+import com.smarthome.mobile.model.Device;
 import com.smarthome.mobile.model.Home;
 
 import java.util.Map;
@@ -45,7 +47,14 @@ public interface ApiService {
 
     @Multipart
     @POST("api/speeches/upload/")
-    Call<Void> authenticateSpeeches(
+    Call<AuthResponse> authenticateSpeeches(
+            @Part MultipartBody.Part file,
+            @PartMap Map<String, RequestBody> metadata
+    );
+
+    @Multipart
+    @POST("api/speeches/remote/")
+    Call<Device> remoteBySpeech(
             @Part MultipartBody.Part file,
             @PartMap Map<String, RequestBody> metadata
     );

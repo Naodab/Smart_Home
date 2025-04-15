@@ -102,13 +102,13 @@ public class MainActivity extends AppCompatActivity {
             currentFragment = itemId;
             fragmentTransaction = getSupportFragmentManager().beginTransaction();
             if (itemId ==  R.id.navigation_home) {
-                slideInLeft();
+                slideInLeft(fragmentTransaction);
                 fragmentTransaction.replace(R.id.fragmentContainerView, new HomeFragment());
             } else if (itemId == R.id.navigation_remote) {
                 if (prevFragment == R.id.navigation_home)
-                    slideInRight();
+                    slideInRight(fragmentTransaction);
                 else
-                    slideInLeft();
+                    slideInLeft(fragmentTransaction);
                 fragmentTransaction.replace(R.id.fragmentContainerView, new RemoteFragment());
             }
             fragmentTransaction.commit();
@@ -123,14 +123,14 @@ public class MainActivity extends AppCompatActivity {
         showBottomNav();
     }
 
-    private void slideInLeft() {
+    public void slideInLeft(FragmentTransaction fragmentTransaction) {
         fragmentTransaction.setCustomAnimations(
                 R.anim.slide_in_left,
                 R.anim.slide_out_right
         );
     }
 
-    private void slideInRight() {
+    public void slideInRight(FragmentTransaction fragmentTransaction) {
         fragmentTransaction.setCustomAnimations(
                 R.anim.slide_in_right,
                 R.anim.slide_out_left

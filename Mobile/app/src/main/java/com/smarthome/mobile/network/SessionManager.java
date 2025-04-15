@@ -3,6 +3,7 @@ package com.smarthome.mobile.network;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.smarthome.mobile.dto.response.AuthResponse;
 import com.smarthome.mobile.dto.response.LoginResponse;
 
 public class SessionManager {
@@ -15,6 +16,7 @@ public class SessionManager {
     private static final String USER_ADDRESS =  "UserAddress";
     private static final String USER_ID = "UserID";
     private static final String PERSON_ID = "PersonID";
+    private static final String PERSON_NAME = "PersonName";
 
     public SessionManager(Context context) {
         this.sharedPreferences = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
@@ -49,6 +51,20 @@ public class SessionManager {
     public void savePersonID(int id) {
         editor.putInt(PERSON_ID, id);
         editor.apply();
+    }
+
+    public void savePersonName(String name) {
+        editor.putString(PERSON_NAME, name);
+        editor.apply();
+    }
+
+    public void savePerson(AuthResponse authResponse) {
+        savePersonID(authResponse.getPersonId());
+        savePersonName(authResponse.getPersonName());
+    }
+
+    public String fetchPersonName() {
+        return sharedPreferences.getString(PERSON_NAME, null);
     }
 
     public int fetchPersonID() {

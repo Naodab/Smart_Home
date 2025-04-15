@@ -12,6 +12,7 @@ import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.ViewModelProvider;
 
 import android.os.Handler;
 import android.os.Looper;
@@ -20,14 +21,15 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.OvershootInterpolator;
-import android.view.animation.ScaleAnimation;
 
 import com.smarthome.mobile.R;
 import com.smarthome.mobile.databinding.FragmentSpeechAuthBinding;
-import com.smarthome.mobile.util.SpeechAuthCallBack;
+import com.smarthome.mobile.util.AnimationUtil;
+import com.smarthome.mobile.util.AudioRecorderHelper;
+import com.smarthome.mobile.util.SoundRecordUtil;
 import com.smarthome.mobile.view.activity.MainActivity;
+import com.smarthome.mobile.view.widget.CustomLoadingDialog;
+import com.smarthome.mobile.view.widget.CustomToast;
 import com.smarthome.mobile.viewmodel.SpeechAuthViewModel;
 
 public class SpeechAuthFragment extends Fragment {
@@ -37,6 +39,7 @@ public class SpeechAuthFragment extends Fragment {
     private int soundId;
     private final float SCALE = 0.9f;
     private SpeechAuthViewModel speechAuthViewModel;
+    private CustomLoadingDialog loading;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -49,6 +52,7 @@ public class SpeechAuthFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         binding = FragmentSpeechAuthBinding.inflate(inflater, container, false);
+        loading = new CustomLoadingDialog(getContext());
         return binding.getRoot();
     }
 
@@ -75,15 +79,24 @@ public class SpeechAuthFragment extends Fragment {
             ((MainActivity) getActivity()).hideBottomNav();
         }
 
-        speechAuthViewModel = new SpeechAuthViewModel(new SpeechAuthCallBack() {
-            @Override
-            public void onSuccess() {
-                // TODO: when valid authentication
-            }
+        speechAuthViewModel = new ViewModelProvider(requireActivity()).get(SpeechAuthViewModel.class);
+        speechAuthViewModel.setAudioRecorderHelper(new AudioRecorderHelper(speechAuthViewModel::uploadAudio));
 
-            @Override
-            public void onFailure() {
-                // TODO: when invalid authentication
+        speechAuthViewModel.getAuthStatus().observe(getViewLifecycleOwner(), result -> {
+            switch (result.status) {
+                case LOADING:
+                    loading.show();
+                    break;
+                case SUCCESS:
+                    loading.dismiss();
+                    CustomToast.showSuccess(requireContext(), "Chào mừng " + result.data.getPersonName());
+                    goToRemote();
+                    break;
+                case ERROR:
+                    loading.dismiss();
+                    CustomToast.showError(requireContext(), result.message);
+                    backToHome();
+                    break;
             }
         });
 
@@ -92,15 +105,22 @@ public class SpeechAuthFragment extends Fragment {
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
                     Log.d("record", "2");
-                    int duration = playSound();
-                    scaleView(binding.micBtn.btnMic, 1.0f, SCALE);
+                    int duration = SoundRecordUtil.getInstance(requireContext())
+                            .playSound(requireContext());
+                    AnimationUtil.scaleView(binding.micBtn.btnMic, 1.0f, SCALE);
                     new Handler(Looper.getMainLooper()).postDelayed(
-                            () -> speechAuthViewModel.startRecording(), duration);
+                        () -> {
+                            try {
+                                speechAuthViewModel.startRecording();
+                            } catch (Exception e) {
+                                CustomToast.showError(requireContext(), e.getMessage());
+                            }
+                        }, duration);
                     return true;
 
                 case MotionEvent.ACTION_UP:
                 case MotionEvent.ACTION_CANCEL:
-                    scaleView(binding.micBtn.btnMic, SCALE, 1.0f);
+                    AnimationUtil.scaleView(binding.micBtn.btnMic, SCALE, 1.0f);
                     speechAuthViewModel.stopRecording();
                     return true;
             }
@@ -117,22 +137,17 @@ public class SpeechAuthFragment extends Fragment {
         }
     }
 
-    private void scaleView(View view, float from, float to) {
-        ScaleAnimation animation = new ScaleAnimation(
-                from, to,
-                from, to,
-                Animation.RELATIVE_TO_SELF, 0.5f,
-                Animation.RELATIVE_TO_SELF, 0.5f);
-
-        animation.setInterpolator(new OvershootInterpolator());
-        animation.setFillAfter(true);
-        animation.setDuration(300);
-        view.startAnimation(animation);
-    }
-
     private void backToHome() {
         FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
         transaction.replace(R.id.fragmentContainerView, new HomeFragment());
+        transaction.addToBackStack(null);
+        transaction.commit();
+    }
+
+    public void goToRemote() {
+        FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
+        ((MainActivity) requireActivity()).slideInLeft(transaction);
+        transaction.replace(R.id.fragmentContainerView, new RemoteFragment());
         transaction.addToBackStack(null);
         transaction.commit();
     }
@@ -141,6 +156,7 @@ public class SpeechAuthFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
 
+        SoundRecordUtil.getInstance(requireContext()).release();
         if (getActivity() instanceof MainActivity) {
             ((MainActivity) getActivity()).showBottomNav();
         }
