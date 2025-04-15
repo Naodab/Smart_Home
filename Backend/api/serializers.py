@@ -33,10 +33,12 @@ class DeviceSerializer(serializers.ModelSerializer):
         histories = obj.histories.all()
         return [{
             "id": h.id,
-            "person_id": h.person.id,
-            "person_name": h.person.name,
             "new_status": h.status,
-            "timestamp": h.time
+            "timestamp": h.time,
+            "person": {
+                "id": h.person.id,
+                "name": h.person.name
+            }
         } for h in histories]
 
     class Meta:
@@ -266,6 +268,21 @@ class PersonSerializer(serializers.ModelSerializer):
             "status": h.status,
             "time": h.time
         } for h in histories]
+    
+class HistoryUserSerializer(serializers.ModelSerializer):
+    person = serializers.SerializerMethodField()
+
+    def get_person(self, obj):
+        if obj.person is None:
+            return None
+        return {
+            "id": obj.person.id,
+            "name": obj.person.name
+        }
+
+    class Meta:
+        model = History
+        fields = ['id', 'person', 'status', 'time']
 
 class HistorySerializer(serializers.ModelSerializer):
     device = serializers.PrimaryKeyRelatedField(queryset=Device.objects.all())

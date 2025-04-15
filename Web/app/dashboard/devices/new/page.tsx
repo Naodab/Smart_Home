@@ -23,7 +23,7 @@ export default function NewDevicePage() {
         variant: "success",
       })
 
-      // router.push("/dashboard/devices")
+      router.push("/dashboard/devices")
     } catch (error) {
       const apiError = error as ApiError
       toast({

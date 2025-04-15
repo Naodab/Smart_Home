@@ -136,10 +136,12 @@ export function DeviceDetails({ device, onStatusChange }: DeviceDetailsProps) {
               </Badge>
             ) : (
               <Badge
-                variant={device.status === "on" ? "default" : "secondary"}
-                className={device.status === "off" ? "bg-green-500" : "bg-gray-500"}
+                variant={(device.status === "on" || device.status === "close") ? "default" : "secondary"}
+                className={(device.status === "on" || device.status === "close") ? "bg-green-500" : "bg-gray-500"}
               >
-                {device.status === "on" ? "bật" : "tắt"}
+                {device.type === 'light' 
+                  ? (device.status === "on" ? "Bật" : "Tắt") 
+                  : (device.status === "open" ? "Mở" : "Đóng")}
               </Badge>
             )}
           </div>

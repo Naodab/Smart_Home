@@ -249,6 +249,8 @@ export function DevicesList() {
                 <SelectItem value="all">Tất cả</SelectItem>
                 <SelectItem value="on">Bật</SelectItem>
                 <SelectItem value="off">Tắt</SelectItem>
+                <SelectItem value="open">Đèn - Mở</SelectItem>
+                <SelectItem value="close">Đèn - Đóng</SelectItem>
                 <SelectItem value="0">Quạt - Tắt</SelectItem>
                 <SelectItem value="1">Quạt - Thấp</SelectItem>
                 <SelectItem value="2">Quạt - Trung bình</SelectItem>
@@ -296,10 +298,12 @@ export function DevicesList() {
                       </Badge>
                     ) : (
                       <Badge
-                        variant={device.status === "on" ? "default" : "secondary"}
-                        className={device.status === "on" ? "bg-green-500" : "bg-gray-500"}
+                        variant={(device.status === "on" || device.status === "open") ? "default" : "secondary"}
+                        className={(device.status === "on" || device.status === "open") ? "bg-green-500" : "bg-gray-500"}
                       >
-                        {device.status === "on" ? "Bật" : "Tắt"}
+                        {device.type === 'light' 
+                          ? (device.status === "on" ? "Bật" : "Tắt") 
+                          : (device.status === "open" ? "Mở" : "Đóng")}
                       </Badge>
                     )}
                   </TableCell>

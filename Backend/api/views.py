@@ -22,7 +22,8 @@ from .serializers import DeviceCreateSerializer, \
                           HomeSerializer, \
                           HistorySerializer, \
                           LocationSaveSerializer, \
-                          LocationSerializer
+                          LocationSerializer, \
+                          HistoryUserSerializer
 
 from api.models import History, BlacklistedToken, Location
 
@@ -63,7 +64,11 @@ class SpeechCreateAPIView(APIView):
         result = identify_speaker()
         print(result)
 
-        return Response({"message": "File uploaded successfully", "file_url": file_url, "email": email})
+        return Response({
+          "message": "File uploaded successfully", 
+          "file_url": file_url, 
+          "email": email
+        })
     return Response(serializer.errors, status=400)
   
 speech_create_api_view = SpeechCreateAPIView.as_view()
@@ -122,6 +127,72 @@ class DeviceUsersAPIView(APIView):
       return Response({"message": "Permission denied"}, status=403)
     return Response(device, status=status.HTTP_200_OK)
 device_mobile_api_view = DeviceUsersAPIView.as_view()
+
+# /api/users/devices/<id>/
+class DeviceUsersIdAPIView(APIView):
+  permission_classes = [IsAuthenticated]
+
+  def get(self, request, id, *args, **kwargs):
+    device = get_object_or_404(Device, id=id)
+    serializer = DeviceSerializer(device)
+    device = serializer.data
+    if request.user.id != device['home']['id']:
+      return Response({"message": "Permission denied"}, status=403)
+    return Response(device, status=status.HTTP_200_OK)
+  
+  def post(self, request, id, *args, **kwargs):
+    device = get_object_or_404(Device, id=id)
+    serializer = DeviceSerializer(device, data=request.data)
+    if serializer.is_valid():
+      serializer.save()
+      if request.user.id != device.home.id:
+        return Response({"message": "Permission denied"}, status=403)
+      return Response({"message": "Device updated successfully", "name": device.name})
+    return Response(serializer.errors, status=400)
+  
+  def put(self, request, id, *args, **kwargs):
+    print(request.data)
+    device = get_object_or_404(Device, id=id)
+
+    new_status = request.data.get('status')
+    person_id = request.data.get('personId')
+
+    if request.user.id != device.location.home.id:
+        return Response({"message": "Permission denied"}, status=403)
+
+    if new_status not in dict(Device.DEVICE_STATUSES):
+        return Response({"message": "Invalid status"}, status=400)
+
+    person = get_object_or_404(Person, id=person_id)
+    if not person:
+        return Response({"message": "Person not found"}, status=404)
+    if person.home != device.location.home:
+        return Response({"message": "Permission denied"}, status=403)
+
+    device.status = new_status
+    device.save()
+    
+    History.objects.create(
+        device=device,
+        status=new_status,
+        person=person
+    )
+
+    return Response({"message": "Device updated and history created", "status": new_status})
+device_users_id_api_view = DeviceUsersIdAPIView.as_view()
+
+# /api/users/histories/<device_id>/
+class HistoryUsersAPIView(APIView):
+  permission_classes = [IsAuthenticated]
+
+  def get(self, request, device_id, *args, **kwargs):
+    device = get_object_or_404(Device, id=device_id)
+    if request.user.id != device.location.home.id:
+      return Response({"message": "Permission denied"}, status=403)
+    serializer = HistoryUserSerializer(device.histories, many=True)
+    histories = serializer.data
+    return Response(histories, status=status.HTTP_200_OK)
+history_users_api_view = HistoryUsersAPIView.as_view()
 
 # ADMIN API
 # ONLY FOR ADMIN

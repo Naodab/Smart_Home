@@ -49,7 +49,8 @@ export function DeviceForm({
     locationName: initialData?.location?.name ?? "",
     homeEmail: initialData?.location?.home?.email ?? "",
     type: initialData?.type ?? "light",
-    status: initialData?.status ?? (initialData?.type === "quạt" ? "0" : "off"),
+    status: initialData?.status ?? (initialData?.type === "quạt" ? "0" : 
+      (initialData?.type === "light" ? "off" : "close"))
   })
   const [availableLocations, setAvailableLocations] = useState<{ id: string; name: string }[]>([])
   useEffect(() => {
@@ -97,7 +98,7 @@ export function DeviceForm({
     console.log(value)
     setFormData({
       ...formData,
-      type: value
+      type: value,
     })
     console.log(formData)
   }
@@ -105,10 +106,17 @@ export function DeviceForm({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     const selectedHome = homes.find((home) => home.email === formData.homeEmail)
+    let status = "close"
+    if (formData.type === "fan") {
+      status = "0"
+    } else if (formData.type === "light") {
+      status = "off"
+    }
     const formattedData = {
       id: initialData?.id ?? "",
       name: formData.name,
-      type: formData.type,
+      type: formData.type,  
+      status: status,
       location: {
         name: formData.locationName,
       },

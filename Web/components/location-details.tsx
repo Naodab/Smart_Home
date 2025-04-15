@@ -86,10 +86,12 @@ export function LocationDetails({ location }: LocationDetailsProps) {
                           </Badge>
                         ) : (
                           <Badge
-                            variant={device.status === "on" ? "default" : "secondary"}
-                            className={device.status === "on" ? "bg-green-500" : "bg-gray-500"}
+                            variant={(device.status === "on" || device.status === "close") ? "default" : "secondary"}
+                            className={(device.status === "on" || device.status === "close") ? "bg-green-500" : "bg-gray-500"}
                           >
-                            {device.status === "on" ? "Bật" : "Tắt"}
+                            {device.type === 'light'
+                              ? (device.status === "on" ? "Bật" : "Tắt") 
+                              : (device.status === "open" ? "Mở" : "Đóng")}
                           </Badge>
                         )}
                       </TableCell>

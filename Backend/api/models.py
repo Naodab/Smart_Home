@@ -67,8 +67,8 @@ class Device(models.Model):
   DEVICE_STATUSES = [
     ('on', 'On'),
     ('off', 'Off'),
-    ('locked', 'Locked'),
-    ('unlocked', 'Unlocked'),
+    ('open', 'Open'),
+    ('close', 'Close'),
     ('0', '0'),
     ('1', '1'),
     ('2', '2'),
@@ -85,9 +85,20 @@ class Device(models.Model):
     return f"Device: {self.id} - {self.name} - {self.type} - {self.home}"
 
 class History(models.Model):
+  DEVICE_STATUSES = [
+    ('on', 'On'),
+    ('off', 'Off'),
+    ('open', 'Open'),
+    ('close', 'Close'),
+    ('0', '0'),
+    ('1', '1'),
+    ('2', '2'),
+    ('3', '3')
+  ]
+
   id = models.AutoField(primary_key=True)
   device = models.ForeignKey(Device, on_delete=models.CASCADE, related_name='histories')
-  status = models.BooleanField(default=False)
+  status = models.CharField(max_length=10, choices=DEVICE_STATUSES, default="off")
   time = models.DateTimeField(auto_now_add=True)
   person = models.ForeignKey(Person, on_delete=models.CASCADE, related_name='histories')
 
