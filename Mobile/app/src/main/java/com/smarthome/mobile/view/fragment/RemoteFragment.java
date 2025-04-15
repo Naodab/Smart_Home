@@ -21,6 +21,7 @@ import com.smarthome.mobile.databinding.FragmentRemoteBinding;
 import com.smarthome.mobile.model.Home;
 import com.smarthome.mobile.model.Location;
 import com.smarthome.mobile.util.AnimationUtil;
+import com.smarthome.mobile.util.AudioRecorderHelper;
 import com.smarthome.mobile.util.SoundRecordUtil;
 import com.smarthome.mobile.view.activity.MainActivity;
 import com.smarthome.mobile.view.widget.CustomLoadingDialog;
@@ -56,8 +57,7 @@ public class RemoteFragment extends Fragment {
                 .get(SpeechRemoteViewModel.class);
         binding.locationList.setLayoutManager(new LinearLayoutManager(requireContext()));
         homeViewModel = new ViewModelProvider(requireActivity()).get(HomeViewModel.class);
-        DeviceViewModel deviceViewModel = new ViewModelProvider(requireActivity())
-                .get(DeviceViewModel.class);
+        DeviceViewModel deviceViewModel = new DeviceViewModel();
         locationAdapter = new LocationAdapter(new ArrayList<>(), loading,
                 getViewLifecycleOwner(), deviceViewModel);
         binding.locationList.setAdapter(locationAdapter);
@@ -69,6 +69,7 @@ public class RemoteFragment extends Fragment {
     @SuppressLint("ClickableViewAccessibility")
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        speechRemoteViewModel.setAudioRecorderHelper(new AudioRecorderHelper(speechRemoteViewModel::changeBySpeech));
         homeViewModel.fetchHome();
         homeViewModel.getHomeLiveData().observe(getViewLifecycleOwner(), result -> {
             switch (result.status) {

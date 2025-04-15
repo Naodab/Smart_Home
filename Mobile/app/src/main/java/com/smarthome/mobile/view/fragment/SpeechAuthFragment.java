@@ -95,7 +95,6 @@ public class SpeechAuthFragment extends Fragment {
                 case ERROR:
                     loading.dismiss();
                     CustomToast.showError(requireContext(), result.message);
-                    backToHome();
                     break;
             }
         });

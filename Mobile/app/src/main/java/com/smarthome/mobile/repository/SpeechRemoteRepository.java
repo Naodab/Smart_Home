@@ -54,7 +54,7 @@ public class SpeechRemoteRepository {
             int personId = MyApp.getInstance().getSessionManager().fetchPersonID();
             metadata.put("email", RequestBody.create(email,
                     MediaType.parse("text/plain")));
-            metadata.put("personId", RequestBody.create(String.valueOf(personId),
+            metadata.put("person_id", RequestBody.create(String.valueOf(personId),
                     MediaType.parse("text/plain")));
 
             apiService.remoteBySpeech(body, metadata).enqueue(new Callback<Device>() {
