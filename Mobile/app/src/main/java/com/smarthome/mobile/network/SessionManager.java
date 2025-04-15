@@ -52,7 +52,7 @@ public class SessionManager {
     }
 
     public int fetchPersonID() {
-        return sharedPreferences.getInt(PERSON_ID, 0);
+        return sharedPreferences.getInt(PERSON_ID, 1);
     }
 
     public String fetchAuthToken() {

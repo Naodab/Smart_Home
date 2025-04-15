@@ -19,6 +19,7 @@ import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.Multipart;
 import retrofit2.http.POST;
+import retrofit2.http.PUT;
 import retrofit2.http.Part;
 import retrofit2.http.PartMap;
 import retrofit2.http.Path;
@@ -39,8 +40,8 @@ public interface ApiService {
     @GET("api/users/homes/{email}/")
     Call<Home> getHome(@Path("email") String email);
 
-    @POST("api/users/change-device/")
-    Call<ChangeDeviceResponse> changeStatusDevice(@Body ChangeDeviceRequest request);
+    @PUT("api/users/devices/{deviceId}/")
+    Call<ChangeDeviceResponse> changeStatusDevice(@Path("deviceId") int deviceId, @Body ChangeDeviceRequest request);
 
     @Multipart
     @POST("api/speeches/upload/")

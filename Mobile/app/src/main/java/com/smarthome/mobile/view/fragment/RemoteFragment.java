@@ -17,6 +17,7 @@ import com.smarthome.mobile.databinding.FragmentRemoteBinding;
 import com.smarthome.mobile.model.Home;
 import com.smarthome.mobile.view.widget.CustomLoadingDialog;
 import com.smarthome.mobile.view.widget.CustomToast;
+import com.smarthome.mobile.viewmodel.DeviceViewModel;
 import com.smarthome.mobile.viewmodel.HomeViewModel;
 import com.smarthome.mobile.viewmodel.LocationAdapter;
 
@@ -38,12 +39,14 @@ public class RemoteFragment extends Fragment {
     public View onCreateView(@NonNull  LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         binding = FragmentRemoteBinding.inflate(inflater, container, false);
+        loading = new CustomLoadingDialog(getContext());
         binding.locationList.setLayoutManager(new LinearLayoutManager(requireContext()));
         homeViewModel = new ViewModelProvider(requireActivity()).get(HomeViewModel.class);
-        locationAdapter = new LocationAdapter(new ArrayList<>(), loading);
+        DeviceViewModel deviceViewModel = new ViewModelProvider(requireActivity()).get(DeviceViewModel.class);
+        locationAdapter = new LocationAdapter(new ArrayList<>(), loading,
+                getViewLifecycleOwner(), deviceViewModel);
         binding.locationList.setAdapter(locationAdapter);
         Log.d("Remote Fragment", "onCreateView: change to view");
-        loading = new CustomLoadingDialog(getContext());
         return binding.getRoot();
     }
 

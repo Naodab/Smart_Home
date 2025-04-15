@@ -6,13 +6,13 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
+import androidx.lifecycle.LifecycleOwner;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.smarthome.mobile.R;
 import com.smarthome.mobile.databinding.LocationItemBinding;
 import com.smarthome.mobile.model.Location;
-import com.smarthome.mobile.repository.DeviceRepository;
 import com.smarthome.mobile.view.widget.CustomLoadingDialog;
 
 import java.util.List;
@@ -21,11 +21,14 @@ public class LocationAdapter extends RecyclerView.Adapter<LocationAdapter.ViewHo
     private final List<Location> locations;
     private final CustomLoadingDialog loading;
     private final DeviceViewModel deviceViewModel;
+    private final LifecycleOwner owner;
 
-    public LocationAdapter(List<Location> locations, CustomLoadingDialog loading) {
+    public LocationAdapter(List<Location> locations, CustomLoadingDialog loading,
+                           LifecycleOwner owner, DeviceViewModel deviceViewModel) {
         this.locations = locations;
         this.loading = loading;
-        this.deviceViewModel = new DeviceViewModel();
+        this.deviceViewModel = deviceViewModel;
+        this.owner = owner;
     }
 
     @NonNull
@@ -54,7 +57,6 @@ public class LocationAdapter extends RecyclerView.Adapter<LocationAdapter.ViewHo
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         LocationItemBinding binding;
-        DeviceAdapter deviceAdapter;
 
         public ViewHolder (LocationItemBinding binding) {
             super(binding.getRoot());
@@ -83,7 +85,7 @@ public class LocationAdapter extends RecyclerView.Adapter<LocationAdapter.ViewHo
             binding.setLocation(location);
             binding.executePendingBindings();
 
-            DeviceAdapter deviceAdapter = new DeviceAdapter(location.getDevices(), loading, deviceViewModel);
+            DeviceAdapter deviceAdapter = new DeviceAdapter(location.getDevices(), loading, deviceViewModel, owner);
             binding.devices.setLayoutManager(new LinearLayoutManager(binding.getRoot().getContext()));
             binding.devices.setAdapter(deviceAdapter);
 

@@ -12,55 +12,57 @@ import com.smarthome.mobile.network.ApiClient;
 import com.smarthome.mobile.network.ApiService;
 import com.smarthome.mobile.util.Result;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 public class DeviceRepository {
     private final ApiService apiService;
-    private final MutableLiveData<Result<Boolean>> changeDeviceStatus;
+    private final MutableLiveData<Map<Integer, Result<Status>>> changeDeviceStatus;
+    private final Map<Integer, Result<Status>> results;
 
     public DeviceRepository() {
         this.apiService = ApiClient.getClient().create(ApiService.class);
-        this.changeDeviceStatus = new MutableLiveData<>();
+        this.results = new ConcurrentHashMap<>();
+        this.changeDeviceStatus = new MutableLiveData<>(this.results);
     }
 
-    public MutableLiveData<Result<Boolean>> getChangeDeviceStatus() {
+    public MutableLiveData<Map<Integer, Result<Status>>> getChangeDeviceStatus() {
         return changeDeviceStatus;
     }
 
     public void changeStatusDevice(Device device, Status targetStatus) {
-        ChangeDeviceRequest request = new ChangeDeviceRequest(device.getId(), targetStatus.toApiValue(),
-                MyApp.getInstance().getSessionManager().fetchPersonID());
-        changeDeviceStatus.setValue(Result.loading());
+        int deviceId= device.getId();
+        results.put(device.getId(), Result.loading());
+        ChangeDeviceRequest request = new ChangeDeviceRequest(
+            deviceId,
+            targetStatus.toApiValue(),
+            MyApp.getInstance().getSessionManager().fetchPersonID()
+        );
+        changeDeviceStatus.postValue(new HashMap<>(results));
 
-        // In the real app should be not command this
-//        apiService.changeStatusDevice(request).enqueue(new Callback<ChangeDeviceResponse>() {
-//            @Override
-//            public void onResponse(@NonNull Call<ChangeDeviceResponse> call,
-//                                   @NonNull Response<ChangeDeviceResponse> response) {
-//                if (response.isSuccessful()&& response.body() != null && response.body().isSuccess()) {
-//                    changeDeviceStatus.setValue(Result.success(true));
-//                } else {
-//                    changeDeviceStatus.setValue(Result.error("Can't change status this device"));
-//                }
-//            }
-//
-//            @Override
-//            public void onFailure(@NonNull Call<ChangeDeviceResponse> call,
-//                                  @NonNull Throwable throwable) {
-//                changeDeviceStatus.setValue(Result.error("Can't change status this device"));
-//            }
-//        });
-
-        // Mock request to test
-        new Thread(() -> {
-            try {
-                Thread.sleep(1000);
-                changeDeviceStatus.setValue(Result.success(true));
-            } catch (InterruptedException e) {
-                changeDeviceStatus.setValue(Result.error("Can't change status this device"));
+        apiService.changeStatusDevice(deviceId, request).enqueue(new Callback<ChangeDeviceResponse>() {
+            @Override
+            public void onResponse(@NonNull Call<ChangeDeviceResponse> call,
+                                   @NonNull Response<ChangeDeviceResponse> response) {
+                if (response.isSuccessful()&& response.body() != null && response.body().isSuccess()) {
+                    results.put(deviceId, Result.success(targetStatus));
+                } else {
+                    results.put(deviceId, Result.error("Can't change status of this device"));
+                }
+                changeDeviceStatus.postValue(new ConcurrentHashMap<>(results));
             }
-        }).start();
+
+            @Override
+            public void onFailure(@NonNull Call<ChangeDeviceResponse> call,
+                                  @NonNull Throwable throwable) {
+                results.put(deviceId, Result.error("Can't change status of this device"));
+                changeDeviceStatus.postValue(new ConcurrentHashMap<>(results));
+            }
+        });
     }
 }
