@@ -61,6 +61,7 @@ public class DeviceAdapter extends RecyclerView.Adapter<DeviceAdapter.ViewHolder
         if (device == null) return;
         deviceViewModel.changeStatusDevice(device, newStatus);
         deviceViewModel.getChangeDeviceStatus().observe();
+
         device.setStatus(newStatus);
         notifyItemChanged(position);
     }
