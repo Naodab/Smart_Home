@@ -5,6 +5,7 @@ from . import views
 urlpatterns = [
   # User urls
   path('speeches/upload/', views.speech_create_api_view), # /api/speeches/upload/
+  path('speeches/remote/', views.speech_remote_api_view), # /api/speeches/remote/
   path('users/login/', views.user_login_api_view), # /api/users/login/
   path('users/homes/<str:email>/', views.home_mobile_api_view), # /api/users/homes/<email>/
   path('users/devices/<int:id>/', views.device_users_id_api_view), # /api/users/devices/<id>/

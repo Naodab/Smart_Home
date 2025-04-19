@@ -6,6 +6,11 @@ class SpeechSerializer(serializers.Serializer):
     file = serializers.FileField()
     email = serializers.CharField()
 
+class SpeechRemoteSerializer(serializers.Serializer):
+    file = serializers.FileField()
+    email = serializers.CharField()
+    person_id = serializers.IntegerField()
+
 class LoginSerializer(serializers.Serializer):
     email = serializers.CharField()
     password = serializers.CharField()

@@ -23,7 +23,8 @@ from .serializers import DeviceCreateSerializer, \
                           HistorySerializer, \
                           LocationSaveSerializer, \
                           LocationSerializer, \
-                          HistoryUserSerializer
+                          HistoryUserSerializer, \
+                          SpeechRemoteSerializer
 
 from api.models import History, BlacklistedToken, Location
 
@@ -67,11 +68,38 @@ class SpeechCreateAPIView(APIView):
         return Response({
           "message": "File uploaded successfully", 
           "file_url": file_url, 
-          "email": email
+          "email": email,
+          "person_id": 1,
+          "person_name": "Nguyen Ho Ba Doan",
         })
     return Response(serializer.errors, status=400)
   
 speech_create_api_view = SpeechCreateAPIView.as_view()
+
+# /api/speeches/remote/
+class SpeechRemoteAPIView(APIView):
+  permission_classes = [AllowAny]
+  
+  parser_classes = (MultiPartParser, FormParser)
+  def post(self, request, *args, **kwargs):
+    print(request.data)
+    serializer = SpeechRemoteSerializer(data=request.data)
+    if serializer.is_valid():
+        file = serializer.validated_data['file']
+        email = serializer.validated_data['email']
+        person_id = serializer.validated_data['person_id']
+
+        print(email) 
+        print(file)
+        print(person_id)
+
+        return Response({
+          "id": 10,
+          "name": "Quạt",
+          "status": "0",
+        })
+    return Response(serializer.errors, status=400)
+speech_remote_api_view  = SpeechRemoteAPIView.as_view()
 
 # /api/users/login/
 class UserLoginAPIView(APIView):

@@ -59,6 +59,14 @@ public interface ApiService {
             @PartMap Map<String, RequestBody> metadata
     );
 
+
+    @Multipart
+    @POST("api/faces/auth/")
+    Call<AuthResponse> authenticateFaces(
+            @Part MultipartBody.Part file,
+            @PartMap Map<String, RequestBody> metadata
+    );
+
     @Multipart
     @POST("face_detection/detect/")
     Call<ResponseBody> authenticateFaces(

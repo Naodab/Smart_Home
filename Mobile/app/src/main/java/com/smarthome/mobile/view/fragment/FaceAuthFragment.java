@@ -20,7 +20,7 @@ import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.navigation.Navigation;
+import androidx.lifecycle.ViewModelProvider;
 
 import android.os.Looper;
 import android.util.Log;
@@ -36,8 +36,9 @@ import com.google.mlkit.vision.face.FaceDetector;
 import com.google.mlkit.vision.face.FaceDetectorOptions;
 import com.smarthome.mobile.R;
 import com.smarthome.mobile.databinding.FragmentFaceAuthBinding;
-import com.smarthome.mobile.util.FaceAuthCallback;
 import com.smarthome.mobile.view.activity.MainActivity;
+import com.smarthome.mobile.view.widget.CustomLoadingDialog;
+import com.smarthome.mobile.view.widget.CustomToast;
 import com.smarthome.mobile.viewmodel.FaceAuthViewModel;
 
 import java.nio.ByteBuffer;
@@ -51,6 +52,7 @@ public class FaceAuthFragment extends Fragment {
     private ExecutorService executorService;
     private ImageCapture imageCapture;
     private FaceAuthViewModel faceAuthViewModel;
+    private CustomLoadingDialog loading;
     private ImageAnalysis imageAnalysis;
     private boolean isAnalyzing;
 
@@ -63,6 +65,7 @@ public class FaceAuthFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         binding = FragmentFaceAuthBinding.inflate(inflater, container, false);
+        loading = new CustomLoadingDialog(requireContext());
         return binding.getRoot();
     }
 
@@ -73,7 +76,8 @@ public class FaceAuthFragment extends Fragment {
             ((MainActivity) getActivity()).hideBottomNav();
         }
 
-        this.faceAuthViewModel = FaceAuthViewModel.getInstance();
+        this.faceAuthViewModel = new ViewModelProvider(requireActivity())
+                .get(FaceAuthViewModel.class);
         animatePreviewView();
 
         View[] viewsToAnimate = {binding.backBtn, binding.cameraStatus};
@@ -101,6 +105,24 @@ public class FaceAuthFragment extends Fragment {
                 isAnalyzing = false;
             }
             backToHome();
+        });
+
+        faceAuthViewModel.getAuthenticateStatus().observe(getViewLifecycleOwner(), result -> {
+            switch (result.status) {
+                case LOADING:
+                    loading.show();
+                    break;
+                case ERROR:
+                    loading.dismiss();
+                    CustomToast.showError(requireContext(), "Lỗi xác thực khuôn mặt");
+                    backToHome();
+                    break;
+                case SUCCESS:
+                    loading.dismiss();
+                    CustomToast.showSuccess(requireContext(), "Chào mừng " + result.data.getPersonName());
+                    goToRemote();
+                    break;
+            }
         });
     }
 
@@ -207,20 +229,20 @@ public class FaceAuthFragment extends Fragment {
                         byte[] bytes = new byte[buffer.remaining()];
                         buffer.get(bytes);
                         image.close();
-
-                        faceAuthViewModel.uploadImageToServer(bytes, new FaceAuthCallback() {
-                            @Override
-                            public void onSuccess() {
-                                Log.d("UploadSuccess", "Picture uploaded successfully!");
-                                Toast.makeText(requireContext(), "Ảnh đã đuợc upload đến server!", Toast.LENGTH_SHORT).show();
-                            }
-
-                            @Override
-                            public void onFailure() {
-                                Log.e("UploadFailure", "Picture upload failed");
-                                Toast.makeText(requireContext(), "Thất bại!", Toast.LENGTH_SHORT).show();
-                            }
-                        });
+                        faceAuthViewModel.authenticateFace(bytes);
+//                        faceAuthViewModel.uploadImageToServer(bytes, new FaceAuthCallback() {
+//                            @Override
+//                            public void onSuccess() {
+//                                Log.d("UploadSuccess", "Picture uploaded successfully!");
+//                                Toast.makeText(requireContext(), "Ảnh đã đuợc upload đến server!", Toast.LENGTH_SHORT).show();
+//                            }
+//
+//                            @Override
+//                            public void onFailure() {
+//                                Log.e("UploadFailure", "Picture upload failed");
+//                                Toast.makeText(requireContext(), "Thất bại!", Toast.LENGTH_SHORT).show();
+//                            }
+//                        });
                     }
 
                     @Override
@@ -254,6 +276,14 @@ public class FaceAuthFragment extends Fragment {
     private void backToHome() {
         FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
         transaction.replace(R.id.fragmentContainerView, new HomeFragment());
+        transaction.addToBackStack(null);
+        transaction.commit();
+    }
+
+    public void goToRemote() {
+        FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
+        ((MainActivity) requireActivity()).slideInLeft(transaction);
+        transaction.replace(R.id.fragmentContainerView, new RemoteFragment());
         transaction.addToBackStack(null);
         transaction.commit();
     }
