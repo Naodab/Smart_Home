@@ -12,11 +12,15 @@ import com.smarthome.mobile.util.Result;
 
 import java.util.Map;
 
-public class DeviceViewModel extends AndroidViewModel {
+public class DeviceViewModel  {
     private final DeviceRepository deviceRepository;
 
-    public DeviceViewModel(Application application) {
-        super(application);
+//    public DeviceViewModel(Application application) {
+//        super(application);
+//        this.deviceRepository = new DeviceRepository();
+//    }
+
+    public DeviceViewModel() {
         this.deviceRepository = new DeviceRepository();
     }
 
