@@ -4,21 +4,26 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".view.FaceAuthFragment"
+    tools:context=".view.fragment.FaceAuthFragment"
     android:background="@drawable/back_auth">
 
-    <ImageView
+    <TextView
         android:id="@+id/back_btn"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="60dp"
         android:contentDescription="@string/back"
-        android:src="@drawable/ic_back"
+        android:fontFamily="@font/abeezee"
+        android:gravity="center"
+        android:background="@drawable/home_rounded_main_square"
+        android:text="@string/back"
+        android:paddingVertical="12dp"
+        android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.043"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.023" />
+        app:layout_constraintVertical_bias="0.9" />
 
     <androidx.cardview.widget.CardView
         android:id="@+id/cardView"

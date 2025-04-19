@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/btnMic"
+    android:layout_height="wrap_content"
+    android:layout_width="wrap_content"
+    android:background="@color/mic_color"
+    android:backgroundTintMode="src_over"
+    android:foreground="?attr/selectableItemBackgroundBorderless"
+    app:cardBackgroundColor="@color/mic_color_third"
+    app:cardCornerRadius="125dp"
+    app:strokeColor="@color/white"
+    app:strokeWidth="20dp"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toTopOf="parent"
+    app:contentPadding="15dp">
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/mic_color"
+        android:backgroundTintMode="src_over"
+        android:foreground="?attr/selectableItemBackgroundBorderless"
+        android:layout_gravity="center"
+        app:cardBackgroundColor="@color/mic_color_second"
+        app:cardCornerRadius="125dp"
+        app:strokeColor="@color/white"
+        app:strokeWidth="20dp"
+        app:contentPadding="15dp">
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/mic_color"
+            android:backgroundTintMode="src_over"
+            android:foreground="?attr/selectableItemBackgroundBorderless"
+            android:layout_gravity="center"
+            app:cardBackgroundColor="@color/mic_color"
+            app:cardCornerRadius="125dp"
+            app:strokeColor="@color/white"
+            app:strokeWidth="22dp"
+            app:contentPadding="25dp">
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:contentDescription="@string/mic_btn"
+                android:src="@drawable/ic_mic"
+                app:tint="@color/white" />
+        </androidx.cardview.widget.CardView>
+    </androidx.cardview.widget.CardView>
+</androidx.cardview.widget.CardView>

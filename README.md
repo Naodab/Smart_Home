@@ -1,32 +1,56 @@
+# Smart Home Project
+
 ## Backend
 
+### Setup Backend
+
 ```bash
-    cd Backend
+cd Backend
 ```
 
 ```bash
-    py -m venv venv
+py -m venv venv
 ```
 
 ```bash
-    .\venv\Scripts\activate
+.\venv\Scripts\activate
 ```
 
 ```bash
-    pip install -r requirements.txt
+pip install -r requirements.txt
 ```
 
 #### Cập nhật pip packages nếu cần (Latest version: 25.0.1)
 
+```bash
+py -m pip install --upgrade pip
 ```
-    py -m pip install --upgrade pip
-```
-<<<<<<< HEAD
-=======
 
 #### Install torch version helping CUDA
 
+```bash
+pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu117
 ```
-    pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu117
+
+---
+
+## Frontend
+
+### Setup Frontend
+
+```bash
+cd Frontend
 ```
->>>>>>> 3bd420abf20509311a4ed0f027df0adfe3152016
+
+```bash
+npm install
+```
+
+### Run Development Server
+
+```bash
+npm run dev
+```
+
+---
+

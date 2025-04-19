@@ -13,4 +13,12 @@
     <color name="navbar_color">#1D1C24</color>
     <color name="orange">#FF9F6C</color>
     <color name="alpha_orange">#AAFF9F6C</color>
+    <color name="alpha_green">#C0EBE4</color>
+    <color name="alpha_red">#EA8183</color>
+    <color name="alpha_blue">#9BBDF3</color>
+    <color name="setting_color_bg">#FF9F6C</color>
+    <color name="mic_color">#FFF76A63</color>
+    <color name="mic_color_second">#88F76A63</color>
+    <color name="mic_color_third">#44F76A63</color>
+    <color name="gray">#494550</color>
 </resources>

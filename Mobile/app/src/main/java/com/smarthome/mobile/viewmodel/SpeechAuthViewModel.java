@@ -1,5 +1,6 @@
 package com.smarthome.mobile.viewmodel;
 
+import android.app.Application;
 import android.content.ContentValues;
 import android.content.Context;
 import android.net.Uri;
@@ -7,25 +8,41 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+import androidx.lifecycle.AndroidViewModel;
+import androidx.lifecycle.MutableLiveData;
+
+import com.smarthome.mobile.dto.response.AuthResponse;
 import com.smarthome.mobile.repository.SpeechAuthRepository;
 import com.smarthome.mobile.util.AudioRecorderHelper;
-import com.smarthome.mobile.util.SpeechAuthCallBack;
+import com.smarthome.mobile.util.Result;
 
 import java.io.IOException;
 import java.io.OutputStream;
 
-public class SpeechAuthViewModel {
+public class SpeechAuthViewModel extends AndroidViewModel {
     private final SpeechAuthRepository speechAuthRepository;
-    private final AudioRecorderHelper audioRecorderHelper;
-    private final SpeechAuthCallBack callBack;
+    private AudioRecorderHelper audioRecorderHelper;
 
-    public SpeechAuthViewModel(SpeechAuthCallBack callBack) {
+    public SpeechAuthViewModel(@NonNull Application application) {
+        super(application);
         speechAuthRepository = new SpeechAuthRepository();
-        audioRecorderHelper = new AudioRecorderHelper(this::onAudioDataCaptured);
-        this.callBack = callBack;
     }
 
-    public void startRecording() {
+    public void setAudioRecorderHelper(AudioRecorderHelper audioRecorderHelper) {
+        this.audioRecorderHelper = audioRecorderHelper;
+    }
+
+    public MutableLiveData<Result<AuthResponse>> getAuthStatus() {
+        return speechAuthRepository.getAuthStatus();
+    }
+
+    public void startRecording() throws Exception {
+        if (audioRecorderHelper == null) {
+            throw new Exception(
+                    "AudioRecorderHelper is not initialized. Please call setAudioRecorderHelper() first."
+            );
+        }
         audioRecorderHelper.startRecording();
     }
 
@@ -34,7 +51,11 @@ public class SpeechAuthViewModel {
     }
 
     public void onAudioDataCaptured(byte[] audioData) {
-        speechAuthRepository.uploadAudio(audioData, callBack);
+        speechAuthRepository.uploadAudio(audioData);
+    }
+
+    public void uploadAudio(byte[] audioData) {
+        speechAuthRepository.uploadAudio(audioData);
     }
 
     public void saveAudioExternalStorage(Context context, byte[] audioData) {
