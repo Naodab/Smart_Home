@@ -17,6 +17,19 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
+from django.conf import settings
+from django.conf.urls.static import static
+from django.urls import path
+# from project import views
+from face_recognition_app.views import send_command_to_esp32
+from face_recognition_app import views
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path("upload/", views.detect, name="upload"),
+    path('api/control/<str:device>/<str:state>/', send_command_to_esp32, name='control_esp32'),
+    path("api/control/<str:device>/<str:state>/<int:angle>/", send_command_to_esp32),  # Hỗ trợ servo
+    # path('face_detection/detect', views.detect, name='face_detection'),
 ]
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
