@@ -11,6 +11,8 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 import os
 from pathlib import Path
+from dotenv import load_dotenv
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -25,19 +27,16 @@ SECRET_KEY = 'django-insecure-kg*&+$keln$xz4(+m9y-bjgiuo!9opp883eh!g(x741m*)@r&x
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = [
+load_dotenv()
 
-   '192.168.1.6',
-   
-   
-]
+ALLOWED_HOSTS = ['0.0.0.0', '127.0.0.1', 'localhost', os.getenv('IP')]
 
 
 # Application definition
 
 INSTALLED_APPS = [
-     "daphne",
-    "channels",
+    'daphne',
+    'channels',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -45,9 +44,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'api',
     'project.devices',
-    'face_recognition_app',
-   
+    'face_recognition_app'
 ]
 
 MIDDLEWARE = [
@@ -80,7 +79,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'project.wsgi.application'
-ASGI_APPLICATION = "project.asgi.application"
+ASGI_APPLICATION = 'project.asgi.application'
 
 
 # Database
@@ -92,7 +91,6 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -135,19 +133,13 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-
-
-
-
-
-MEDIA_URL = '/media/'  # URL để truy cập file media
+# Thư mục gốc để lưu trữ các tệp tải lên
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
+MEDIA_URL = '/media/'
 
 CHANNEL_LAYERS = {
-    "default": {
-        "BACKEND": "channels.layers.InMemoryChannelLayer",
-    },
+  "default": {
+    "BACKEND": "channels.layers.InMemoryChannelLayer"
+  }
 }
-
-

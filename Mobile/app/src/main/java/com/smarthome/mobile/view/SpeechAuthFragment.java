@@ -12,6 +12,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -19,6 +20,7 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.OvershootInterpolator;
 import android.view.animation.ScaleAnimation;
+import android.widget.Toast;
 
 import com.smarthome.mobile.R;
 import com.smarthome.mobile.databinding.FragmentSpeechAuthBinding;
@@ -76,9 +78,11 @@ public class SpeechAuthFragment extends Fragment {
         });
 
         binding.btnMic.setOnTouchListener((v, event) -> {
+            Log.d("record", "1");
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
-                    playSound();
+                    Log.d("record", "2");
+//                    playSound();
                     scaleView(binding.btnMic, 1.0f, SCALE);
                     speechAuthViewModel.startRecording();
                     return true;

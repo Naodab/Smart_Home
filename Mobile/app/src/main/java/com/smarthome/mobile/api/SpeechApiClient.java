@@ -1,12 +1,14 @@
 package com.smarthome.mobile.api;
 
+import static com.smarthome.mobile.BuildConfig.API_BASE_URL;
+
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class SpeechApiClient {
-    private static final String BASE_URL = "";
+    private static final String BASE_URL = API_BASE_URL;
     private static Retrofit retrofit;
 
     public static Retrofit getClient() {

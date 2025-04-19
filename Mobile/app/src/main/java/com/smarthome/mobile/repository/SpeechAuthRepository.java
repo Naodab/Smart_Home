@@ -4,10 +4,13 @@ import android.util.Log;
 
 import com.smarthome.mobile.api.SpeechApiClient;
 import com.smarthome.mobile.service.SpeechAuthService;
+import com.smarthome.mobile.util.AudioRecorderHelper;
 import com.smarthome.mobile.util.SpeechAuthCallBack;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -21,7 +24,7 @@ import retrofit2.Response;
 
 public class SpeechAuthRepository {
     private final SpeechAuthService speechAuthService;
-    private final String email = Objects.requireNonNull(AuthRepository.getInstance().getUserLiveData().getValue()).getEmail();
+    private String email;
 
     public SpeechAuthRepository() {
         this.speechAuthService = SpeechApiClient.getClient().create(SpeechAuthService.class);
@@ -30,15 +33,17 @@ public class SpeechAuthRepository {
     public void uploadAudio(byte[] audioData, SpeechAuthCallBack callBack) {
         new Thread(() -> {
             try {
-                File templateFile = File.createTempFile("audio", ".wav");
+                File templateFile = File.createTempFile("audio_1", ".wav");
                 FileOutputStream fos = new FileOutputStream(templateFile);
+                AudioRecorderHelper.writeWavHeader(fos, audioData.length);
                 fos.write(audioData);
                 fos.close();
-
-                RequestBody requestFile = RequestBody.create(templateFile, MediaType.parse("audio/wav"));
-                MultipartBody.Part body = MultipartBody.Part.createFormData("file",templateFile.getName(), requestFile);
+                
+                RequestBody requestFile = RequestBody.create(templateFile, MediaType.parse("application/octet-stream"));
+                MultipartBody.Part body = MultipartBody.Part.createFormData("file", "audio.wav", requestFile);
 
                 Map<String, RequestBody> metadata = new HashMap<>();
+                email = "hoang";
                 metadata.put("email", RequestBody
                         .create(email, MediaType.parse("text/plain")));
 
@@ -57,6 +62,7 @@ public class SpeechAuthRepository {
                     @Override
                     public void onFailure(Call<Void> call, Throwable t) {
                         Log.d("Upload audio", "Failure");
+                        Log.d("Upload audio", Objects.requireNonNull(t.getMessage()));
                         callBack.onFailure();
                     }
                 });

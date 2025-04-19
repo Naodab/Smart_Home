@@ -1,2 +1,6 @@
 venv
-env
+Backend/.env
+Backend/__pycache__
+Backend/AI_Module/speaker_recognition/models/*.keras
+Backend/AI_Module/speaker_recognition/models/*.pkl
+.git.backup
