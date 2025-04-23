@@ -17,8 +17,9 @@
     <color name="alpha_red">#EA8183</color>
     <color name="alpha_blue">#9BBDF3</color>
     <color name="setting_color_bg">#FF9F6C</color>
-    <color name="mic_color">#FFF76A63</color>
-    <color name="mic_color_second">#88F76A63</color>
-    <color name="mic_color_third">#44F76A63</color>
+    <color name="mic_color">#FFfb9505</color>
+    <color name="mic_color_second">#88fb9505</color>
+    <color name="mic_color_third">#44fb9505</color>
     <color name="gray">#494550</color>
+    <color name="bg_remote">#111520</color>
 </resources>

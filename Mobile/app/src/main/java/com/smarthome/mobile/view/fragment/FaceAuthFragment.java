@@ -27,7 +27,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.mlkit.vision.common.InputImage;
@@ -187,36 +186,6 @@ public class FaceAuthFragment extends Fragment {
         }).addOnFailureListener(e -> Log.d("Analyze Image", Objects.requireNonNull(e.getMessage())));
     }
 
-//    public void takePhoto() {
-//        if (imageCapture == null) return;
-//        String timestamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(System.currentTimeMillis());
-//        ContentValues contentValues = new ContentValues();
-//        contentValues.put(MediaStore.MediaColumns.DISPLAY_NAME, "IMG_" + timestamp);
-//        contentValues.put(MediaStore.MediaColumns.MIME_TYPE, "image/jpeg");
-//        ImageCapture.OutputFileOptions outputFileOptions = new ImageCapture.OutputFileOptions.Builder(
-//                requireActivity().getContentResolver(),
-//                MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-//                contentValues
-//        ).build();
-//        imageCapture.takePicture(outputFileOptions, ContextCompat.getMainExecutor(requireContext()),
-//                new ImageCapture.OnImageSavedCallback() {
-//                    @Override
-//                    public void onImageSaved(@NonNull ImageCapture.OutputFileResults output) {
-//                        Toast.makeText(requireContext(), "Ảnh đã lưu!", Toast.LENGTH_SHORT).show();
-//                        Log.e("SuccessMessageOnSaved:", "Successfully saved!");
-//                        Uri savedUri = output.getSavedUri();
-//                        if (savedUri != null)
-//                            uploadImageToServer(savedUri);
-//                    }
-//
-//                    @Override
-//                    public void onError(@NonNull ImageCaptureException exception) {
-//                        Log.e("CameraX", "Chụp ảnh thất bại: " + exception.getMessage(), exception);
-//                    }
-//                }
-//        );
-//    }
-
     public void takePhoto() {
         if (imageCapture == null) return;
 
@@ -291,45 +260,5 @@ public class FaceAuthFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-
-        if (getActivity() instanceof MainActivity) {
-            ((MainActivity) getActivity()).showBottomNav();
-        }
     }
-
-    //    private String getRealPathFromURI(Uri contentUri) {
-//        String result = null;
-//        String[] proj = {MediaStore.Images.Media.DATA};
-//        Cursor cursor = requireContext().getContentResolver().query(contentUri, proj, null, null, null);
-//        if (cursor != null) {
-//            int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-//            cursor.moveToFirst();
-//            result = cursor.getString(column_index);
-//            cursor.close();
-//        }
-//        return result;
-//    }
-//
-//    private void uploadImageToServer(Uri imageUri) {
-//        File file = new File(getRealPathFromURI(imageUri));
-//
-//        RequestBody requestFile = RequestBody.create(MediaType.parse("image/jpeg"), file);
-//        MultipartBody.Part body = MultipartBody.Part.createFormData("image", file.getName(), requestFile);
-//
-//        Retrofit retrofit = FaceApiClient.getClient();
-//        FaceAuthService apiService = retrofit.create(FaceAuthService.class);
-//
-//        Call<ResponseBody> call = apiService.uploadImage(body);
-//        call.enqueue(new Callback<ResponseBody>() {
-//            @Override
-//            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-//                if (response.isSuccessful())
-//                    Log.d("UploadSuccess:", "Picture uploaded successfully!");
-//            }
-//            @Override
-//            public void onFailure(Call<ResponseBody> call, Throwable t) {
-//                Log.e("UploadFailure:", "Picture uploaded failed: " + t.getMessage());
-//            }
-//        });
-//    }
 }

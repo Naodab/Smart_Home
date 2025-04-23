@@ -49,7 +49,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="4"
                     android:text="@string/id_tv"
-                    android:textColor="@color/black"
+                    android:textColor="@color/white"
                     android:textStyle="bold"
                     android:textSize="@dimen/text_size_profile"
                     android:fontFamily="@font/abeezee" />
@@ -60,7 +60,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="14"
                     android:text="@string/temp_id"
-                    android:textColor="@color/black"
+                    android:textColor="@color/white"
                     android:textStyle="bold|italic"
                     android:textSize="@dimen/text_size_profile"
                     android:fontFamily="@font/abeezee"
@@ -80,7 +80,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="2"
                     android:text="@string/email_tv"
-                    android:textColor="@color/black"
+                    android:textColor="@color/white"
                     android:textStyle="bold"
                     android:textSize="@dimen/text_size_profile"
                     android:fontFamily="@font/abeezee" />
@@ -91,7 +91,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="14"
                     android:text="@string/text_email"
-                    android:textColor="@color/black"
+                    android:textColor="@color/white"
                     android:textStyle="bold|italic"
                     android:textSize="@dimen/text_size_profile"
                     android:fontFamily="@font/abeezee"
@@ -109,7 +109,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="2"
                     android:text="@string/address_tv"
-                    android:textColor="@color/black"
+                    android:textColor="@color/white"
                     android:textStyle="bold"
                     android:textSize="@dimen/text_size_profile"
                     android:fontFamily="@font/abeezee" />
@@ -120,7 +120,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="24"
                     android:text="@string/text_address"
-                    android:textColor="@color/black"
+                    android:textColor="@color/white"
                     android:textStyle="bold|italic"
                     android:textSize="@dimen/text_size_profile"
                     android:fontFamily="@font/abeezee"
@@ -144,7 +144,7 @@
             android:layout_weight="1"
             android:layout_marginStart="0dp"
             android:layout_marginEnd="6dp"
-            android:background="@drawable/bg_green_button"
+            android:background="@drawable/bg_first_text"
             android:padding="8dp">
 
             <ImageView
@@ -174,7 +174,7 @@
             android:layout_marginStart="6dp"
             android:layout_marginEnd="0dp"
             android:layout_weight="1"
-            android:background="@drawable/bg_logout_button"
+            android:background="@drawable/bg_first_text"
             android:padding="8dp">
 
             <ImageView
@@ -203,8 +203,8 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:layout_marginTop="12dp"
-        android:background="@drawable/bg_green_button"
-        android:padding="8dp">
+        android:background="@drawable/bg_second_text"
+        android:padding="12dp">
 
         <TextView
             android:layout_width="0dp"

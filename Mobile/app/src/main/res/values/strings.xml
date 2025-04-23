@@ -17,7 +17,7 @@
     <string name="follow">Theo dõi</string>
     <string name="setting">Cài đặt</string>
     <string name="back">Trở lại</string>
-    <string name="face_auth_manual">Vui lòng di chuyển mặt đến khung hình</string>
+    <string name="face_auth_manual">Vui lòng di chuyển mặt đến máy ảnh</string>
     <string name="audio_record_manual">Nhấn giữ để nói</string>
     <string name="mic_btn">mic_btn</string>
     <string name="temperature">Nhiệt độ</string>
@@ -54,4 +54,11 @@
     <string name="fan_low">1</string>
     <string name="open">mở</string>
     <string name="close">đóng</string>
+    <string name="touch_up">Touch up</string>
+    <string name="login_background">login_backgound</string>
+    <string name="hi_command">Xin chào,</string>
+    <string name="testhome1">testhome1</string>
+    <string name="authenticate_command">Xác thực để tiếp tục</string>
+    <string name="record_command">Xin chào, tôi là người dùng của hệ thống nhà thông minh, hãy kích hoạt chế độ điều khiển hỗ trợ giọng nói.</string>
+    <string name="project_description">Quản lý thiết bị của nhà bạn</string>
 </resources>

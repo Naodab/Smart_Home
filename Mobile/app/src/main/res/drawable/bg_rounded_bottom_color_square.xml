@@ -2,7 +2,7 @@
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="rectangle">
 
-    <solid android:color="#F5F4F0" /> <!-- Màu nền, thay đổi tùy ý -->
+    <solid android:color="@color/white" /> <!-- Màu nền, thay đổi tùy ý -->
 
     <corners
         android:topLeftRadius="0dp"

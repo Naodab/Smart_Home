@@ -154,10 +154,6 @@ public class SpeechAuthFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-
         SoundRecordUtil.getInstance(requireContext()).release();
-        if (getActivity() instanceof MainActivity) {
-            ((MainActivity) getActivity()).showBottomNav();
-        }
     }
 }

@@ -26,6 +26,9 @@ import com.smarthome.mobile.util.SoundRecordUtil;
 import com.smarthome.mobile.view.activity.MainActivity;
 import com.smarthome.mobile.view.widget.CustomLoadingDialog;
 import com.smarthome.mobile.view.widget.CustomToast;
+import com.smarthome.mobile.view.widget.DialogChangePassword;
+import com.smarthome.mobile.view.widget.DialogSetting;
+import com.smarthome.mobile.viewmodel.AuthViewModel;
 import com.smarthome.mobile.viewmodel.DeviceViewModel;
 import com.smarthome.mobile.viewmodel.HomeViewModel;
 import com.smarthome.mobile.viewmodel.LocationAdapter;
@@ -39,6 +42,9 @@ public class RemoteFragment extends Fragment {
     private HomeViewModel homeViewModel;
     private CustomLoadingDialog loading;
     private LocationAdapter locationAdapter;
+    private DialogSetting setting;
+    private DialogChangePassword changePassword;
+    private AuthViewModel authViewModel;
     private SpeechRemoteViewModel speechRemoteViewModel;
     private final float SCALE = 0.9f;
     private Home home;
@@ -58,10 +64,12 @@ public class RemoteFragment extends Fragment {
         binding.locationList.setLayoutManager(new LinearLayoutManager(requireContext()));
         homeViewModel = new ViewModelProvider(requireActivity()).get(HomeViewModel.class);
         DeviceViewModel deviceViewModel = new DeviceViewModel();
+        this.authViewModel = new ViewModelProvider(requireActivity()).get(AuthViewModel.class);
+        this.changePassword = new DialogChangePassword(requireContext(), authViewModel);
+        setting = new DialogSetting(requireContext(), authViewModel, changePassword);
         locationAdapter = new LocationAdapter(new ArrayList<>(), loading,
                 getViewLifecycleOwner(), deviceViewModel);
         binding.locationList.setAdapter(locationAdapter);
-        Log.d("Remote Fragment", "onCreateView: change to view");
         return binding.getRoot();
     }
 
@@ -146,6 +154,8 @@ public class RemoteFragment extends Fragment {
                     break;
             }
         });
+
+        binding.settingBtn.setOnClickListener(v -> setting.show());
     }
 
 

@@ -18,8 +18,6 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.smarthome.mobile.R;
 import com.smarthome.mobile.databinding.ActivityMainBinding;
 import com.smarthome.mobile.view.fragment.HomeFragment;
-import com.smarthome.mobile.view.fragment.MonitorFragment;
-import com.smarthome.mobile.view.fragment.ProfileFragment;
 import com.smarthome.mobile.view.fragment.RemoteFragment;
 import com.smarthome.mobile.view.widget.CustomLoadingDialog;
 import com.smarthome.mobile.view.widget.CustomToast;

@@ -3,10 +3,58 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:background="@android:color/transparent"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".view.fragment.HomeFragment">
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        android:src="@drawable/bg_way_to_authenticate" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/alpha"
+        android:text="@string/hi_command"
+        android:textColor="@color/white"
+        android:textSize="42sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.15"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.04" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:fontFamily="@font/alpha"
+        android:paddingBottom="12dp"
+        android:text="@string/authenticate_command"
+        android:textColor="@color/white"
+        android:textSize="15sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.12"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView" />
+
+    <ImageView
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:contentDescription="@string/setting"
+        android:src="@drawable/ic_setting"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.956"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.039"
+        app:tint="@color/white" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -15,7 +63,7 @@
         android:paddingHorizontal="32dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.545"
+        app:layout_constraintVertical_bias="0.819"
         tools:layout_editor_absoluteX="0dp">
 
         <LinearLayout
@@ -23,7 +71,7 @@
             android:layout_width="match_parent"
             android:layout_height="130dp"
             android:layout_marginBottom="16dp"
-            android:background="@drawable/home_rounded_main_square"
+            android:background="@drawable/bg_authenticate_btn"
             android:orientation="horizontal"
             android:paddingVertical="20dp">
 
@@ -56,7 +104,7 @@
             android:id="@+id/speech_auth_btn"
             android:layout_width="match_parent"
             android:layout_height="130dp"
-            android:background="@drawable/home_rounded_main_square"
+            android:background="@drawable/bg_authenticate_btn"
             android:orientation="horizontal"
             android:paddingVertical="20dp">
 
