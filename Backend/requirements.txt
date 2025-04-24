@@ -16,3 +16,4 @@ librosa
 torchvision
 daphne
 channels
+speechbrain
