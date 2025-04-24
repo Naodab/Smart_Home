@@ -6,90 +6,33 @@
     app:startDestination="@id/homeFragment">
 
     <fragment
-        android:id="@+id/loginFragment"
-        android:name="com.smarthome.mobile.view.LoginFragment"
-        android:label="fragment_login"
-        tools:layout="@layout/fragment_login" >
-        <action
-            android:id="@+id/action_loginFragment_to_homeFragment"
-            app:destination="@id/homeFragment"
-            app:enterAnim="@anim/fade_in"
-            app:exitAnim="@anim/fade_out"
-            app:popEnterAnim="@anim/fade_in"
-            app:popExitAnim="@anim/fade_out" />
-    </fragment>
-    <fragment
         android:id="@+id/monitorFragment"
-        android:name="com.smarthome.mobile.view.MonitorFragment"
+        android:name="com.smarthome.mobile.view.fragment.MonitorFragment"
         android:label="fragment_monitor"
-        tools:layout="@layout/fragment_monitor" >
-        <action
-            android:id="@+id/action_monitorFragment_to_homeFragment"
-            app:destination="@id/homeFragment"
-            app:enterAnim="@anim/slide_in_left"
-            app:exitAnim="@anim/slide_out_left"
-            app:popEnterAnim="@anim/slide_in_left"
-            app:popExitAnim="@anim/slide_out_right"/>
-    </fragment>
+        tools:layout="@layout/fragment_monitor" />
     <fragment
         android:id="@+id/homeFragment"
-        android:name="com.smarthome.mobile.view.HomeFragment"
+        android:name="com.smarthome.mobile.view.fragment.HomeFragment"
         android:label="fragment_home"
-        tools:layout="@layout/fragment_home" >
-        <action
-            android:id="@+id/action_homeFragment_to_loginFragment"
-            app:destination="@id/loginFragment"
-            app:enterAnim="@anim/fade_in"
-            app:exitAnim="@anim/fade_out"
-            app:popEnterAnim="@anim/fade_in"
-            app:popExitAnim="@anim/fade_out"  />
-        <action
-            android:id="@+id/action_homeFragment_to_faceAuthFragment"
-            app:destination="@id/faceAuthFragment"
-            app:enterAnim="@anim/fade_in"
-            app:exitAnim="@anim/fade_out"
-            app:popEnterAnim="@anim/fade_in"
-            app:popExitAnim="@anim/fade_out" />
-        <action
-            android:id="@+id/action_homeFragment_to_speechAuthFragment"
-            app:destination="@id/speechAuthFragment" />
-        <action
-            android:id="@+id/action_homeFragment_to_monitorFragment"
-            app:destination="@id/monitorFragment"
-            app:enterAnim="@anim/slide_in_left"
-            app:exitAnim="@anim/slide_out_right"
-            app:popEnterAnim="@anim/slide_in_right"
-            app:popExitAnim="@anim/slide_out_left"/>
-    </fragment>
+        tools:layout="@layout/fragment_home" />
     <fragment
         android:id="@+id/faceAuthFragment"
-        android:name="com.smarthome.mobile.view.FaceAuthFragment"
+        android:name="com.smarthome.mobile.view.fragment.FaceAuthFragment"
         android:label="fragment_face_auth"
-        tools:layout="@layout/fragment_face_auth" >
-        <action
-            android:id="@+id/action_faceAuthFragment_to_homeFragment"
-            app:destination="@id/homeFragment"
-            app:enterAnim="@anim/fade_in"
-            app:exitAnim="@anim/fade_out"
-            app:popEnterAnim="@anim/fade_in"
-            app:popExitAnim="@anim/fade_out" />
-    </fragment>
+        tools:layout="@layout/fragment_face_auth" />
     <fragment
         android:id="@+id/speechAuthFragment"
-        android:name="com.smarthome.mobile.view.SpeechAuthFragment"
+        android:name="com.smarthome.mobile.view.fragment.SpeechAuthFragment"
         android:label="fragment_speech_auth"
-        tools:layout="@layout/fragment_speech_auth" >
-        <action
-            android:id="@+id/action_speechAuthFragment_to_homeFragment"
-            app:destination="@id/homeFragment"
-            app:enterAnim="@anim/slide_in_right"
-            app:exitAnim="@anim/slide_out_right"
-            app:popEnterAnim="@anim/slide_in_right"
-            app:popExitAnim="@anim/slide_out_right"/>
-    </fragment>
+        tools:layout="@layout/fragment_speech_auth" />
     <fragment
         android:id="@+id/remoteFragment"
-        android:name="com.smarthome.mobile.view.RemoteFragment"
+        android:name="com.smarthome.mobile.view.fragment.RemoteFragment"
         android:label="fragment_remote"
         tools:layout="@layout/fragment_remote" />
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="com.smarthome.mobile.view.fragment.ProfileFragment"
+        android:label="fragment_profile"
+        tools:layout="@layout/fragment_profile" />
 </navigation>

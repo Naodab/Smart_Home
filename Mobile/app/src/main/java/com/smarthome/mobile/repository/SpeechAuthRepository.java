@@ -1,16 +1,17 @@
 package com.smarthome.mobile.repository;
 
-import android.util.Log;
+import androidx.annotation.NonNull;
+import androidx.lifecycle.MutableLiveData;
 
-import com.smarthome.mobile.api.SpeechApiClient;
-import com.smarthome.mobile.service.SpeechAuthService;
+import com.smarthome.mobile.app.MyApp;
+import com.smarthome.mobile.dto.response.AuthResponse;
+import com.smarthome.mobile.network.ApiService;
+import com.smarthome.mobile.network.ApiClient;
 import com.smarthome.mobile.util.AudioRecorderHelper;
-import com.smarthome.mobile.util.SpeechAuthCallBack;
+import com.smarthome.mobile.util.Result;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -23,53 +24,58 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class SpeechAuthRepository {
-    private final SpeechAuthService speechAuthService;
-    private String email;
+    private final ApiService apiService;
+    private final MutableLiveData<Result<AuthResponse>> authStatus;
 
     public SpeechAuthRepository() {
-        this.speechAuthService = SpeechApiClient.getClient().create(SpeechAuthService.class);
+        this.apiService = ApiClient.getClient().create(ApiService.class);
+        this.authStatus = new MutableLiveData<>();
     }
 
-    public void uploadAudio(byte[] audioData, SpeechAuthCallBack callBack) {
-        new Thread(() -> {
-            try {
-                File templateFile = File.createTempFile("audio_1", ".wav");
-                FileOutputStream fos = new FileOutputStream(templateFile);
-                AudioRecorderHelper.writeWavHeader(fos, audioData.length);
-                fos.write(audioData);
-                fos.close();
-                
-                RequestBody requestFile = RequestBody.create(templateFile, MediaType.parse("application/octet-stream"));
-                MultipartBody.Part body = MultipartBody.Part.createFormData("file", "audio.wav", requestFile);
+    public MutableLiveData<Result<AuthResponse>> getAuthStatus() {
+        return authStatus;
+    }
 
-                Map<String, RequestBody> metadata = new HashMap<>();
-                email = "hoang";
-                metadata.put("email", RequestBody
-                        .create(email, MediaType.parse("text/plain")));
+    public void uploadAudio(byte[] audioData) {
+        try {
+            authStatus.postValue(Result.loading());
+            File templateFile = File.createTempFile("audio_1", ".wav");
+            FileOutputStream fos = new FileOutputStream(templateFile);
+            AudioRecorderHelper.writeWavHeader(fos, audioData.length);
+            fos.write(audioData);
+            fos.close();
 
-                speechAuthService.uploadAudio(body, metadata).enqueue(new Callback<Void>() {
-                    @Override
-                    public void onResponse(Call<Void> call, Response<Void> response) {
-                        if (response.isSuccessful()) {
-                            Log.d("Upload audio", "Success");
-                            callBack.onSuccess();
-                        } else {
-                            Log.d("Upload audio", "Failure");
-                            callBack.onFailure();
-                        }
+            RequestBody requestFile = RequestBody
+                    .create(templateFile, MediaType.parse("application/octet-stream"));
+            MultipartBody.Part body = MultipartBody.Part
+                    .createFormData("file", "audio.wav", requestFile);
+
+            Map<String, RequestBody> metadata = new HashMap<>();
+            String email = MyApp.getInstance().getSessionManager().fetchUserEmail();
+            metadata.put("email", RequestBody
+                    .create(email, MediaType.parse("text/plain")));
+
+            apiService.authenticateSpeeches(body, metadata).enqueue(new Callback<AuthResponse>() {
+                @Override
+                public void onResponse(@NonNull Call<AuthResponse> call,
+                                       @NonNull Response<AuthResponse> response) {
+                    if (response.isSuccessful() && response.body() != null) {
+                        MyApp.getInstance().getSessionManager().savePerson(response.body());
+                        authStatus.postValue(Result.success(response.body()));
+                    } else {
+                        authStatus.postValue(Result
+                                .error(Objects.requireNonNull(response.errorBody()).toString()));
                     }
+                }
 
-                    @Override
-                    public void onFailure(Call<Void> call, Throwable t) {
-                        Log.d("Upload audio", "Failure");
-                        Log.d("Upload audio", Objects.requireNonNull(t.getMessage()));
-                        callBack.onFailure();
-                    }
-                });
-            } catch (Exception e) {
-                Log.d("Speech Auth Repository", Objects.requireNonNull(e.getMessage()));
-                callBack.onFailure();
-            }
-        }).start();
+                @Override
+                public void onFailure(@NonNull Call<AuthResponse> call,
+                                      @NonNull Throwable t) {
+                    authStatus.postValue(Result.error(t.getMessage()));
+                }
+            });
+        } catch (Exception e) {
+            authStatus.postValue(Result.error(e.getMessage()));
+        }
     }
 }

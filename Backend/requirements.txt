@@ -1,6 +1,7 @@
 django==4.2.1
 django-rest-framework
 djangorestframework
+djangorestframework-simplejwt
 pyyaml
 requests
 django-cors-headers
@@ -16,4 +17,6 @@ librosa
 torchvision
 daphne
 channels
+tensorflow
+tf-keras
 speechbrain
