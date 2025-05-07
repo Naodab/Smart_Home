@@ -187,7 +187,7 @@ class DeviceUsersIdAPIView(APIView):
     person_id = request.data.get('personId')
     device_id = request.data.get('id')
 
-    send_command_to_esp32(device=device_id, state=new_status)
+    send_command_to_esp32(device=device.type, state=new_status, room=device.location.name)
 
     # if request.user.id != device.location.home.id:
     #     return Response({"message": "Permission denied"}, status=403)
@@ -198,8 +198,6 @@ class DeviceUsersIdAPIView(APIView):
     person = get_object_or_404(Person, id=person_id)
     if not person:
         return Response({"message": "Person not found"}, status=404)
-    # if person.home != device.location.home:
-    #     return Response({"message": "Permission denied"}, status=403)
 
     device.status = new_status
     device.save()
