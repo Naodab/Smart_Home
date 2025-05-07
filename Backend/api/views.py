@@ -10,6 +10,8 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from api.permissions import IsAdmin
 from api.tokens import get_tokens_for_user
 
+from project.views import send_command_to_esp32
+
 from .serializers import DeviceCreateSerializer, \
                           DeviceSerializer, \
                           DeviceUpdateSerializer, \
@@ -183,6 +185,9 @@ class DeviceUsersIdAPIView(APIView):
 
     new_status = request.data.get('status')
     person_id = request.data.get('personId')
+    device_id = request.data.get('id')
+
+    send_command_to_esp32(device=device_id, state=new_status)
 
     # if request.user.id != device.location.home.id:
     #     return Response({"message": "Permission denied"}, status=403)
@@ -232,7 +237,11 @@ class AdminLoginAPIView(APIView):
       email = serializer.validated_data['email']
       password = serializer.validated_data['password']
 
+      print(email)
+      print(password)
+
       home = get_object_or_404(Home, email=email)
+
       if not home.is_staff:
         return Response({"message": "Permission denied, admin required"}, status=403)
       if home.check_password(password):

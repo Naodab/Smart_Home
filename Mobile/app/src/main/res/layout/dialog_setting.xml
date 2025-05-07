@@ -59,7 +59,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="14"
-                    android:text="@string/temp_id"
+                    android:text="12"
                     android:textColor="@color/white"
                     android:textStyle="bold|italic"
                     android:textSize="@dimen/text_size_profile"

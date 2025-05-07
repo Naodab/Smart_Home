@@ -10,8 +10,8 @@ export function DashboardStats() {
           <Home className="h-4 w-4 text-green-600" />
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold">12</div>
-          <p className="text-xs text-muted-foreground">+2 từ tháng  trước</p>
+          <div className="text-2xl font-bold">1</div>
+          <p className="text-xs text-muted-foreground">+1 từ tháng  trước</p>
         </CardContent>
       </Card>
       <Card>
@@ -20,8 +20,8 @@ export function DashboardStats() {
           <Users className="h-4 w-4 text-green-600" />
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold">36</div>
-          <p className="text-xs text-muted-foreground">+4 kể từ tháng trước</p>
+          <div className="text-2xl font-bold">4</div>
+          <p className="text-xs text-muted-foreground">+1 kể từ tháng trước</p>
         </CardContent>
       </Card>
       <Card>
@@ -30,8 +30,8 @@ export function DashboardStats() {
           <Cpu className="h-4 w-4 text-green-600" />
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold">48</div>
-          <p className="text-xs text-muted-foreground">+8 kể từ tháng trước</p>
+          <div className="text-2xl font-bold">10</div>
+          <p className="text-xs text-muted-foreground">+10 kể từ tháng trước</p>
         </CardContent>
       </Card>
     </>
