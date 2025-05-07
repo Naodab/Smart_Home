@@ -33,6 +33,7 @@ from api.models import History, BlacklistedToken, Location
 from AI_Module.speech_recognition.speech_to_text import transfer_audio_to_text
 from AI_Module.speaker_recognition.test import identify_speaker
 from AI_Module.speaker_recognition.verify import verify
+from AI_Module.speaker_recognition.verification import test_verification
 
 from django.shortcuts import get_object_or_404
 from api.models import Device, Home, Person
@@ -65,8 +66,16 @@ class SpeechCreateAPIView(APIView):
 
         transfer_audio_to_text()
 
-        result = identify_speaker()
-        print(result)
+        import os
+
+        media_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "media")
+        os.makedirs(media_dir, exist_ok=True)
+
+        audio_path = os.path.join(media_dir, "audio.wav")
+
+        # result = identify_speaker()
+        # print(result)
+        test_verification(audio_path, threshold=0.8)
 
         return Response({
           "message": "File uploaded successfully",

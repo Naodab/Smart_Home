@@ -258,7 +258,8 @@ test_files = [
     # "datasets/test/unknown/unknown_05.wav",
     # "datasets/test/Huy_01.wav",
     # "datasets/test/Hoang_01.wav",
-    "datasets/test/unknown/unknown_03.wav",
+    # "datasets/test/unknown/unknown_03.wav",
+    audio_path
 ]
 
 for test_file in test_files:
