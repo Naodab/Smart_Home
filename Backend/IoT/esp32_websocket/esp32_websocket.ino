@@ -3,9 +3,9 @@
 #include <ArduinoJson.h>
 #include <ESP32Servo.h>
 
-const char* ssid = "Tuyetnu";
-const char* password = "123456789";
-const char* serverAddress = "192.168.1.10";  // Thay bằng IP server Django 
+const char* ssid = "...";
+const char* password = "hxh12399";
+const char* serverAddress = "192.168.1.20";  // Thay bằng IP server Django 
 const int serverPort = 8088;
 
 WebSocketsClient webSocket;
