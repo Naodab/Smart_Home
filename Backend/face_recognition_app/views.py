@@ -31,12 +31,11 @@ import face_recognition
 import urllib
 import cv2
 import os
-
+from collections import defaultdict
+import numpy as np
 # Hàm gửi lệnh tới ESP32 qua WebSocket
-def send_command_to_esp32(device, state, angle=None):
-    command = {"device": device, "state": state}
-    if device == "servo" and angle is not None:
-        command["angle"] = angle 
+def send_command_to_esp32(device, dev_id , state):
+    command = {"device": device, "id": dev_id, "state": state}
     print(f"🚀 Sending command to WebSocket: {command}")  # In ra terminal Django
 
     channel_layer = get_channel_layer()
@@ -46,29 +45,47 @@ def send_command_to_esp32(device, state, angle=None):
     )
     return {"status": "command_sent", "command": command}
 
-def send_update_to_android():
-    """Hàm gửi thông báo đến Android qua WebSocket"""
-    message = {
-        "detail": "Unknown"
-    }
+# def send_update_to_android():
+#     """Hàm gửi thông báo đến Android qua WebSocket"""
+#     message = {
+#         "detail": "Unknown"
+#     }
   
-    print(f"📡 Sending WebSocket message: {message}")  # Debug message
+#     print(f"📡 Sending WebSocket message: {message}")  # Debug message
 
-    channel_layer = get_channel_layer()
-    async_to_sync(channel_layer.group_send)(
-        "android_group",  # Nhóm WebSocket cho Android
-        {"type": "send_message", "message": message}
-    )
+#     channel_layer = get_channel_layer()
+#     async_to_sync(channel_layer.group_send)(
+#         "android_group",  # Nhóm WebSocket cho Android
+#         {"type": "send_message", "message": message}
+#     )
 
 
 app_config = apps.get_app_config("face_recognition_app")
 face_embeddings = app_config.face_embeddings
 model = app_config.model
 
+from collections import defaultdict
+
+names = face_embeddings['arr_1']
+ids   = face_embeddings['arr_0']
+
+# Tạo mapping name -> list of embeddings
+name_to_ids = defaultdict(list)
+for name, embedding in zip(names, ids):
+    name_to_ids[name].append(embedding)
+
+# Optionally, convert lists to numpy arrays
+for name in name_to_ids:
+    name_to_ids[name] = np.array(name_to_ids[name])
+
+# Giữ lại encoder để giải mã nhãn số -> tên
+encoder  = LabelEncoder().fit(names)
+
+
 facenet = FaceNet()
-Y = face_embeddings['arr_1']
-encoder = LabelEncoder()
-encoder.fit(Y)
+# Y = face_embeddings['arr_1']
+# encoder = LabelEncoder()
+# encoder.fit(Y)
 detector = MTCNN()
 
 @csrf_exempt
@@ -97,7 +114,7 @@ def detect(request):
                     proba = model.predict_proba(ypred)
                     max_prob = np.max(proba)
                     print(max_prob)
-                    if max_prob < 0.5:
+                    if max_prob < 0.8:
                         final_name = "Unknown"
                     else:
                         face_name = model.predict(ypred)
@@ -106,17 +123,23 @@ def detect(request):
                     face_name = model.predict(ypred)
                     final_name = encoder.inverse_transform(face_name)[0]
                 
+                if final_name == "Unknown":
+                    final_id = -1
+                else:
+                    final_id = int(encoder.transform([final_name])[0])
+
                 data["faces"].append({
+                    "id": final_id,
                     "name": str(final_name),
                     "face_location": {"x": x, "y": y, "w": w, "h": h}
                 })
 
         for face in data["faces"]:
             if face["name"] == "BINH":
-                send_command_to_esp32(device="led", state="on")
+                send_command_to_esp32(device="led",dev_id="1" ,state="on")
                 print("✅ Detected 'BINH' - Commands sent to ESP32!")
-            elif face["name"] == "Unknown":
-                send_update_to_android()
+            # elif face["name"] == "Unknown":
+            #     send_update_to_android()
 
     print(data)
     return JsonResponse(data=data)

@@ -30,7 +30,7 @@ DEBUG = True
 
 load_dotenv()
 
-ALLOWED_HOSTS = ['0.0.0.0', '127.0.0.1', 'localhost', os.getenv('IP')]
+ALLOWED_HOSTS = ['0.0.0.0', '127.0.0.1', 'localhost', os.getenv('IP'),'192.168.1.9']
 
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_METHODS = ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
@@ -50,7 +50,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'api',
     'rest_framework_simplejwt',
-    'corsheaders'
+    'corsheaders',
     'project.devices',
     'face_recognition_app'
 ]

@@ -27,8 +27,8 @@ from .serializers import DeviceCreateSerializer, \
 
 from api.models import History, BlacklistedToken, Location
 
-from AI_Module.speech_recognition.speech_to_text import transfer_audio_to_text
-from AI_Module.speaker_recognition.test import identify_speaker
+# from AI_Module.speech_recognition.speech_to_text import transfer_audio_to_text
+# from AI_Module.speaker_recognition.test import identify_speaker
 
 from django.shortcuts import get_object_or_404
 from api.models import Device, Home, Person
@@ -61,8 +61,8 @@ class SpeechCreateAPIView(APIView):
 
         transfer_audio_to_text()
 
-        result = identify_speaker()
-        print(result)
+        # result = identify_speaker()
+        # print(result)
 
         return Response({
           "message": "File uploaded successfully", 

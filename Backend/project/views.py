@@ -119,31 +119,31 @@
 
 
 
-from channels.layers import get_channel_layer
-from asgiref.sync import async_to_sync
-from django.http import JsonResponse
-from django.shortcuts import render
-from django.views.decorators.csrf import csrf_exempt
-import numpy as np
-# import face_recognition
-# import urllib
-# import json
-# import cv2
-# import os
+# from channels.layers import get_channel_layer
+# from asgiref.sync import async_to_sync
+# from django.http import JsonResponse
+# from django.shortcuts import render
+# from django.views.decorators.csrf import csrf_exempt
+# import numpy as np
+# # import face_recognition
+# # import urllib
+# # import json
+# # import cv2
+# # import os
 
-# Hàm gửi lệnh tới ESP32 qua WebSocket
-def send_command_to_esp32(device, state, angle=None):
-    command = {"device": device, "state": state}
-    if device == "servo" and angle is not None:
-        command["angle"] = angle 
-    print(f"🚀 Sending command to WebSocket: {command}")  # In ra terminal Django
+# # Hàm gửi lệnh tới ESP32 qua WebSocket
+# def send_command_to_esp32(device, state, angle=None):
+#     command = {"device": device, "state": state}
+#     if device == "servo" and angle is not None:
+#         command["angle"] = angle 
+#     print(f"🚀 Sending command to WebSocket: {command}")  # In ra terminal Django
 
-    channel_layer = get_channel_layer()
-    async_to_sync(channel_layer.group_send)(
-        "esp32_group",
-        {"type": "send_command", "command": command}
-    )
-    return {"status": "command_sent", "command": command}
+#     channel_layer = get_channel_layer()
+#     async_to_sync(channel_layer.group_send)(
+#         "esp32_group",
+#         {"type": "send_command", "command": command}
+#     )
+#     return {"status": "command_sent", "command": command}
 
 # import os
 # import cv2
