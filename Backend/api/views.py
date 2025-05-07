@@ -32,6 +32,7 @@ from api.models import History, BlacklistedToken, Location
 
 from AI_Module.speech_recognition.speech_to_text import transfer_audio_to_text
 from AI_Module.speaker_recognition.test import identify_speaker
+from AI_Module.speaker_recognition.verify import verify
 
 from django.shortcuts import get_object_or_404
 from api.models import Device, Home, Person
@@ -44,7 +45,7 @@ from datetime import datetime, timezone
 # /api/speeches/upload/
 class SpeechCreateAPIView(APIView):
   permission_classes = [AllowAny]
-  
+
   parser_classes = (MultiPartParser, FormParser)
   def post(self, request, *args, **kwargs):
     serializer = SpeechSerializer(data=request.data)
@@ -52,7 +53,7 @@ class SpeechCreateAPIView(APIView):
         file = serializer.validated_data['file']
         email = serializer.validated_data['email']
 
-        print(email) 
+        print(email)
         print(file)
 
         if default_storage.exists(file.name):
@@ -68,8 +69,8 @@ class SpeechCreateAPIView(APIView):
         print(result)
 
         return Response({
-          "message": "File uploaded successfully", 
-          "file_url": file_url, 
+          "message": "File uploaded successfully",
+          "file_url": file_url,
           "email": email,
           "person_id": 1,
           "person_name": "Nguyen Ho Ba Doan",
@@ -81,7 +82,7 @@ speech_create_api_view = SpeechCreateAPIView.as_view()
 # /api/speeches/remote/
 class SpeechRemoteAPIView(APIView):
   permission_classes = [AllowAny]
-  
+
   parser_classes = (MultiPartParser, FormParser)
   def post(self, request, *args, **kwargs):
     print(request.data)
@@ -91,7 +92,7 @@ class SpeechRemoteAPIView(APIView):
         email = serializer.validated_data['email']
         person_id = serializer.validated_data['person_id']
 
-        print(email) 
+        print(email)
         print(file)
         print(person_id)
 
@@ -119,7 +120,7 @@ class UserLoginAPIView(APIView):
       if home.check_password(password):
         tokens = get_tokens_for_user(home)
         return Response({
-          "message": "Login successful", 
+          "message": "Login successful",
           "email": email,
           "tokens": tokens,
           "address": home.address,
@@ -168,7 +169,7 @@ class DeviceUsersIdAPIView(APIView):
     if request.user.id != device['home']['id']:
       return Response({"message": "Permission denied"}, status=403)
     return Response(device, status=status.HTTP_200_OK)
-  
+
   def post(self, request, id, *args, **kwargs):
     device = get_object_or_404(Device, id=id)
     serializer = DeviceSerializer(device, data=request.data)
@@ -178,7 +179,7 @@ class DeviceUsersIdAPIView(APIView):
         return Response({"message": "Permission denied"}, status=403)
       return Response({"message": "Device updated successfully", "name": device.name})
     return Response(serializer.errors, status=400)
-  
+
   def put(self, request, id, *args, **kwargs):
     print(request.data)
     device = get_object_or_404(Device, id=id)
@@ -201,7 +202,7 @@ class DeviceUsersIdAPIView(APIView):
 
     device.status = new_status
     device.save()
-    
+
     History.objects.create(
         device=device,
         status=new_status,
@@ -228,7 +229,7 @@ history_users_api_view = HistoryUsersAPIView.as_view()
 # ONLY FOR ADMIN
 class AdminLoginAPIView(APIView):
   permission_classes = [AllowAny]
-  
+
   def post(self, request,  *args, **kwargs):
     serializer = LoginSerializer(data=request.data)
     if serializer.is_valid():
@@ -259,7 +260,7 @@ class HomeAPIView(APIView):
       home = serializer.save()
       return Response({"message": "Home registered successfully", "email": home.email, "address": home.address})
     return Response(serializer.errors, status=400)
-  
+
   def get(self, request, *args, **kwargs):
     homes = Home.objects.all()
     homes = [home for home in homes if home.is_staff == False]
@@ -275,7 +276,7 @@ class HomeIdAPIView(APIView):
     home = get_object_or_404(Home, id=id)
     serializer = HomeSerializer(home)
     return Response(serializer.data)
-  
+
   def put(self, request, id, *args, **kwargs):
     home = get_object_or_404(Home, id=id)
     serializer = HomeSerializer(home, data=request.data)
@@ -283,7 +284,7 @@ class HomeIdAPIView(APIView):
       serializer.save()
       return Response({"message": "Home updated successfully", "email": home.email, "address": home.address})
     return Response(serializer.errors, status=400)
-  
+
   def delete(self, request, id, *args, **kwargs):
     home = get_object_or_404(Home, id=id)
     home.delete()
@@ -303,14 +304,14 @@ home_emails_api_view = HomeEmailsAPIView.as_view()
 # /api/people/
 class PersonAPIView(APIView):
   permission_classes = [IsAuthenticated, IsAdmin]
-  
+
   def post(self, request, *args, **kwargs):
     serializer = PersonSaveSerializer(data=request.data, context={"request": request})
     if serializer.is_valid():
       person = serializer.save()
       return Response({"message": "Person registered successfully", "name": person.name})
     return Response(serializer.errors, status=400)
-  
+
   def get(self, request, *args, **kwargs):
     persons = Person.objects.all()
     serializer = PersonSerializer(persons, many=True)
@@ -320,7 +321,7 @@ person_api_view = PersonAPIView.as_view()
 # /api/people/select/
 class PersonSelectAPIView(APIView):
   permission_classes = [IsAuthenticated, IsAdmin]
-  
+
   def get(self, request, *args, **kwargs):
     persons = Person.objects.values('id', 'name')
     return Response(persons)
@@ -329,12 +330,12 @@ person_select_api_view = PersonSelectAPIView.as_view()
 # /api/people/<id>/
 class PersonIdAPIView(APIView):
   permission_classes = [IsAuthenticated, IsAdmin]
-  
+
   def get(self, request, id, *args, **kwargs):
     person = get_object_or_404(Person, id=id)
     serializer = PersonSerializer(person)
     return Response(serializer.data)
-  
+
   def put(self, request, id, *args, **kwargs):
     person = get_object_or_404(Person, id=id)
     serializer = PersonSaveSerializer(person, data=request.data, context={"request": request})
@@ -342,7 +343,7 @@ class PersonIdAPIView(APIView):
       serializer.save()
       return Response({"message": "Person updated successfully", "name": person.name})
     return Response(serializer.errors, status=400)
-  
+
   def delete(self, request, id, *args, **kwargs):
     person = get_object_or_404(Person, id=id)
     person.delete()
@@ -352,19 +353,19 @@ person_id_api_view = PersonIdAPIView.as_view()
 # /api/locations/
 class LocationAPIView(APIView):
   permission_classes = [IsAuthenticated, IsAdmin]
-  
+
   def post(self, request, *args, **kwargs):
     serializer = LocationSaveSerializer(data=request.data, context={"request": request})
     if serializer.is_valid():
       location = serializer.save()
       return Response({"message": "Location registered successfully", "name": location.name})
     return Response(serializer.errors, status=400)
-  
+
   def get(self, request, *args, **kwargs):
     locations = Location.objects.all()
     serializer = LocationSerializer(locations, many=True)
     return Response(serializer.data)
-  
+
 location_api_view = LocationAPIView.as_view()
 
 # /api/locations/<id>/
@@ -374,7 +375,7 @@ class LocationIdAPIView(APIView):
     location = get_object_or_404(Location, id=id)
     serializer = LocationSerializer(location)
     return Response(serializer.data)
-  
+
   def put(self, request, id, *args, **kwargs):
     location = get_object_or_404(Location, id=id)
     serializer = LocationSaveSerializer(location, data=request.data, context={"request": request})
@@ -382,7 +383,7 @@ class LocationIdAPIView(APIView):
       serializer.save()
       return Response({"message": "Location updated successfully", "name": location.name})
     return Response(serializer.errors, status=400)
-  
+
   def delete(self, request, id, *args, **kwargs):
     location = get_object_or_404(Location, id=id)
     location.delete()
@@ -392,7 +393,7 @@ location_id_api_view = LocationIdAPIView.as_view()
 # /api/homes/<email>/locations/
 class LocationInHomeAPIView(APIView):
   permission_classes = [IsAuthenticated, IsAdmin]
-  
+
   def get(self, request, email, *args, **kwargs):
     home = get_object_or_404(Home, email=email)
     locations = home.locations.all()
@@ -403,7 +404,7 @@ location_in_home_api_view = LocationInHomeAPIView.as_view()
 # /api/devices/
 class DeviceAPIView(APIView):
   permission_classes = [IsAuthenticated, IsAdmin]
-  
+
   def post(self, request, *args, **kwargs):
     serializer = DeviceCreateSerializer(data=request.data, context={"request": request})
     if serializer.is_valid():
@@ -411,7 +412,7 @@ class DeviceAPIView(APIView):
       device = serializer.save()
       return Response(DeviceSerializer(device).data, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=400)
-  
+
   def get(self, request, *args, **kwargs):
     devices = Device.objects.all()
     serializer = DeviceSerializer(devices, many=True)
@@ -422,12 +423,12 @@ device_api_view = DeviceAPIView.as_view()
 # /api/devices/<id>/
 class DeviceIdAPIView(APIView):
   permission_classes = [IsAuthenticated, IsAdmin]
-  
+
   def get(self, request, id, *args, **kwargs):
     device = get_object_or_404(Device, id=id)
     serializer = DeviceSerializer(device)
     return Response(serializer.data)
-  
+
   def put(self, request, id, *args, **kwargs):
     print(id, request.data)
     device = get_object_or_404(Device, id=id)
@@ -436,7 +437,7 @@ class DeviceIdAPIView(APIView):
       serializer.save()
       return Response({"message": "Device updated successfully", "name": device.name})
     return Response(serializer.errors, status=400)
-  
+
   def delete(self, request, id, *args, **kwargs):
     device = get_object_or_404(Device, id=id)
     device.delete()
@@ -446,14 +447,14 @@ device_id_api_view = DeviceIdAPIView.as_view()
 
 class HistoryAPIView(APIView):
   permission_classes = [IsAuthenticated, IsAdmin]
-  
+
   def post(self, request, *args, **kwargs):
     serializer = HistorySerializer(data=request.data, context={"request": request})
     if serializer.is_valid():
       history = serializer.save()
       return Response(HistorySerializer(history).data, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=400)
-  
+
   def get(self, request, *args, **kwargs):
     histories = History.objects.all()
     serializer = HistorySerializer(histories, many=True)
@@ -464,7 +465,7 @@ history_api_view = HistoryAPIView.as_view()
 # /api/histories/<id>/
 class HistoryIdAPIView(APIView):
   permission_classes = [IsAuthenticated, IsAdmin]
-  
+
   def get(self, request, id, *args, **kwargs):
     history = get_object_or_404(History, id=id)
     serializer = HistorySerializer(history)
