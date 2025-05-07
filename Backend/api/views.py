@@ -30,9 +30,10 @@ from .serializers import DeviceCreateSerializer, \
 
 from api.models import History, BlacklistedToken, Location
 
+# from AI_Module.speaker_recognition.test import identify_speaker
+# from AI_Module.speaker_recognition.verify import verify
+
 from AI_Module.speech_recognition.speech_to_text import transfer_audio_to_text
-from AI_Module.speaker_recognition.test import identify_speaker
-from AI_Module.speaker_recognition.verify import verify
 from AI_Module.speaker_recognition.verification import test_verification
 
 from django.shortcuts import get_object_or_404
@@ -51,20 +52,23 @@ class SpeechCreateAPIView(APIView):
   def post(self, request, *args, **kwargs):
     serializer = SpeechSerializer(data=request.data)
     if serializer.is_valid():
+        
         file = serializer.validated_data['file']
         email = serializer.validated_data['email']
 
         print(email)
         print(file)
 
+        home = get_object_or_404(Home, email=email)
+        persons = Person.objects.filter(home=home)
+
         if default_storage.exists(file.name):
           default_storage.delete(file.name)
         
         # Lưu tệp âm thanh
-        file_name = default_storage.save(file.name, file)
-        file_url = default_storage.url(file_name)
-
-        transfer_audio_to_text()
+        file = default_storage.save(file.name, file)
+        file_path = default_storage.url(file)
+        # transfer_audio_to_text()
 
         import os
 
@@ -75,15 +79,21 @@ class SpeechCreateAPIView(APIView):
 
         # result = identify_speaker()
         # print(result)
-        test_verification(audio_path, threshold=0.8)
 
-        return Response({
-          "message": "File uploaded successfully",
-          "file_url": file_url,
-          "email": email,
-          "person_id": 1,
-          "person_name": "Nguyen Ho Ba Doan",
-        })
+
+        # TODO: chỉnh code ở đây
+        result = test_verification(audio_path, threshold=0.8)
+        for person in persons:
+          if person.name.contains(result.speaker_id):
+            print("Đúng người")
+            return Response({
+              "message": "File uploaded successfully",
+              "email": email,
+              "person_id": person.id,
+              "person_name": person.name,
+            })
+          
+        return Response(serializer.errors, status=400)
     return Response(serializer.errors, status=400)
   
 speech_create_api_view = SpeechCreateAPIView.as_view()

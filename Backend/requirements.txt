@@ -20,3 +20,4 @@ channels
 tensorflow
 tf-keras
 speechbrain
+torchaudio

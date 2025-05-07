@@ -4,7 +4,6 @@ import sounddevice as sd
 import wavio
 from pydub import AudioSegment
 from pydub.effects import normalize
-from transformers import pipeline
 import torchvision
 
 from project.views import send_command_to_esp32
@@ -13,6 +12,7 @@ from project.views import send_command_to_esp32
 torchvision.disable_beta_transforms_warning()
 
 def transfer_audio_to_text():
+  from transformers import pipeline
   # Thiết lập các thông số ghi âm
   # duration = 5  # Thời gian ghi âm (giây)
   # fs = 44100  # Tần số mẫu (Hz)

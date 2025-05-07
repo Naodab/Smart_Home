@@ -1,13 +1,31 @@
 import torch
 import torchaudio
-from speechbrain.inference.speaker import SpeakerRecognition
+# from speechbrain.inference.speaker import SpeakerRecognition
 from sklearn.metrics.pairwise import cosine_similarity
 import numpy as np
 import os
 import warnings
 from pathlib import Path
-import torchaudio
+# import torchaudio
 import torch
+_orig_torch_load = torch.load
+torch.load = lambda f, **kw: _orig_torch_load(f, **kw)
+
+# 2) Override hàm mà SpeechBrain thật sự dùng để load state_dict
+import speechbrain.utils.checkpoints as _sb_ckpt
+_sb_ckpt.torch_patched_state_dict_load = lambda path, device="cpu": torch.load(path, map_location=device)
+# --- KẾT THÚC PATCH ---
+
+# Bây giờ import các thứ còn lại
+import torchaudio
+from speechbrain.inference.speaker import SpeakerRecognition
+
+def patched_load(path, device="cpu"):
+    print(f"[DEBUG] Trying to load checkpoint: {path}")
+    return _orig_torch_load(path, map_location=device, weights_only=False)
+
+_sb_ckpt.torch_patched_state_dict_load = patched_load
+
 from torchaudio import functional as F
 
 import logging
@@ -85,7 +103,8 @@ def verify_checkpoint(checkpoint_path):
 #         return False
 
 # # Sử dụng hàm kiểm tra với đường dẫn chính xác
-checkpoint_path = "model"
+current_dir = os.path.dirname(__file__)
+checkpoint_path = os.path.join(current_dir, "model")
 # if not verify_checkpoint(checkpoint_path):
 #     print(f"Error: Invalid or missing checkpoint at {checkpoint_path}")
 #     exit(1)
@@ -152,10 +171,13 @@ def verify_audio(audio_path, threshold=0.7):
     """Kiểm tra xem audio có thuộc về speaker đã enroll không."""
     # Trích xuất embedding từ audio đầu vào
     src = Path(audio_path)
+    if not audio_path or not os.path.exists(audio_path):
+            raise ValueError("Invalid audio path")
 
     resampled_path = resample_audio(
         str(src), output_dir, 16000
     )
+    print(resampled_path)
     signal, fs = torchaudio.load(resampled_path)
     if signal.shape[0] > 1:
         signal = torch.mean(signal, dim=0, keepdim=True)
@@ -206,6 +228,8 @@ def verify_audio(audio_path, threshold=0.7):
 
 def test_verification(audio_path, threshold=0.85):
     """Test verification với debug info"""
+    if not os.path.exists(input_path):
+            raise FileNotFoundError(f"Input file không tồn tại: {input_path}")
     print(f"\nTesting audio: {os.path.basename(audio_path)}")
     
     speaker_id, confidence = verify_audio(audio_path, threshold)
@@ -219,7 +243,7 @@ def test_verification(audio_path, threshold=0.85):
     return speaker_id, confidence
 
 # Enroll speakers
-print("Enrolling speakers...")
+# print("Enrolling speakers...")
 # enroll_speaker("1", ["/kaggle/input/datasets-td/dataset/Binh/dth-Binh-cn-sang-phong.wav", 
 #                     "/kaggle/input/datasets-td/dataset/Binh/dth-Binh-t7-sang-troi.wav"])
 # enroll_speaker("2", ["/kaggle/input/datasets-td/dataset/Doan/Doan_Laptop_Sang_T2.wav", 
@@ -251,16 +275,20 @@ print("Enrolling speakers...")
 
 # /kaggle/working/speechbrain/results/checkpoints/CKPT+2025-04-23+04-38-19+00
 
-test_files = [
-    # "datasets/test/Binh_01.wav",
-    # "datasets/test/unknown/unknown_04.wav",
-    # "datasets/test/Doan_01.wav",
-    # "datasets/test/unknown/unknown_05.wav",
-    # "datasets/test/Huy_01.wav",
-    # "datasets/test/Hoang_01.wav",
-    # "datasets/test/unknown/unknown_03.wav",
-    audio_path
-]
-
-for test_file in test_files:
-    test_verification(test_file, threshold=0.8)
+if __name__ == "__main__":
+    test_files = [
+        # "datasets/test/Binh_01.wav",
+        # "datasets/test/unknown/unknown_04.wav",
+        # "datasets/test/Doan_01.wav",
+        # "datasets/test/unknown/unknown_05.wav",
+        # "datasets/test/Huy_01.wav",
+        os.path.join(os.path.dirname(__file__), "datasets", "test", "Hoang_01.wav")
+        # "datasets/test/unknown/unknown_03.wav",
+        # audio_path
+    ]
+    print(test_files)
+    for test_file in test_files:
+        speaker_id, confidence = test_verification(test_file, threshold=0.8)
+        print(f"Predicted Speaker: {speaker_id}, Confidence: {confidence:.3f}")
+        if(speaker_id != "Unknown"):
+            print(f"Audio {test_file} is likely to be spoken by {speaker_id}.")
