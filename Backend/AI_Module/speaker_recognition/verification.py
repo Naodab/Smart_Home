@@ -106,6 +106,7 @@ def verify_checkpoint(checkpoint_path):
 # # Sử dụng hàm kiểm tra với đường dẫn chính xác
 current_dir = os.path.dirname(__file__)
 checkpoint_path = os.path.join(current_dir, "model")
+print(f"Checkpoint path: {checkpoint_path}")
 # if not verify_checkpoint(checkpoint_path):
 #     print(f"Error: Invalid or missing checkpoint at {checkpoint_path}")
 #     exit(1)
