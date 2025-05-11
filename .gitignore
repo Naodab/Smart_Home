@@ -6,3 +6,4 @@ Backend/AI_Module/speaker_recognition/models/*.pkl
 .git.backup
 Backend/AI_Module/speaker_recognition/text_dependent/*
 Backend/venv_new
+Backend/AI_Module/speaker_recognition/model/*

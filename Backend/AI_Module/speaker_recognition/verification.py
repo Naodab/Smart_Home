@@ -230,8 +230,8 @@ def verify_audio(audio_path, threshold=0.7):
 
 def test_verification(audio_path, threshold=0.85):
     """Test verification với debug info"""
-    if not os.path.exists(input_path):
-            raise FileNotFoundError(f"Input file không tồn tại: {input_path}")
+    if not os.path.exists(audio_path):
+            raise FileNotFoundError(f"Input file không tồn tại: {audio_path}")
     print(f"\nTesting audio: {os.path.basename(audio_path)}")
     
     speaker_id, confidence = verify_audio(audio_path, threshold)
