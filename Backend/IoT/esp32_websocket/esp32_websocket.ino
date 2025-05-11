@@ -8,9 +8,9 @@
 #define HOME_ID 8
 std::map<String, String> deviceStateMap;
 
-const char* ssid = "...";
-const char* password = "hxh12399";
-const char* serverAddress = "192.168.1.21";  // Thay dbằng IP server Django 
+const char* ssid = "no";
+const char* password = "doandoandoan";
+const char* serverAddress = "192.168.151.197";  // Thay dbằng IP server Django 
 const int serverPort = 8088;
 
 WebSocketsClient webSocket;
@@ -20,7 +20,7 @@ Servo bathroomDoor;
 
 // LIGHT PIN
 constexpr int LIGHT_BEDROOM_PIN = 16;
-constexpr int LIGHT_BATHROOM_PIN = 17;
+constexpr int LIGHT_BATHROOM_PIN = 17;cmd
 constexpr int LIGHT_KITCHEN_PIN = 18;
 constexpr int LIGHT_LIVING_ROOM_PIN = 19;
 

@@ -21,3 +21,5 @@ tensorflow
 tf-keras
 speechbrain
 torchaudio
+opencv-python
+keras-facenet

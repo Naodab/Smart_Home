@@ -9,11 +9,12 @@ from pathlib import Path
 # import torchaudio
 import torch
 _orig_torch_load = torch.load
-torch.load = lambda f, **kw: _orig_torch_load(f, **kw)
+torch.load = lambda f, **kw: _orig_torch_load(f, weights_only=False, **kw)
 
 # 2) Override hàm mà SpeechBrain thật sự dùng để load state_dict
 import speechbrain.utils.checkpoints as _sb_ckpt
 _sb_ckpt.torch_patched_state_dict_load = lambda path, device="cpu": torch.load(path, map_location=device)
+# _sb_ckpt.torch_patched_state_dict_load = lambda path, device="cpu": _orig_torch_load(path, map_location=device, weights_only=False)
 # --- KẾT THÚC PATCH ---
 
 # Bây giờ import các thứ còn lại
@@ -243,7 +244,7 @@ def test_verification(audio_path, threshold=0.85):
     return speaker_id, confidence
 
 # Enroll speakers
-# print("Enrolling speakers...")
+print("Enrolling speakers...")
 # enroll_speaker("1", ["/kaggle/input/datasets-td/dataset/Binh/dth-Binh-cn-sang-phong.wav", 
 #                     "/kaggle/input/datasets-td/dataset/Binh/dth-Binh-t7-sang-troi.wav"])
 # enroll_speaker("2", ["/kaggle/input/datasets-td/dataset/Doan/Doan_Laptop_Sang_T2.wav", 

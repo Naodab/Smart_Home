@@ -42,6 +42,7 @@ import com.smarthome.mobile.viewmodel.FaceAuthViewModel;
 
 import java.nio.ByteBuffer;
 import java.util.Objects;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -181,7 +182,7 @@ public class FaceAuthFragment extends Fragment {
                 isAnalyzing = false;
                 takePhoto();
                 binding.cameraStatus.setText("Đã nhận được ảnh");
-                new android.os.Handler(Looper.getMainLooper()).postDelayed(this::backToHome, 2000);
+//                new android.os.Handler(Looper.getMainLooper()).postDelayed(this::backToHome, 2000);
             }
         }).addOnFailureListener(e -> Log.d("Analyze Image", Objects.requireNonNull(e.getMessage())));
     }

@@ -20,14 +20,10 @@ from django.http import JsonResponse
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 import numpy as np
-import face_recognition
 import urllib
-import json
-import cv2
-import os
+from api.models import Person
 
 import numpy as np
-import face_recognition
 import urllib
 import cv2
 import os
@@ -88,61 +84,82 @@ facenet = FaceNet()
 # encoder.fit(Y)
 detector = MTCNN()
 
+def map_name_to_id(name):
+    """
+    Hàm ánh xạ tên thành ID
+    """
+    names = {
+        "DOAN": 1,
+        "BINH": 7,
+        "HOANG": 6,
+        "HUY": 3,
+    }
+
 @csrf_exempt
 def detect(request):
-    data = {"faces": []}
-    if request.method == 'POST':
-        image = None
-        if request.FILES.get("image", None) is not None:
-            image = _grab_image(stream=request.FILES["image"])
-        elif request.POST.get("url", None) is not None:
-            image = _grab_image(url=request.POST.get("url"))
-        elif request.POST.get("path", None) is not None:
-            image = _grab_image(path=request.POST.get("path"))
-        if image is None:
-            return JsonResponse({"error": "No suitable face in the request!"}, status=400)
-        faces = detector.detect_faces(image)
-        for face in faces:
-            x, y, w, h = face['box']
-            confidence = face['confidence']
-            if confidence > 0.9:
-                face_img = image[y:y+h, x:x+w]
-                face_img = cv.resize(face_img, (160, 160))
-                face_img = np.expand_dims(face_img, axis=0)
-                ypred = facenet.embeddings(face_img)
-                if hasattr(model, "predict_proba"):
-                    proba = model.predict_proba(ypred)
-                    max_prob = np.max(proba)
-                    print(max_prob)
-                    if max_prob < 0.8:
-                        final_name = "Unknown"
-                    else:
-                        face_name = model.predict(ypred)
-                        final_name = encoder.inverse_transform(face_name)[0]
-                else:
-                    face_name = model.predict(ypred)
-                    final_name = encoder.inverse_transform(face_name)[0]
-                
-                if final_name == "Unknown":
-                    final_id = -1
-                else:
-                    final_id = int(encoder.transform([final_name])[0])
+    if request.method != 'POST':
+        return JsonResponse({"error": "Invalid request method"}, status=405)
 
-                data["faces"].append({
-                    "id": final_id,
-                    "name": str(final_name),
+    image = None
+    if request.FILES.get("file"):
+        image = _grab_image(stream=request.FILES["file"])
+    elif request.POST.get("url"):
+        image = _grab_image(url=request.POST["url"])
+    elif request.POST.get("path"):
+        image = _grab_image(path=request.POST["path"])
+
+    if image is None:
+        return JsonResponse({"error": "No suitable image in the request!"}, status=400)
+
+    faces = detector.detect_faces(image)
+    response_faces = []
+    first_valid_face_response = None
+
+    for face in faces:
+        x, y, w, h = face['box']
+        confidence = face['confidence']
+
+        if confidence <= 0.9:
+            continue
+
+        face_img = image[y:y + h, x:x + w]
+        face_img = cv.resize(face_img, (160, 160))
+        face_img = np.expand_dims(face_img, axis=0)
+        ypred = facenet.embeddings(face_img)
+
+        if hasattr(model, "predict_proba"):
+            proba = model.predict_proba(ypred)
+            max_prob = np.max(proba)
+            if max_prob < 0.8:
+                final_name = "Unknown"
+            else:
+                final_name = encoder.inverse_transform(model.predict(ypred))[0]
+        else:
+            final_name = encoder.inverse_transform(model.predict(ypred))[0]
+
+        final_id = -1 if final_name == "Unknown" else int(encoder.transform([final_name])[0])
+
+        face_data = {
+            "id": final_id,
+            "name": final_name,
+            "face_location": {"x": x, "y": y, "w": w, "h": h}
+        }
+
+        response_faces.append(face_data)
+
+        if first_valid_face_response is None and final_id != -1:
+            person = Person.objects.filter(id=final_id).first()
+            if person:
+                first_valid_face_response = {
+                    "id": person.id,
+                    "name": person.name,
                     "face_location": {"x": x, "y": y, "w": w, "h": h}
-                })
+                }
 
-        for face in data["faces"]:
-            if face["name"] == "BINH":
-                send_command_to_esp32(device="led",dev_id="1" ,state="on")
-                print("✅ Detected 'BINH' - Commands sent to ESP32!")
-            # elif face["name"] == "Unknown":
-            #     send_update_to_android()
+    if first_valid_face_response:
+        return JsonResponse(data=first_valid_face_response)
 
-    print(data)
-    return JsonResponse(data=data)
+    return JsonResponse({"error": "Không tìm thấy khuôn mặt hợp lệ!"}, status=400)
 
 def _grab_image(path=None, stream=None, url=None):
     image = None

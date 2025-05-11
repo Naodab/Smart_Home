@@ -64,6 +64,7 @@ public class FaceAuthRepository {
                 @Override
                 public void onResponse(@NonNull Call<AuthResponse> call,
                                        @NonNull Response<AuthResponse> response) {
+                    Log.d("Face Auth Repo", "Authenticate success");
                     if (response.isSuccessful() && response.body() != null) {
                         MyApp.getInstance().getSessionManager().savePerson(response.body());
                         authenticateStatus.postValue(Result.success(response.body()));
