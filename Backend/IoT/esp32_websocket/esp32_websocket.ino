@@ -1,4 +1,4 @@
-#include <WiFi.h>
+  #include <WiFi.h>
 #include <WebSocketsClient.h>
 #include <ArduinoJson.h>
 #include <ESP32Servo.h>
@@ -10,7 +10,7 @@ std::map<String, String> deviceStateMap;
 
 const char* ssid = "no";
 const char* password = "doandoandoan";
-const char* serverAddress = "192.168.151.197";  // Thay dbằng IP server Django 
+const char* serverAddress = "192.168.151.197";  // Thay dbằng IP server Djangoe
 const int serverPort = 8088;
 
 WebSocketsClient webSocket;
