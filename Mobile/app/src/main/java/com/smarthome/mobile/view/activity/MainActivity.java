@@ -53,10 +53,6 @@ public class MainActivity extends AppCompatActivity {
         authViewModel.getLogoutStatus().observe(this, result -> {
             switch (result.status) {
                 case ERROR:
-                    loading.dismiss();
-                    dialogSetting.dismiss();
-                    CustomToast.showError(this, result.message);
-                    break;
                 case SUCCESS:
                     loading.dismiss();
                     dialogSetting.dismiss();
