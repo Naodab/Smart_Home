@@ -94,6 +94,7 @@ def map_name_to_id(name):
         "HOANG": 6,
         "HUY": 3,
     }
+    return names.get(name, -1)
 
 @csrf_exempt
 def detect(request):
@@ -148,7 +149,7 @@ def detect(request):
         response_faces.append(face_data)
 
         if first_valid_face_response is None and final_id != -1:
-            person = Person.objects.filter(id=final_id).first()
+            person = Person.objects.filter(id=map_name_to_id(final_name)).first()
             if person:
                 first_valid_face_response = {
                     "id": person.id,
@@ -157,6 +158,7 @@ def detect(request):
                 }
 
     if first_valid_face_response:
+        print(first_valid_face_response)
         return JsonResponse(data=first_valid_face_response)
 
     return JsonResponse({"error": "Không tìm thấy khuôn mặt hợp lệ!"}, status=400)

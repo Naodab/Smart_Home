@@ -156,4 +156,8 @@ public class MainActivity extends AppCompatActivity {
         });
         bottomNav.startAnimation(anim);
     }
+
+    public void logout() {
+
+    }
 }

@@ -11,6 +11,7 @@ from api.permissions import IsAdmin
 from api.tokens import get_tokens_for_user
 
 from project.views import send_command_to_esp32
+from django.conf import settings
 
 from .serializers import DeviceCreateSerializer, \
                           DeviceSerializer, \
@@ -41,6 +42,8 @@ from api.models import Device, Home, Person
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
 from datetime import datetime, timezone
+import os
+import shutil
 
 # MOBILE API
 # ONLY FOR USER
@@ -66,39 +69,37 @@ class SpeechCreateAPIView(APIView):
           default_storage.delete(file.name)
         
         # Lưu tệp âm thanh
-        file = default_storage.save(file.name, file)
-        file_path = default_storage.url(file)
-        # transfer_audio_to_text()
+        saved_path = default_storage.save(file.name, file)
+        saved_full_path = os.path.join(settings.MEDIA_ROOT, saved_path)
 
-        import os
+        # media_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "media")
+        # os.makedirs(media_dir, exist_ok=True)
 
-        media_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "media")
+        media_dir = os.path.join(settings.BASE_DIR, "media")
         os.makedirs(media_dir, exist_ok=True)
 
         audio_path = os.path.join(media_dir, "audio.wav")
+        if os.path.abspath(saved_full_path) != os.path.abspath(audio_path):
+          shutil.copy(saved_full_path, audio_path)
 
-        # result = identify_speaker()
-        # print(result)
-
-
-        # TODO: chỉnh code ở đây
-        # result = test_verification(audio_path, threshold=0.8)
-        # for person in persons:
-        #   if person.name.contains(result.speaker_id):
-        #     print("Đúng người")
-        #     return Response({
-        #       "message": "File uploaded successfully",
-        #       "email": email,
-        #       "person_id": person.id,
-        #       "person_name": person.name,
-        #     })
-          
-        return Response({
+        result = test_verification(audio_path, threshold=0.8)
+        for person in persons:
+          if result["speaker_id"] in person.name:
+            print("Đúng người")
+            return Response({
               "message": "File uploaded successfully",
               "email": email,
-              "person_id": 1,
-              "person_name": "Nguyen Ho Ba Doan",
+              "person_id": person.id,
+              "person_name": person.name,
             })
+          
+        # return Response({
+        #       "message": "File uploaded successfully",
+        #       "email": email,
+        #       "person_id": 1,
+        #       "person_name": "Nguyen Ho Ba Doan",
+        #     })
+        return Response({"message": "File uploaded successfully", "email": email, "person_id": 1, "person_name": "Nguyen Ho Ba Doan"}, status=400)
     return Response(serializer.errors, status=400)
   
 speech_create_api_view = SpeechCreateAPIView.as_view()
@@ -534,6 +535,7 @@ class LogoutView(APIView):
       jti = validated_token.get("jti")
       if not jti:
           return Response({"detail": "Token does not contain jti"}, status=status.HTTP_400_BAD_REQUEST)
+      print(jti)
 
       exp_timestamp = validated_token.get("exp")
       exp_datetime = datetime.fromtimestamp(exp_timestamp, tz=timezone.utc)

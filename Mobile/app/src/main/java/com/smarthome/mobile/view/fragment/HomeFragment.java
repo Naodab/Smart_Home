@@ -14,11 +14,13 @@ import android.view.ViewGroup;
 import com.smarthome.mobile.R;
 import com.smarthome.mobile.databinding.FragmentHomeBinding;
 import com.smarthome.mobile.view.activity.MainActivity;
+import com.smarthome.mobile.view.widget.DialogSettingHome;
 
 import java.util.Objects;
 
 public class HomeFragment extends Fragment {
     private FragmentHomeBinding binding;
+    private DialogSettingHome dialogSettingHome;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -38,9 +40,16 @@ public class HomeFragment extends Fragment {
                               @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         ((MainActivity) Objects.requireNonNull(requireActivity())).hideBottomNav();
+        dialogSettingHome = new DialogSettingHome(requireContext(), () -> {
+            ((MainActivity) requireActivity()).logout();
+        });
 
         binding.faceAuthBtn.setOnClickListener(v -> navigateToFragment(new FaceAuthFragment()));
         binding.speechAuthBtn.setOnClickListener(v -> navigateToFragment(new SpeechAuthFragment()));
+
+        binding.btnSetting.setOnClickListener(v -> {
+
+        });
     }
 
     private void navigateToFragment(Fragment fragment) {
