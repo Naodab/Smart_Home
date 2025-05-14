@@ -82,10 +82,6 @@ class SpeechCreateAPIView(APIView):
         
         if os.path.abspath(saved_full_path) != os.path.abspath(audio_path):
           shutil.copy(saved_full_path, audio_path)
-        
-        mesage = transfer_audio_to_text()
-
-        print("Message:", mesage)
 
         speaker_id, _ = test_verification(audio_path, threshold=0.8)
         print("Speaker ID:", speaker_id)
