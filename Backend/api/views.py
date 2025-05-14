@@ -82,9 +82,9 @@ class SpeechCreateAPIView(APIView):
         if os.path.abspath(saved_full_path) != os.path.abspath(audio_path):
           shutil.copy(saved_full_path, audio_path)
 
-        result = test_verification(audio_path, threshold=0.8)
+        speaker_id, _ = test_verification(audio_path, threshold=0.8)
         for person in persons:
-          if result["speaker_id"] in person.name:
+          if speaker_id in person.name:
             print("Đúng người")
             return Response({
               "message": "File uploaded successfully",

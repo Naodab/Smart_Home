@@ -242,8 +242,8 @@ def test_verification(audio_path, threshold=0.85):
     print(f"Confidence Score: {confidence:.3f}")
     print(f"Threshold: {threshold}")
     print("-" * 50)
-    
-    return {"speaker_id": speaker_id, "confidence": confidence}
+    return speaker_id, confidence
+    # return {"speaker_id": speaker_id, "confidence": confidence}
 
 # Enroll speakers
 print("Enrolling speakers...")
