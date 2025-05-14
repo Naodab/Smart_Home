@@ -119,7 +119,8 @@ model2 = SpeakerRecognition.from_hparams(
 )
 
 # Thư mục lưu embeddings của các speaker đã enroll
-embeddings_dir = "enrolled_embeddings"
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+embeddings_dir = os.path.join(BASE_DIR, "enrolled_embeddings")
 os.makedirs(embeddings_dir, exist_ok=True)
 
 def resample_audio(input_path, output_dir, target_sr):
