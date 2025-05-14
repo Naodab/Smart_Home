@@ -46,9 +46,5 @@ def transfer_audio_to_text():
 
   transcriber = pipeline("automatic-speech-recognition", model="vinai/PhoWhisper-base")
   output = transcriber(processed_filename)['text']
-  print(output)
   
-  if output == "bật đèn.":
-    send_command_to_esp32(device="led", state="on")
-  else:
-    send_command_to_esp32(device="led", state="off")
+  return output

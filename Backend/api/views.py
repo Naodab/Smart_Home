@@ -99,7 +99,12 @@ class SpeechCreateAPIView(APIView):
         #       "person_id": 1,
         #       "person_name": "Nguyen Ho Ba Doan",
         #     })
-        return Response({"message": "File uploaded successfully", "email": email, "person_id": 1, "person_name": "Nguyen Ho Ba Doan"}, status=400)
+        return Response({
+          "message": "File uploaded successfully", 
+          "email": email, 
+          "person_id": 1, 
+          "person_name": 
+          "Nguyen Ho Ba Doan"}, status=400)
     return Response(serializer.errors, status=400)
   
 speech_create_api_view = SpeechCreateAPIView.as_view()
@@ -117,14 +122,21 @@ class SpeechRemoteAPIView(APIView):
         email = serializer.validated_data['email']
         person_id = serializer.validated_data['person_id']
 
-        print(email)
-        print(file)
-        print(person_id)
+        
+        if default_storage.exists(file.name):
+          default_storage.delete(file.name)
+        
+        # Lưu tệp âm thanh
+        saved_path = default_storage.save(file.name, file)
+        saved_full_path = os.path.join(settings.MEDIA_ROOT, saved_path)
+
+        mesage = transfer_audio_to_text()
 
         return Response({
           "id": 10,
           "name": "Quạt",
           "status": "0",
+          "message": mesage,
         })
     return Response(serializer.errors, status=400)
 speech_remote_api_view  = SpeechRemoteAPIView.as_view()
