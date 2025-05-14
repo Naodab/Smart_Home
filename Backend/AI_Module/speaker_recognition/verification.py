@@ -8,24 +8,24 @@ import warnings
 from pathlib import Path
 # import torchaudio
 import torch
-_orig_torch_load = torch.load
-torch.load = lambda f, **kw: _orig_torch_load(f, weights_only=False, **kw)
+# _orig_torch_load = torch.load
+# torch.load = lambda f, **kw: _orig_torch_load(f, weights_only=False, **kw)
 
-# 2) Override hàm mà SpeechBrain thật sự dùng để load state_dict
-import speechbrain.utils.checkpoints as _sb_ckpt
-_sb_ckpt.torch_patched_state_dict_load = lambda path, device="cpu": torch.load(path, map_location=device)
-# _sb_ckpt.torch_patched_state_dict_load = lambda path, device="cpu": _orig_torch_load(path, map_location=device, weights_only=False)
-# --- KẾT THÚC PATCH ---
+# # 2) Override hàm mà SpeechBrain thật sự dùng để load state_dict
+# import speechbrain.utils.checkpoints as _sb_ckpt
+# _sb_ckpt.torch_patched_state_dict_load = lambda path, device="cpu": torch.load(path, map_location=device)
+# # _sb_ckpt.torch_patched_state_dict_load = lambda path, device="cpu": _orig_torch_load(path, map_location=device, weights_only=False)
+# # --- KẾT THÚC PATCH ---
 
 # Bây giờ import các thứ còn lại
 import torchaudio
 from speechbrain.inference.speaker import SpeakerRecognition
 
-def patched_load(path, device="cpu"):
-    print(f"[DEBUG] Trying to load checkpoint: {path}")
-    return _orig_torch_load(path, map_location=device, weights_only=False)
+# def patched_load(path, device="cpu"):
+#     print(f"[DEBUG] Trying to load checkpoint: {path}")
+#     return _orig_torch_load(path, map_location=device, weights_only=False)
 
-_sb_ckpt.torch_patched_state_dict_load = patched_load
+# _sb_ckpt.torch_patched_state_dict_load = patched_load
 
 from torchaudio import functional as F
 
@@ -119,7 +119,8 @@ model2 = SpeakerRecognition.from_hparams(
 )
 
 # Thư mục lưu embeddings của các speaker đã enroll
-embeddings_dir = "enrolled_embeddings"
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+embeddings_dir = os.path.join(BASE_DIR, "enrolled_embeddings")
 os.makedirs(embeddings_dir, exist_ok=True)
 
 def resample_audio(input_path, output_dir, target_sr):

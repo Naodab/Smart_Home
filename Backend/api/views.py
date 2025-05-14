@@ -62,36 +62,38 @@ class SpeechCreateAPIView(APIView):
         print(email)
         print(file)
 
-        home = get_object_or_404(Home, email=email)
-        persons = Person.objects.filter(home=home)
+        # home = get_object_or_404(Home, email=email)
+        # persons = Person.objects.filter(home=home)
 
-        if default_storage.exists(file.name):
-          default_storage.delete(file.name)
+        # if default_storage.exists(file.name):
+        #   default_storage.delete(file.name)
         
         # Lưu tệp âm thanh
         saved_path = default_storage.save(file.name, file)
         saved_full_path = os.path.join(settings.MEDIA_ROOT, saved_path)
 
-        # media_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "media")
-        # os.makedirs(media_dir, exist_ok=True)
+        media_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "media")
+        os.makedirs(media_dir, exist_ok=True)
 
         media_dir = os.path.join(settings.BASE_DIR, "media")
         os.makedirs(media_dir, exist_ok=True)
 
         audio_path = os.path.join(media_dir, "audio.wav")
+        
         if os.path.abspath(saved_full_path) != os.path.abspath(audio_path):
           shutil.copy(saved_full_path, audio_path)
 
         speaker_id, _ = test_verification(audio_path, threshold=0.8)
-        for person in persons:
-          if speaker_id in person.name:
-            print("Đúng người")
-            return Response({
-              "message": "File uploaded successfully",
-              "email": email,
-              "person_id": person.id,
-              "person_name": person.name,
-            })
+        print("Speaker ID:", speaker_id)
+        # for person in persons:
+        #   if speaker_id in person.name:
+        #     print("Đúng người")
+        #     return Response({
+        #       "message": "File uploaded successfully",
+        #       "email": email,
+        #       "person_id": person.id,
+        #       "person_name": person.name,
+        #     })
           
         # return Response({
         #       "message": "File uploaded successfully",
@@ -99,12 +101,13 @@ class SpeechCreateAPIView(APIView):
         #       "person_id": 1,
         #       "person_name": "Nguyen Ho Ba Doan",
         #     })
-        return Response({
-          "message": "File uploaded successfully", 
-          "email": email, 
-          "person_id": 1, 
-          "person_name": 
-          "Nguyen Ho Ba Doan"}, status=400)
+        # return Response({
+        #   "message": "File uploaded successfully", 
+        #   "email": email, 
+        #   "person_id": 1, 
+        #   "person_name": 
+        #   "Nguyen Ho Ba Doan"}, status=400)
+        return Response(status=400)
     return Response(serializer.errors, status=400)
   
 speech_create_api_view = SpeechCreateAPIView.as_view()
