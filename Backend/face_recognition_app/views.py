@@ -152,8 +152,8 @@ def detect(request):
             person = Person.objects.filter(id=map_name_to_id(final_name)).first()
             if person:
                 first_valid_face_response = {
-                    "id": person.id,
-                    "name": person.name,
+                    "person_id": person.id,
+                    "person_name": person.name,
                     "face_location": {"x": x, "y": y, "w": w, "h": h}
                 }
 

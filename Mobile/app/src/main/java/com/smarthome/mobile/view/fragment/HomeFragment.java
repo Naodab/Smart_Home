@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.ViewModelProvider;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,12 +16,14 @@ import com.smarthome.mobile.R;
 import com.smarthome.mobile.databinding.FragmentHomeBinding;
 import com.smarthome.mobile.view.activity.MainActivity;
 import com.smarthome.mobile.view.widget.DialogSettingHome;
+import com.smarthome.mobile.viewmodel.AuthViewModel;
 
 import java.util.Objects;
 
 public class HomeFragment extends Fragment {
     private FragmentHomeBinding binding;
     private DialogSettingHome dialogSettingHome;
+    private AuthViewModel authViewModel;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -32,6 +35,7 @@ public class HomeFragment extends Fragment {
                              ViewGroup container,
                              Bundle savedInstanceState) {
         binding = FragmentHomeBinding.inflate(inflater, container, false);
+        this.authViewModel = new ViewModelProvider(this).get(AuthViewModel.class);
         return binding.getRoot();
     }
 
@@ -40,15 +44,13 @@ public class HomeFragment extends Fragment {
                               @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         ((MainActivity) Objects.requireNonNull(requireActivity())).hideBottomNav();
-        dialogSettingHome = new DialogSettingHome(requireContext(), () -> {
-            ((MainActivity) requireActivity()).logout();
-        });
+        dialogSettingHome = new DialogSettingHome(requireContext(), () -> authViewModel.logout());
 
         binding.faceAuthBtn.setOnClickListener(v -> navigateToFragment(new FaceAuthFragment()));
         binding.speechAuthBtn.setOnClickListener(v -> navigateToFragment(new SpeechAuthFragment()));
 
         binding.btnSetting.setOnClickListener(v -> {
-
+            this.dialogSettingHome.show();
         });
     }
 

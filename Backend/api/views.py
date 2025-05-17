@@ -30,6 +30,7 @@ from .serializers import DeviceCreateSerializer, \
                           SpeechRemoteSerializer
 
 from api.models import History, BlacklistedToken, Location
+from .globals import get_command_processor
 
 # from AI_Module.speaker_recognition.test import identify_speaker
 # from AI_Module.speaker_recognition.verify import verify
@@ -44,6 +45,18 @@ from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
 from datetime import datetime, timezone
 import os
 import shutil
+
+def map_name_to_id(name):
+    """
+    Hàm ánh xạ tên thành ID
+    """
+    names = {
+        "Doan": 1,
+        "Binh": 7,
+        "Hoang": 6,
+        "Huy": 3,
+    }
+    return names.get(name, -1)
 
 # MOBILE API
 # ONLY FOR USER
@@ -62,8 +75,8 @@ class SpeechCreateAPIView(APIView):
         print(email)
         print(file)
 
-        # home = get_object_or_404(Home, email=email)
-        # persons = Person.objects.filter(home=home)
+        home = get_object_or_404(Home, email=email)
+        persons = Person.objects.filter(home=home)
 
         # if default_storage.exists(file.name):
         #   default_storage.delete(file.name)
@@ -85,28 +98,15 @@ class SpeechCreateAPIView(APIView):
 
         speaker_id, _ = test_verification(audio_path, threshold=0.8)
         print("Speaker ID:", speaker_id)
-        # for person in persons:
-        #   if speaker_id in person.name:
-        #     print("Đúng người")
-        #     return Response({
-        #       "message": "File uploaded successfully",
-        #       "email": email,
-        #       "person_id": person.id,
-        #       "person_name": person.name,
-        #     })
-          
-        # return Response({
-        #       "message": "File uploaded successfully",
-        #       "email": email,
-        #       "person_id": 1,
-        #       "person_name": "Nguyen Ho Ba Doan",
-        #     })
-        # return Response({
-        #   "message": "File uploaded successfully", 
-        #   "email": email, 
-        #   "person_id": 1, 
-        #   "person_name": 
-        #   "Nguyen Ho Ba Doan"}, status=400)
+        pr_id = map_name_to_id(speaker_id)
+        for person in persons:
+          if pr_id == person.id:
+            return Response({
+              "message": "File uploaded successfully",
+              "email": email,
+              "person_id": person.id,
+              "person_name": person.name,
+            })
         return Response(status=400)
     return Response(serializer.errors, status=400)
   
@@ -125,22 +125,51 @@ class SpeechRemoteAPIView(APIView):
         email = serializer.validated_data['email']
         person_id = serializer.validated_data['person_id']
 
+        home = get_object_or_404(Home, email=email)
+        person = get_object_or_404(Person, id=person_id)
+
+        if person.home != home:
+          return Response({"message": "Permission denied"}, status=403)
         
         if default_storage.exists(file.name):
           default_storage.delete(file.name)
         
         # Lưu tệp âm thanh
         saved_path = default_storage.save(file.name, file)
-        saved_full_path = os.path.join(settings.MEDIA_ROOT, saved_path)
 
-        mesage = transfer_audio_to_text()
+        message = transfer_audio_to_text()
+        print(message)
+        processor = get_command_processor()
 
-        return Response({
-          "id": 10,
-          "name": "Quạt",
-          "status": "0",
-          "message": mesage,
-        })
+        command = processor.process_command(message)
+        print(command)
+
+        for location in home.locations.all():
+          if command['location'] == location.name:
+            print("Location found:", location.name)
+            device = Device.objects.filter(location=location, type=command['device']).first()
+            if device:
+              device.status = command['status']
+              device.save()
+
+              History.objects.create(
+                device=device,
+                status=device.status,
+                person=person
+              )
+              send_command_to_esp32(device=device.type, state=device.status, room=location.name)
+              return Response({
+                "id": device.id,
+                "name": device.name,
+                "status": device.status,
+                "message": message,
+                "type": device.type
+              })
+            else:
+              print("Device not found")
+              return Response({"message": "Device not found"}, status=400)
+
+        return Response({"message": "Location not found"}, status=400)
     return Response(serializer.errors, status=400)
 speech_remote_api_view  = SpeechRemoteAPIView.as_view()
 

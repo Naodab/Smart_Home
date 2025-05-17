@@ -81,6 +81,7 @@ public class AuthRepository {
             @Override
             public void onResponse(@NonNull Call<Void> call,
                                    @NonNull Response<Void> response) {
+                MyApp.getInstance().getSessionManager().clear();
                 if (response.isSuccessful()) {
                     logoutStatus.setValue(Result.success(true));
                 } else {
