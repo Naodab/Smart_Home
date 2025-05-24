@@ -1,16 +1,18 @@
-  #include <WiFi.h>
+#include <WiFi.h>
 #include <WebSocketsClient.h>
 #include <ArduinoJson.h>
 #include <ESP32Servo.h>
-// #include <DHT.h>
+#include <DHT11.h>
 #include <Arduino.h>
 #include <map>
 #define HOME_ID 8
+#define HOME_ADDRESS_EMAIL "testhome1@smarthome.com"
+
 std::map<String, String> deviceStateMap;
 
-const char* ssid = "no";
-const char* password = "doandoandoan";
-const char* serverAddress = "192.168.151.197";  // Thay dbằng IP server Djangoe
+const char* ssid = "LOC_Wiffi";
+const char* password = "303304305";
+const char* serverAddress = "192.168.1.17";  // Thay dbằng IP server Djangoe
 const int serverPort = 8088;
 
 WebSocketsClient webSocket;
@@ -20,7 +22,7 @@ Servo bathroomDoor;
 
 // LIGHT PIN
 constexpr int LIGHT_BEDROOM_PIN = 16;
-constexpr int LIGHT_BATHROOM_PIN = 17;cmd
+constexpr int LIGHT_BATHROOM_PIN = 17;
 constexpr int LIGHT_KITCHEN_PIN = 18;
 constexpr int LIGHT_LIVING_ROOM_PIN = 19;
 
@@ -55,7 +57,7 @@ void webSocketEvent(WStype_t type, uint8_t * payload, size_t length) {
       break;
     case WStype_CONNECTED:
       Serial.println("✅ Connected to WebSocket server!");
-      webSocket.sendTXT("{\"message\": \"ESP32 connected\"}");
+      webSocket.sendTXT("{\"message\": \"ESP32 connected\", \"email\": \"" + String(HOME_ADDRESS_EMAIL) + "\"}");
       fetchInitialDeviceStates();
       break;
     case WStype_TEXT:
@@ -255,6 +257,7 @@ void fetchInitialDeviceStates() {
     DynamicJsonDocument doc(128);
     doc["command"] = "init_request";
     doc["home_id"] = HOME_ID;
+    doc["home_email"] = HOME_ADDRESS_EMAIL;
 
     String jsonStr;
     serializeJson(doc, jsonStr);

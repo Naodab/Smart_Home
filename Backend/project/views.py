@@ -142,7 +142,7 @@ def map_room_to_device(room):
     }
     return room_device_mapping.get(room, None)
 
-def send_command_to_esp32(device, state, room, angle=None):
+def send_command_to_esp32(email, device, state, room, angle=None):
     command = {"type": "remote", "device": device, "state": state, "room": map_room_to_device(room)}
     if device == "servo" and angle is not None:
         command["angle"] = angle 
@@ -150,7 +150,7 @@ def send_command_to_esp32(device, state, room, angle=None):
 
     channel_layer = get_channel_layer()
     async_to_sync(channel_layer.group_send)(
-        "esp32_group",
+        f"esp32_{email.replace('@', '_at_').replace('.', '_dot_')}",
         {"type": "send_command", "command": command}
     )
     return {"status": "command_sent", "command": command}

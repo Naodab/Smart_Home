@@ -157,7 +157,7 @@ class SpeechRemoteAPIView(APIView):
                 status=device.status,
                 person=person
               )
-              send_command_to_esp32(device=device.type, state=device.status, room=location.name)
+              send_command_to_esp32(email=home.email, device=device.type, state=device.status, room=location.name)
               return Response({
                 "id": device.id,
                 "name": device.name,
@@ -257,8 +257,6 @@ class DeviceUsersIdAPIView(APIView):
     person_id = request.data.get('personId')
     device_id = request.data.get('id')
 
-    send_command_to_esp32(device=device.type, state=new_status, room=device.location.name)
-
     # if request.user.id != device.location.home.id:
     #     return Response({"message": "Permission denied"}, status=403)
 
@@ -268,6 +266,8 @@ class DeviceUsersIdAPIView(APIView):
     person = get_object_or_404(Person, id=person_id)
     if not person:
         return Response({"message": "Person not found"}, status=404)
+
+    send_command_to_esp32(email=person.home.email, device=device.type, state=new_status, room=device.location.name)
 
     device.status = new_status
     device.save()
