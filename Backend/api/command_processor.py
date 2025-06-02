@@ -25,9 +25,9 @@ class CommandProcessor:
         self.negations = ["không", "đừng", "khong", "dung", "đưng", "dừng", "ngừng", "ngung"]
         
         self.fan_states = {
-            "1": ["thấp", "thap", "chậm", "cham", "nhẹ", "nhe", "yếu", "yeu", "nhỏ", "nho"],
-            "2": ["trung bình", "trung binh", "vừa", "vua", "bình thường", "binh thuong"], 
-            "3": ["cao", "mạnh", "manh", "nhanh", "to", "lớn", "lon", "mạnh nhất", "manh nhat", "tối đa", "toi da"]
+            "1": ["thấp", "thap", "chậm", "cham", "nhẹ", "nhe", "yếu", "yeu", "nhỏ", "nho", "mức một", "muc mot", "mức 1", "muc 1", "số 1", "số mot", "so 1", "so mot"],
+            "2": ["trung bình", "trung binh", "vừa", "vua", "bình thường", "binh thuong", "mức hai", "muc hai", "mức 2", "muc 2", "số 2", "so 2", "so hai", "số hai"], 
+            "3": ["cao", "mạnh", "manh", "nhanh", "to", "lớn", "lon", "mạnh nhất", "manh nhat", "tối đa", "toi da", "mức ba", "muc ba", "mức 3", "muc 3", "số 3", "so 3", "so ba", "số ba"]
         }
     
     def _find_best_match(self, word: str, options: Dict[str, List[str]]) -> str:

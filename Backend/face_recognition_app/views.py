@@ -119,6 +119,7 @@ def detect(request):
     for face in faces:
         x, y, w, h = face['box']
         confidence = face['confidence']
+        print(f"Detected face at ({x}, {y}, {w}, {h}) with confidence {confidence:.2f}")
 
         if confidence <= 0.9:
             continue
@@ -161,6 +162,7 @@ def detect(request):
         print(first_valid_face_response)
         return JsonResponse(data=first_valid_face_response)
 
+    print("Không tìm thấy khuôn mặt hợp lệ!")
     return JsonResponse({"error": "Không tìm thấy khuôn mặt hợp lệ!"}, status=400)
 
 def _grab_image(path=None, stream=None, url=None):

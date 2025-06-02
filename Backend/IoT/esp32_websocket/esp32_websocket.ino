@@ -10,9 +10,9 @@
 
 std::map<String, String> deviceStateMap;
 
-const char* ssid = "LOC_Wiffi";
-const char* password = "303304305";
-const char* serverAddress = "192.168.1.17";  // Thay dbằng IP server Djangoe
+const char* ssid = "...";
+const char* password = "hxh12399";
+const char* serverAddress = "192.168.1.21";  // Thay dbằng IP server Djangoe
 const int serverPort = 8088;
 
 WebSocketsClient webSocket;
@@ -39,7 +39,6 @@ constexpr int DOOR_BEDROOM_PIN = 27;
 constexpr int DOOR_BATHROOM_PIN = 26;
 
 // constraints
-
 constexpr int FAN_SPEED_LOW = 100;
 constexpr int FAN_SPEED_MEDIUM = 175;
 constexpr int FAN_SPEED_HIGH = 250;
@@ -49,6 +48,12 @@ constexpr int CURTAIN_SPEED = 70;
 constexpr int CURTAIN_DURATION = 1200;
 constexpr int DOOR_OPEN_ANGLE = 0;
 constexpr int DOOR_CLOSE_ANGLE = 120;
+
+constexpr int DHT_PIN = 25;
+DHT11 dht(DHT_PIN);
+
+float prevTemperature = -1000;
+float prevHumidity = -1000;
 
 void webSocketEvent(WStype_t type, uint8_t * payload, size_t length) {
   switch(type) {
@@ -65,6 +70,15 @@ void webSocketEvent(WStype_t type, uint8_t * payload, size_t length) {
       Serial.println((char*)payload);
       handleCommand((char*)payload);
       break;
+  }
+}
+
+void handleDHT() {
+  float h = dht.readHumidity();
+  float t = dht.readTemperature();
+  if (isnan(h) || isnan(t)) {
+    Serial.println("Không đọc được");
+    return;
   }
 }
 
