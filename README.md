@@ -1,6 +1,6 @@
 # Smart Home Project
 
-## Backend
+## Backend with Django Rest Framework (DRF)
 
 ### Setup Backend
 
