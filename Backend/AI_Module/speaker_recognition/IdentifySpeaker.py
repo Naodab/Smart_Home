@@ -6,61 +6,157 @@ import librosa
 
 # root_dir = "models"
 # sr = SpeakerRecognition(root_dir)
-embedding_model = tf.keras.models.load_model('models/mfcc_embedding_model_update.keras')
-
+embedding_model = tf.keras.models.load_model('models/text_dependent_embedding_model_1.keras')
 # Khởi tạo
 verifier = SpeakerVerification(embedding_model)
 
 speaker_files = {
-    "hoang": [
-        "data/Hoang/Hoang_01.wav",
-        "data/Hoang/Hoang_02.wav",
-        "data/Hoang/Hoang_03.wav",
-        "data/Hoang/Hoang_04.wav",
-        "data/Hoang/Hoang_05.wav",
-        "data/Hoang/Hoang_06.wav",
-        "data/Hoang/Hoang_07.wav",
-        "data/Hoang/Hoang_08.wav",
-        "data/Hoang/Hoang_09.wav",
-        "data/Hoang/Hoang_10.wav",
+    "Hoang": [
+        "datasets/train/Hoang/Hoang_bat_den_nha_bep.wav",
+        "datasets/train/Hoang/Hoang_bat_den_phong_khach.wav",
+        "datasets/train/Hoang/Hoang_bat_den_phong_ngu.wav",
+        "datasets/train/Hoang/Hoang_bat_den_phong_ve_sinh.wav",
+        "datasets/train/Hoang/Hoang_bat_quat_phong_khach.wav",
+        "datasets/train/Hoang/Hoang_bat_quat_phong_ngu.wav",
+        "datasets/train/Hoang/Hoang_dong_cua_nha.wav",
+        "datasets/train/Hoang/Hoang_dong_cua_phong_ngu.wav",
+        "datasets/train/Hoang/Hoang_dong_cua_phong_ve_sinh.wav",
+        "datasets/train/Hoang/Hoang_dong_rem_phong_khach.wav",
+        "datasets/train/Hoang/Hoang_mo_cua_nha.wav",
+        "datasets/train/Hoang/Hoang_mo_cua_phong_ngu.wav",
+        "datasets/train/Hoang/Hoang_mo_cua_phong_ve_sinh.wav",
+        "datasets/train/Hoang/Hoang_mo_rem_phong_khach.wav",
+        "datasets/train/Hoang/Hoang_tat_den_nha_bep.wav",
+        "datasets/train/Hoang/Hoang_tat_den_phong_khach.wav",
+        "datasets/train/Hoang/Hoang_tat_den_phong_ngu.wav",
+        "datasets/train/Hoang/Hoang_tat_den_phong_ve_sinh.wav",
+        "datasets/train/Hoang/Hoang_tat_quat_phong_khach.wav",
+        "datasets/train/Hoang/Hoang_tat_quat_phong_ngu.wav"
     ],
-    "huy": [
-        "data/Huy/Huy_01.wav",
-        "data/Huy/Huy_02.wav",
-        "data/Huy/Huy_03.wav",
-        "data/Huy/Huy_04.wav",
-        "data/Huy/Huy_05.wav",
-        "data/Huy/Huy_06.wav",
-        "data/Huy/Huy_07.wav",
-        "data/Huy/Huy_08.wav",
-        "data/Huy/Huy_09.wav",
-        "data/Huy/Huy_10.wav",
+    "Binh": [
+        "datasets/train/Binh/Binh_bat_den_nha_bep.wav",
+        "datasets/train/Binh/Binh_bat_den_phong_khach.wav",
+        "datasets/train/Binh/Binh_bat_den_phong_ngu.wav",
+        "datasets/train/Binh/Binh_bat_den_phong_ve_sinh.wav",
+        "datasets/train/Binh/Binh_bat_quat_phong_khach.wav",
+        "datasets/train/Binh/Binh_bat_quat_phong_ngu.wav",
+        "datasets/train/Binh/Binh_dong_cua_nha.wav",
+        "datasets/train/Binh/Binh_dong_cua_phong_ngu.wav",
+        "datasets/train/Binh/Binh_dong_cua_phong_ve_sinh.wav",
+        "datasets/train/Binh/Binh_dong_rem_phong_khach.wav",
+        "datasets/train/Binh/Binh_mo_cua_nha.wav",
+        "datasets/train/Binh/Binh_mo_cua_phong_ngu.wav",
+        "datasets/train/Binh/Binh_mo_cua_phong_ve_sinh.wav",
+        "datasets/train/Binh/Binh_mo_rem_phong_khach.wav",
+        "datasets/train/Binh/Binh_tat_den_nha_bep.wav",
+        "datasets/train/Binh/Binh_tat_den_phong_khach.wav",
+        "datasets/train/Binh/Binh_tat_den_phong_ngu.wav",
+        "datasets/train/Binh/Binh_tat_den_phong_ve_sinh.wav",
+        "datasets/train/Binh/Binh_tat_quat_phong_khach.wav",
+        "datasets/train/Binh/Binh_tat_quat_phong_ngu.wav"
     ],
-    "binh": [
-        "data/Binh/Binh_01.wav",
-        "data/Binh/Binh_02.wav",
-        "data/Binh/Binh_03.wav",
-        "data/Binh/Binh_04.wav",
-        "data/Binh/Binh_05.wav",
-        "data/Binh/Binh_06.wav",
-        "data/Binh/Binh_07.wav",
-        "data/Binh/Binh_08.wav",
-        "data/Binh/Binh_09.wav",
-        "data/Binh/Binh_10.wav"
+    "Doan": [
+        "datasets/train/Doan/Doan_bat_den_nha_bep.wav",
+        "datasets/train/Doan/Doan_bat_den_phong_khach.wav",
+        "datasets/train/Doan/Doan_bat_den_phong_ngu.wav",
+        "datasets/train/Doan/Doan_bat_den_phong_ve_sinh.wav",
+        "datasets/train/Doan/Doan_bat_quat_phong_khach.wav",
+        "datasets/train/Doan/Doan_bat_quat_phong_ngu.wav",
+        "datasets/train/Doan/Doan_dong_cua_nha.wav",
+        "datasets/train/Doan/Doan_dong_cua_phong_ngu.wav",
+        "datasets/train/Doan/Doan_dong_cua_phong_ve_sinh.wav",
+        "datasets/train/Doan/Doan_dong_rem_phong_khach.wav",
+        "datasets/train/Doan/Doan_mo_cua_nha.wav",
+        "datasets/train/Doan/Doan_mo_cua_phong_ngu.wav",
+        "datasets/train/Doan/Doan_mo_cua_phong_ve_sinh.wav",
+        "datasets/train/Doan/Doan_mo_rem_phong_khach.wav",
+        "datasets/train/Doan/Doan_tat_den_nha_bep.wav",
+        "datasets/train/Doan/Doan_tat_den_phong_khach.wav",
+        "datasets/train/Doan/Doan_tat_den_phong_ngu.wav",
+        "datasets/train/Doan/Doan_tat_den_phong_ve_sinh.wav",
+        "datasets/train/Doan/Doan_tat_quat_phong_khach.wav",
+        "datasets/train/Doan/Doan_tat_quat_phong_ngu.wav"
     ],
-    "doan": [
-        "data/Doan/Doan_01.wav",
-        "data/Doan/Doan_02.wav",
-        "data/Doan/Doan_03.wav",
-        "data/Doan/Doan_04.wav",
-        "data/Doan/Doan_05.wav",
-        "data/Doan/Doan_06.wav",
-        "data/Doan/Doan_07.wav",
-        "data/Doan/Doan_08.wav",
-        "data/Doan/Doan_09.wav",
-        "data/Doan/Doan_10.wav",
+    "Huy": [
+        "datasets/train/Huy/Huy_bat_den_nha_bep.wav",
+        "datasets/train/Huy/Huy_bat_den_phong_khach.wav",
+        "datasets/train/Huy/Huy_bat_den_phong_ngu.wav",
+        "datasets/train/Huy/Huy_bat_den_phong_ve_sinh.wav",
+        "datasets/train/Huy/Huy_bat_quat_phong_khach.wav",
+        "datasets/train/Huy/Huy_bat_quat_phong_ngu.wav",
+        "datasets/train/Huy/Huy_dong_cua_nha.wav",
+        "datasets/train/Huy/Huy_dong_cua_phong_ngu.wav",
+        "datasets/train/Huy/Huy_dong_cua_phong_ve_sinh.wav",
+        "datasets/train/Huy/Huy_dong_rem_phong_khach.wav",
+        "datasets/train/Huy/Huy_mo_cua_nha.wav",
+        "datasets/train/Huy/Huy_mo_cua_phong_ngu.wav",
+        "datasets/train/Huy/Huy_mo_cua_phong_ve_sinh.wav",
+        "datasets/train/Huy/Huy_mo_rem_phong_khach.wav",
+        "datasets/train/Huy/Huy_tat_den_nha_bep.wav",
+        "datasets/train/Huy/Huy_tat_den_phong_khach.wav",
+        "datasets/train/Huy/Huy_tat_den_phong_ngu.wav",
+        "datasets/train/Huy/Huy_tat_den_phong_ve_sinh.wav",
+        "datasets/train/Huy/Huy_tat_quat_phong_khach.wav",
+        "datasets/train/Huy/Huy_tat_quat_phong_ngu.wav"
+    ],
+    "unknown": [
+        "data/Doan/test.wav"
     ]
 }
+
+# speaker_files = {
+#     "Hoang": [
+#         "data/Hoang/Hoang_01.wav",
+#         "data/Hoang/Hoang_02.wav",
+#         "data/Hoang/Hoang_03.wav",
+#         "data/Hoang/Hoang_04.wav",
+#         "data/Hoang/Hoang_05.wav",
+#         "data/Hoang/Hoang_06.wav",
+#         "data/Hoang/Hoang_07.wav",
+#         "data/Hoang/Hoang_08.wav",
+#         "data/Hoang/Hoang_09.wav",
+#         "data/Hoang/Hoang_10.wav",
+#     ],
+#     "Binh": [
+#         "data/Binh/Binh_01.wav",
+#         "data/Binh/Binh_02.wav",
+#         "data/Binh/Binh_03.wav",
+#         "data/Binh/Binh_04.wav",
+#         "data/Binh/Binh_05.wav",
+#         "data/Binh/Binh_06.wav",
+#         "data/Binh/Binh_07.wav",
+#         "data/Binh/Binh_08.wav",
+#         "data/Binh/Binh_09.wav",
+#         "data/Binh/Binh_10.wav"
+#     ],
+#     "Doan": [
+#         "data/Doan/Doan_01.wav",
+#         "data/Doan/Doan_02.wav",
+#         "data/Doan/Doan_03.wav",
+#         "data/Doan/Doan_04.wav",
+#         "data/Doan/Doan_05.wav",
+#         "data/Doan/Doan_06.wav",
+#         "data/Doan/Doan_07.wav",
+#         "data/Doan/Doan_08.wav",
+#         "data/Doan/Doan_09.wav",
+#         "data/Doan/Doan_10.wav",
+#     ],
+#     "Huy": [
+#         "data/Huy/Huy_01.wav",
+#         "data/Huy/Huy_02.wav",
+#         "data/Huy/Huy_03.wav",
+#         "data/Huy/Huy_04.wav",
+#         "data/Huy/Huy_05.wav",
+#         "data/Huy/Huy_06.wav",
+#         "data/Huy/Huy_07.wav",
+#         "data/Huy/Huy_08.wav",
+#         "data/Huy/Huy_09.wav",
+#         "data/Huy/Huy_10.wav",
+#     ],
+#     "unknown": [
+#         "data/Doan/test.wav"
+#     ]
+# }
 
 def preprocess_audio(audio_path, sr=16000, duration=2):
     """Tiền xử lý file âm thanh"""
@@ -186,7 +282,7 @@ y_val_true = []
 
 verifier.threshold = 0.55
 
-np.savez('mfcc_speaker_database_update.npz',
+np.savez('text_dependent_database_v1.npz',
          centroids=verifier.speaker_centroids,
          threshold=verifier.threshold)
 
@@ -213,8 +309,13 @@ def identify_speaker(audio_path):
     return result
 # Ví dụ sử dụng
 # result = identify_speaker("/kaggle/input/voice-dataset/content/drive/MyDrive/dataset/train/id_001/id_001_0080.wav")
-result = identify_speaker("data/Hoang/normal_1.wav") 
+# result = identify_speaker("data/Hoang/normal_1.wav")
+# print(result)
 # result = identify_speaker("data/Doan/test.wav") 
-result = identify_speaker("data/Huy/8.wav") 
+# result = identify_speaker("data/Huy/8.wav") 
+# print(result)
+
+# result = identify_speaker("C:/Users/TechCare\OneDrive - The University of Technology/PBL5/Smart_Home/Backend/media/audio.wav") 
+# print(result)
 # result = identify_speaker("data/Binh/Recording (10).wav") 
 # result = identify_speaker("C:/Users/TechCare/OneDrive - The University of Technology/PBL5/Smart_Home/Backend/media/processed_audio.wav") 

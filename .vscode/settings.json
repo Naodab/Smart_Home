@@ -1,3 +1,10 @@
 {
-    "java.configuration.updateBuildConfiguration": "interactive"
+    "java.configuration.updateBuildConfiguration": "interactive",
+    "cSpell.words": [
+        "smarthome"
+    ],
+    "files.associations": {
+        "*.embeddedhtml": "html",
+        "*.inc": "cpp"
+    }
 }

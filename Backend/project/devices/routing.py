@@ -4,6 +4,6 @@ from project.devices.consumers import ESP32Consumer
 
 websocket_urlpatterns = [
   re_path(r"ws/esp32/$", ESP32Consumer.as_asgi()),
-  # re_path(r'ws/android/$', ESP32Consumer.as_asgi()), 
+  # re_path(r'ws/android/$', ESP32Consumer.as_asgi()),
   # re_path(r'ws/android/', AndroidConsumer.as_asgi()),
 ]

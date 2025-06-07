@@ -1,62 +1,92 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:background="@color/white"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".view.HomeFragment">
+    tools:context=".view.fragment.HomeFragment">
 
     <ImageView
-        android:id="@+id/background"
+        android:id="@+id/imageView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:contentDescription="@string/background"
         android:scaleType="centerCrop"
-        android:src="@drawable/back_home"/>
+        android:src="@drawable/bg_way_to_authenticate" />
 
     <TextView
-        android:id="@+id/title"
-        android:layout_width="match_parent"
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:fontFamily="@font/title"
-        android:gravity="center"
-        android:text="@string/project_name"
-        android:textColor="@color/orange"
-        android:textSize="40sp"
+        android:fontFamily="@font/alpha"
+        android:text="@string/hi_command"
+        android:textColor="@color/white"
+        android:textSize="42sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/background"
-        app:layout_constraintVertical_bias="0.052"
-        tools:layout_editor_absoluteX="0dp" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.15"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.04" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:fontFamily="@font/alpha"
+        android:paddingBottom="12dp"
+        android:text="@string/authenticate_command"
+        android:textColor="@color/white"
+        android:textSize="15sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.12"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView" />
+
+    <ImageView
+        android:id="@+id/btn_setting"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:contentDescription="@string/setting"
+        android:src="@drawable/ic_setting"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.956"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.039"
+        app:tint="@color/white" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintBottom_toBottomOf="@+id/background"
+        android:paddingHorizontal="32dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:paddingHorizontal="32dp">
+        app:layout_constraintVertical_bias="0.819"
+        tools:layout_editor_absoluteX="0dp">
 
         <LinearLayout
             android:id="@+id/face_auth_btn"
             android:layout_width="match_parent"
             android:layout_height="130dp"
+            android:layout_marginBottom="16dp"
+            android:background="@drawable/bg_authenticate_btn"
             android:orientation="horizontal"
-            android:background="@drawable/home_rounded_orange_square"
-            android:paddingVertical="20dp"
-            android:layout_marginBottom="16dp">
+            android:paddingVertical="20dp">
 
             <androidx.cardview.widget.CardView
                 android:layout_width="90dp"
                 android:layout_height="90dp"
-                app:cardCornerRadius="20dp"
-                android:layout_marginHorizontal="20dp">
+                android:layout_marginHorizontal="20dp"
+                app:cardCornerRadius="20dp">
 
                 <ImageView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:contentDescription="@string/face_icon"
-                    android:src="@drawable/ic_face"/>
+                    android:src="@drawable/ic_face" />
 
             </androidx.cardview.widget.CardView>
 
@@ -64,32 +94,32 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginEnd="20dp"
-                android:text="@string/face_authentication"
-                android:textSize="28sp"
                 android:gravity="center_vertical"
+                android:text="@string/face_authentication"
                 android:textColor="@color/black"
-                android:textStyle="bold"/>
+                android:textSize="28sp"
+                android:textStyle="bold" />
         </LinearLayout>
 
         <LinearLayout
             android:id="@+id/speech_auth_btn"
             android:layout_width="match_parent"
             android:layout_height="130dp"
+            android:background="@drawable/bg_authenticate_btn"
             android:orientation="horizontal"
-            android:background="@drawable/home_rounded_orange_square"
             android:paddingVertical="20dp">
 
             <androidx.cardview.widget.CardView
                 android:layout_width="90dp"
                 android:layout_height="90dp"
-                app:cardCornerRadius="20dp"
-                android:layout_marginHorizontal="20dp">
+                android:layout_marginHorizontal="20dp"
+                app:cardCornerRadius="20dp">
 
                 <ImageView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:contentDescription="@string/speech_icon"
-                    android:src="@drawable/ic_speech"/>
+                    android:src="@drawable/ic_speech" />
 
             </androidx.cardview.widget.CardView>
 
@@ -97,15 +127,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginEnd="20dp"
-                android:text="@string/speech_authentication"
-                android:textSize="28sp"
                 android:gravity="center_vertical"
+                android:text="@string/speech_authentication"
                 android:textColor="@color/black"
-                android:textStyle="bold"/>
+                android:textSize="28sp"
+                android:textStyle="bold" />
         </LinearLayout>
     </LinearLayout>
-
-    <include
-        android:id="@+id/bottom_nav_layout"
-        layout="@layout/bottom_nav_bar" />
 </androidx.constraintlayout.widget.ConstraintLayout>

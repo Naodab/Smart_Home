@@ -132,15 +132,25 @@ import numpy as np
 # import os
 
 # Hàm gửi lệnh tới ESP32 qua WebSocket
-def send_command_to_esp32(device, state, angle=None):
-    command = {"device": device, "state": state}
+
+def map_room_to_device(room):
+    room_device_mapping = {
+        "Phòng khách": "living_room",
+        "Phòng ngủ": "bedroom",
+        "Phòng vệ sinh": "bathroom",
+        "Nhà bếp": "kitchen",
+    }
+    return room_device_mapping.get(room, None)
+
+def send_command_to_esp32(email, device, state, room, angle=None):
+    command = {"type": "remote", "device": device, "state": state, "room": map_room_to_device(room)}
     if device == "servo" and angle is not None:
         command["angle"] = angle 
     print(f"🚀 Sending command to WebSocket: {command}")  # In ra terminal Django
 
     channel_layer = get_channel_layer()
     async_to_sync(channel_layer.group_send)(
-        "esp32_group",
+        f"esp32_{email.replace('@', '_at_').replace('.', '_dot_')}",
         {"type": "send_command", "command": command}
     )
     return {"status": "command_sent", "command": command}

@@ -20,15 +20,19 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from django.urls import path
-from .views import send_command_to_esp32
-
+from face_recognition_app.views import send_command_to_esp32
+from face_recognition_app import views
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/speechs/', include('api.urls')),
+    path('api/', include('api.urls')),
+    path('face_detection/detect/', views.detect, name='detect'),
     # path("upload/", views.detect, name="upload"),
     # path('api/control/<str:device>/<str:state>/', send_command_to_esp32, name='control_esp32'),
     # path("api/control/<str:device>/<str:state>/<int:angle>/", send_command_to_esp32)  # Hỗ trợ servo
 ]
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
