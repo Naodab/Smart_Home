@@ -20,7 +20,7 @@ py -m venv venv
 pip install -r requirements.txt
 ```
 
-#### Cập nhật pip packages nếu cần (Latest version: 25.0.1)
+#### Update pip packages if needed (Latest version: 25.0.1)
 
 ```bash
 py -m pip install --upgrade pip
