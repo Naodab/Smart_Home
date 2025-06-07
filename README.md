@@ -32,6 +32,12 @@ py -m pip install --upgrade pip
 pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu117
 ```
 
+#### Run server
+
+```bash
+python manage.py runserver 0.0.0.0:<host>
+```
+
 ---
 
 ## Frontend
