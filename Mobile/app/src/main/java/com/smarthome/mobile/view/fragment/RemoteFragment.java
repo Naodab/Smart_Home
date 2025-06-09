@@ -17,12 +17,15 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.smarthome.mobile.app.MyApp;
 import com.smarthome.mobile.databinding.FragmentRemoteBinding;
 import com.smarthome.mobile.model.Home;
 import com.smarthome.mobile.model.Location;
+import com.smarthome.mobile.network.WebSocketClient;
 import com.smarthome.mobile.util.AnimationUtil;
 import com.smarthome.mobile.util.AudioRecorderHelper;
 import com.smarthome.mobile.util.SoundRecordUtil;
+import com.smarthome.mobile.util.WebSocketListenerInterface;
 import com.smarthome.mobile.view.activity.MainActivity;
 import com.smarthome.mobile.view.widget.CustomLoadingDialog;
 import com.smarthome.mobile.view.widget.CustomToast;
@@ -33,6 +36,8 @@ import com.smarthome.mobile.viewmodel.DeviceViewModel;
 import com.smarthome.mobile.viewmodel.HomeViewModel;
 import com.smarthome.mobile.viewmodel.LocationAdapter;
 import com.smarthome.mobile.viewmodel.SpeechRemoteViewModel;
+
+import org.json.JSONObject;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -48,6 +53,7 @@ public class RemoteFragment extends Fragment {
     private SpeechRemoteViewModel speechRemoteViewModel;
     private final float SCALE = 0.9f;
     private Home home;
+    private WebSocketClient webSocketClient;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -155,6 +161,49 @@ public class RemoteFragment extends Fragment {
             }
         });
 
+        this.webSocketClient = new WebSocketClient(new WebSocketListenerInterface() {
+            @Override
+            public void onMessageReceived(String message) {
+                new Handler(Looper.getMainLooper()).post(() -> {
+                    try {
+                        JSONObject jsonObject = new JSONObject(message);
+                        String command = jsonObject.getString("command");
+                        if ("init_response".equals(command)) {
+                            boolean isSuccess = jsonObject.getBoolean("success");
+                            if (!isSuccess) {
+                                CustomToast.showError(requireContext(), "Websocket failure");
+                            }
+                        } else if ("temp_humid".equals(command)) {
+                            float temperature = (float) jsonObject.getDouble("temperature");
+                            float humidity = (float) jsonObject.getDouble("humidity");
+                            binding.tvTemperature.setText(MessageFormat.format("{0}°C",
+                                    (int) temperature));
+                            binding.tvHumidity.setText(MessageFormat.format("{0}%",
+                                    (int) humidity));
+                        }
+                    } catch (Exception e) {
+                        CustomToast.showError(requireContext(), "Websocket failure");
+                    }
+                });
+            }
+
+            @Override
+            public void onWebSocketConnected() {
+
+            }
+
+            @Override
+            public void onWebSocketDisconnected() {
+
+            }
+
+            @Override
+            public void onWebSocketError(String error) {
+
+            }
+        });
+        this.webSocketClient.startWebSocket();
+
         binding.settingBtn.setOnClickListener(v -> setting.show());
     }
 
@@ -162,6 +211,7 @@ public class RemoteFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        this.webSocketClient.close();
         SoundRecordUtil.getInstance(requireContext()).release();
     }
 }

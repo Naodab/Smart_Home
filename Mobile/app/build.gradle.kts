@@ -17,6 +17,7 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
         buildConfigField("String", "API_BASE_URL", "\"http://192.168.1.17:8088/\"")
+        buildConfigField("String", "WEBSOCKET_URL", "\"ws://192.168.1.17:8088/ws/android/\"")
     }
 
     buildTypes {
