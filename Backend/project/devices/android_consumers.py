@@ -38,7 +38,7 @@ class AndroidConsumers(AsyncWebsocketConsumer):
             await self.channel_layer.group_add(group_name, self.channel_name)
             print(f" Android WebSocket added to group: {group_name}")
             await self.send(text_data=json.dumps({
-                "type": "init_response",
+                "command": "init_response",
                 "success": True
             }))
 

@@ -169,7 +169,7 @@ public class RemoteFragment extends Fragment {
                         if ("init_response".equals(command)) {
                             boolean isSuccess = jsonObject.getBoolean("success");
                             if (!isSuccess) {
-//                                CustomToast.showError(requireContext(), "Websocket failure");
+                                CustomToast.showError(requireContext(), "Websocket failure");
                             }
                         } else if ("temp_humid".equals(command)) {
                             float temperature = (float) jsonObject.getDouble("temperature");
