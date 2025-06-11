@@ -17,7 +17,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.smarthome.mobile.app.MyApp;
 import com.smarthome.mobile.databinding.FragmentRemoteBinding;
 import com.smarthome.mobile.model.Home;
 import com.smarthome.mobile.model.Location;
@@ -26,7 +25,6 @@ import com.smarthome.mobile.util.AnimationUtil;
 import com.smarthome.mobile.util.AudioRecorderHelper;
 import com.smarthome.mobile.util.SoundRecordUtil;
 import com.smarthome.mobile.util.WebSocketListenerInterface;
-import com.smarthome.mobile.view.activity.MainActivity;
 import com.smarthome.mobile.view.widget.CustomLoadingDialog;
 import com.smarthome.mobile.view.widget.CustomToast;
 import com.smarthome.mobile.view.widget.DialogChangePassword;
@@ -171,7 +169,7 @@ public class RemoteFragment extends Fragment {
                         if ("init_response".equals(command)) {
                             boolean isSuccess = jsonObject.getBoolean("success");
                             if (!isSuccess) {
-                                CustomToast.showError(requireContext(), "Websocket failure");
+//                                CustomToast.showError(requireContext(), "Websocket failure");
                             }
                         } else if ("temp_humid".equals(command)) {
                             float temperature = (float) jsonObject.getDouble("temperature");

@@ -29,4 +29,8 @@ public class FaceAuthViewModel extends AndroidViewModel {
     public void authenticateFace(byte[] imageBytes) {
         faceAuthRepository.authenticate(imageBytes);
     }
+
+    public void resetState() {
+        faceAuthRepository.getAuthenticateStatus().setValue(null); // Đặt lại LiveData nếu cần
+    }
 }

@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,6 +28,7 @@ public class HomeFragment extends Fragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        Log.d("HomeFragment Log", "onCreate");
         super.onCreate(savedInstanceState);
     }
 
@@ -34,6 +36,7 @@ public class HomeFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container,
                              Bundle savedInstanceState) {
+        Log.d("HomeFragment Log", "onCreateView");
         binding = FragmentHomeBinding.inflate(inflater, container, false);
         this.authViewModel = new ViewModelProvider(this).get(AuthViewModel.class);
         return binding.getRoot();
@@ -42,6 +45,7 @@ public class HomeFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view,
                               @Nullable Bundle savedInstanceState) {
+        Log.d("HomeFragment Log", "onCreated");
         super.onViewCreated(view, savedInstanceState);
         ((MainActivity) Objects.requireNonNull(requireActivity())).hideBottomNav();
         dialogSettingHome = new DialogSettingHome(requireContext(), () -> authViewModel.logout());
@@ -55,9 +59,10 @@ public class HomeFragment extends Fragment {
     }
 
     private void navigateToFragment(Fragment fragment) {
-        FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
-        transaction.replace(R.id.fragmentContainerView, fragment);
-        transaction.addToBackStack(null);
-        transaction.commit();
+        getParentFragmentManager()
+                .beginTransaction()
+                .replace(R.id.fragmentContainerView, fragment)
+                .addToBackStack(null)
+                .commit();
     }
 }
