@@ -3,6 +3,9 @@ from channels.generic.websocket import AsyncWebsocketConsumer
 from api.models import Device, Home, Location
 from channels.db import database_sync_to_async
 from asgiref.sync import sync_to_async
+from .helpers import convert_to_group
+from asgiref.sync import async_to_sync
+from channels.layers import get_channel_layer
 
 def map_room_to_device(room):
     room_device_mapping = {
@@ -26,8 +29,6 @@ class ESP32Consumer(AsyncWebsocketConsumer):
 
   async def disconnect(self, close_code):
     await self.channel_layer.group_discard("esp32_group", self.channel_name)
-
-
     print(" ESP32 WebSocket disconnected!")
 
   async def receive(self, text_data):
@@ -42,7 +43,7 @@ class ESP32Consumer(AsyncWebsocketConsumer):
       locations = await sync_to_async(list)(Location.objects.filter(home=home))
 
       if home_email:
-        group_name = f"esp32_{home_email.replace('@', '_at_').replace('.', '_dot_')}"
+        group_name = convert_to_group(home_email=home_email, type="esp32")
         await self.channel_layer.group_add(group_name, self.channel_name)
         print(f" ESP32 WebSocket added to group: {group_name}")
 
@@ -56,7 +57,27 @@ class ESP32Consumer(AsyncWebsocketConsumer):
           "command": "init_response",
           "data": response_data
       }))
+    elif command == "temp_humid":
+      temp = data.get("temp")
+      humid = data.get("humid")
+      home_id = data.get("home_id")
+      print(data)
+      response_data = {}
+      home = await get_home(home_id)
+      home.humidity = humid
+      home.temperature = temp
+      await sync_to_async(home.save)()
+      response_data["temperature"] = temp
+      response_data["humidity"] = humid
+      await self.send(text_data=json.dumps({
+          "command": "temp_humid_response",
+          "data": response_data
+      }))
 
+      await get_channel_layer().group_send(
+        convert_to_group(home_email=home.email, type="android"),
+        {"type": "send_temp_humid", "temperature": temp, "humidity": humid}
+      )
     else:
       device = data.get("device")
       state = data.get("state")

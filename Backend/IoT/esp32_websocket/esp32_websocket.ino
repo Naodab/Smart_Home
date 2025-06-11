@@ -10,9 +10,9 @@
 
 std::map<String, String> deviceStateMap;
 
-const char* ssid = "...";
-const char* password = "hxh12399";
-const char* serverAddress = "192.168.1.21";  // Thay dbằng IP server Djangoe
+const char* ssid = "LOC_Wiffi";
+const char* password = "303304305";
+const char* serverAddress = "192.168.1.17";  // Thay dbằng IP server Djangoe
 const int serverPort = 8088;
 
 WebSocketsClient webSocket;
@@ -51,9 +51,12 @@ constexpr int DOOR_CLOSE_ANGLE = 120;
 
 constexpr int DHT_PIN = 25;
 DHT11 dht(DHT_PIN);
-
-float prevTemperature = -1000;
-float prevHumidity = -1000;
+float currentTemperature = 0.0f;
+float currentHumidity = 0.0f;
+float prevTemperature = -1.0f;
+float prevHumidity = -1.0f;
+unsigned long lastDHTReadTime = 0;
+const unsigned long dhtInterval = 2000;
 
 void webSocketEvent(WStype_t type, uint8_t * payload, size_t length) {
   switch(type) {
@@ -73,13 +76,14 @@ void webSocketEvent(WStype_t type, uint8_t * payload, size_t length) {
   }
 }
 
-void handleDHT() {
-  float h = dht.readHumidity();
-  float t = dht.readTemperature();
-  if (isnan(h) || isnan(t)) {
+bool handleDHT() {
+  currentHumidity = dht.readHumidity();
+  currentTemperature = dht.readTemperature();
+  if (isnan(currentHumidity) || isnan(currentTemperature)) {
     Serial.println("Không đọc được");
-    return;
+    return false;
   }
+  return true;
 }
 
 bool handleLight(String room, String state) {
@@ -314,5 +318,33 @@ void setup() {
 
 void loop() {
     webSocket.loop();
+    unsigned long currentMillis = millis();
+    if (currentMillis - lastDHTReadTime >= dhtInterval) {
+      lastDHTReadTime = currentMillis;
+      
+      if (handleDHT()) {
+        float tempDiff = abs(currentTemperature - prevTemperature);
+        float humidDiff = abs(currentHumidity - prevHumidity);
+
+        if (tempDiff >= 2 || humidDiff >= 2) {
+          prevTemperature = currentTemperature;
+          prevHumidity = currentHumidity;
+
+          DynamicJsonDocument doc(128);
+          doc["command"] = "temp_humid";
+          doc["temp"] = currentTemperature;
+          doc["humid"] = currentHumidity;
+          doc["home_id"] = HOME_ID;
+
+          String jsonStr;
+          serializeJson(doc, jsonStr);
+
+          Serial.print("📤 Sending DHT data: ");
+          Serial.println(jsonStr);
+
+          webSocket.sendTXT(jsonStr);
+        }
+      }
+    }
     delay(100);
 }

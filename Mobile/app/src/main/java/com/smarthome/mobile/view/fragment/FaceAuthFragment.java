@@ -22,7 +22,6 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 
-import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -42,7 +41,6 @@ import com.smarthome.mobile.viewmodel.FaceAuthViewModel;
 
 import java.nio.ByteBuffer;
 import java.util.Objects;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -55,6 +53,7 @@ public class FaceAuthFragment extends Fragment {
     private CustomLoadingDialog loading;
     private ImageAnalysis imageAnalysis;
     private boolean isAnalyzing;
+    private ProcessCameraProvider cameraProvider;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -64,16 +63,27 @@ public class FaceAuthFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        Log.d("FaceAuthFragment Log", "onCreateView");
         binding = FragmentFaceAuthBinding.inflate(inflater, container, false);
         loading = new CustomLoadingDialog(requireContext());
+        // Luôn tạo mới ExecutorService khi tạo lại view
+        if (executorService == null || executorService.isShutdown()) {
+            executorService = Executors.newSingleThreadExecutor();
+        }
         return binding.getRoot();
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        Log.d("FaceAuthFragment Log", "onViewCreated");
         super.onViewCreated(view, savedInstanceState);
         if (getActivity() instanceof MainActivity) {
             ((MainActivity) getActivity()).hideBottomNav();
+        }
+
+        // Luôn tạo lại ExecutorService nếu cần
+        if (executorService == null || executorService.isShutdown()) {
+            executorService = Executors.newSingleThreadExecutor();
         }
 
         this.faceAuthViewModel = new ViewModelProvider(requireActivity())
@@ -81,25 +91,23 @@ public class FaceAuthFragment extends Fragment {
         animatePreviewView();
 
         View[] viewsToAnimate = {binding.backBtn, binding.cameraStatus};
-
         for (int i = 0; i < viewsToAnimate.length; i++) {
             View viewToAnimate = viewsToAnimate[i];
-
             long delay = i * 300L;
-
             ObjectAnimator animator = ObjectAnimator.ofFloat(viewToAnimate, "alpha", 0f, 1f);
             animator.setStartDelay(delay);
             animator.setDuration(500);
             animator.start();
         }
 
-        executorService = Executors.newSingleThreadExecutor();
-
         requestPermissions(new String[]{
                 Manifest.permission.CAMERA,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE
         }, PERMISSION_REQUEST_CODE);
+
+        // Luôn khởi động lại camera khi vào lại fragment
         startCamera();
+
         binding.backBtn.setOnClickListener(v -> {
             if (isAnalyzing) {
                 isAnalyzing = false;
@@ -107,38 +115,65 @@ public class FaceAuthFragment extends Fragment {
             backToHome();
         });
 
+        // Luôn observe lại ViewModel mỗi lần fragment vào lại (onViewCreated luôn được gọi lại)
         faceAuthViewModel.getAuthenticateStatus().observe(getViewLifecycleOwner(), result -> {
-            switch (result.status) {
-                case LOADING:
-                    loading.show();
-                    break;
-                case ERROR:
+            try {
+                if (result == null) {
+                    Log.w("FaceAuthFragment", "Received null result from ViewModel");
                     loading.dismiss();
-                    CustomToast.showError(requireContext(), "Lỗi xác thực khuôn mặt");
-                    backToHome();
-                    break;
-                case SUCCESS:
-                    loading.dismiss();
-                    CustomToast.showSuccess(requireContext(), "Chào mừng " + result.data.getPersonName());
-                    goToRemote();
-                    break;
+                    return;
+                }
+
+                switch (result.status) {
+                    case LOADING:
+                        if (loading != null) loading.show();
+                        break;
+                    case ERROR:
+                        if (loading != null) loading.dismiss();
+                        if (getContext() != null) {
+                            CustomToast.showError(requireContext(), "Lỗi xác thực khuôn mặt");
+                        }
+                        faceAuthViewModel.resetState();
+                        backToHome();
+                        break;
+                    case SUCCESS:
+                        if (loading != null) loading.dismiss();
+                        if (getContext() != null) {
+                            String personName = (result.data != null && result.data.getPersonName() != null)
+                                    ? result.data.getPersonName()
+                                    : "người dùng";
+                            CustomToast.showSuccess(requireContext(), "Chào mừng " + personName);
+                        }
+                        faceAuthViewModel.resetState();
+                        goToRemote();
+                        break;
+                }
+            } catch (Exception e) {
+                Log.e("FaceAuthFragment", "Error in observer: " + e.getMessage(), e);
+                if (loading != null) loading.dismiss();
             }
         });
     }
 
     private void startCamera() {
+        if (cameraProvider != null) {
+            cameraProvider.unbindAll();
+            cameraProvider = null;
+        }
+
         ListenableFuture<ProcessCameraProvider> future = ProcessCameraProvider.getInstance(requireContext());
         future.addListener(() -> {
             try {
-                ProcessCameraProvider cameraProvider = future.get();
-                bindCameraUseCases(cameraProvider);
+                ProcessCameraProvider provider = future.get();
+                bindCameraUseCases(provider);
             } catch (Exception e) {
-                Log.d("Camera Fragment", Objects.requireNonNull(e.getMessage()));
+                Log.e("Camera Fragment", "Camera initialization error: " + e.getMessage());
             }
         }, ContextCompat.getMainExecutor(requireContext()));
     }
 
     private void bindCameraUseCases(ProcessCameraProvider provider) {
+        this.cameraProvider = provider;
         Preview preview = new Preview.Builder().build();
         imageCapture = new ImageCapture.Builder().build();
 
@@ -146,6 +181,7 @@ public class FaceAuthFragment extends Fragment {
                 .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
                 .build();
 
+        // Luôn set lại analyzer và isAnalyzing = true khi bind camera
         isAnalyzing = true;
         imageAnalysis.setAnalyzer(executorService, this::analyzeImage);
 
@@ -182,7 +218,6 @@ public class FaceAuthFragment extends Fragment {
                 isAnalyzing = false;
                 takePhoto();
                 binding.cameraStatus.setText("Đã nhận được ảnh");
-//                new android.os.Handler(Looper.getMainLooper()).postDelayed(this::backToHome, 2000);
             }
         }).addOnFailureListener(e -> Log.d("Analyze Image", Objects.requireNonNull(e.getMessage())));
     }
@@ -200,19 +235,6 @@ public class FaceAuthFragment extends Fragment {
                         buffer.get(bytes);
                         image.close();
                         faceAuthViewModel.authenticateFace(bytes);
-//                        faceAuthViewModel.uploadImageToServer(bytes, new FaceAuthCallback() {
-//                            @Override
-//                            public void onSuccess() {
-//                                Log.d("UploadSuccess", "Picture uploaded successfully!");
-//                                Toast.makeText(requireContext(), "Ảnh đã đuợc upload đến server!", Toast.LENGTH_SHORT).show();
-//                            }
-//
-//                            @Override
-//                            public void onFailure() {
-//                                Log.e("UploadFailure", "Picture upload failed");
-//                                Toast.makeText(requireContext(), "Thất bại!", Toast.LENGTH_SHORT).show();
-//                            }
-//                        });
                     }
 
                     @Override
@@ -221,12 +243,6 @@ public class FaceAuthFragment extends Fragment {
                     }
                 }
         );
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        executorService.shutdown();
     }
 
     private void animatePreviewView() {
@@ -243,14 +259,24 @@ public class FaceAuthFragment extends Fragment {
         animatorSet.start();
     }
 
+    private void resetAuthenticationState() {
+        // Luôn set lại analyzer và isAnalyzing = true khi quay lại fragment
+        isAnalyzing = true;
+        if (imageAnalysis != null && executorService != null && !executorService.isShutdown()) {
+            imageAnalysis.setAnalyzer(executorService, this::analyzeImage);
+        }
+    }
+
     private void backToHome() {
-        FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
-        transaction.replace(R.id.fragmentContainerView, new HomeFragment());
-        transaction.addToBackStack(null);
-        transaction.commit();
+        cleanupCamera();
+        getParentFragmentManager()
+                .beginTransaction()
+                .replace(R.id.fragmentContainerView, new HomeFragment())
+                .commit();
     }
 
     public void goToRemote() {
+        cleanupCamera();
         FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
         ((MainActivity) requireActivity()).slideInLeft(transaction);
         transaction.replace(R.id.fragmentContainerView, new RemoteFragment());
@@ -258,8 +284,66 @@ public class FaceAuthFragment extends Fragment {
         transaction.commit();
     }
 
+    private void cleanupCamera() {
+        isAnalyzing = false;
+        if (imageAnalysis != null) {
+            imageAnalysis.clearAnalyzer();
+        }
+        if (cameraProvider != null) {
+            cameraProvider.unbindAll();
+        }
+    }
+
+    @Override
+    public void onPause() {
+        Log.d("FaceAuthFragment Log", "onPause");
+        super.onPause();
+        isAnalyzing = false;
+        if (imageAnalysis != null) {
+            imageAnalysis.clearAnalyzer();
+        }
+    }
+
+    @Override
+    public void onResume() {
+        Log.d("FaceAuthFragment Log", "onResume");
+        super.onResume();
+        // Luôn tạo lại executorService nếu đã shutdown hoặc null
+        if (executorService == null || executorService.isShutdown()) {
+            executorService = Executors.newSingleThreadExecutor();
+        }
+        // Nếu cameraProvider chưa có, startCamera lại, còn không thì reset lại analyzer
+        if (cameraProvider == null) {
+            startCamera();
+        } else {
+            resetAuthenticationState();
+        }
+    }
+
     @Override
     public void onDestroyView() {
+        Log.d("FaceAuthFragment Log", "onDestroyView");
         super.onDestroyView();
+
+        isAnalyzing = false;
+
+        if (imageAnalysis != null) {
+            imageAnalysis.clearAnalyzer();
+            imageAnalysis = null;
+        }
+
+        if (cameraProvider != null) {
+            cameraProvider.unbindAll();
+            cameraProvider = null;
+        }
+
+        if (executorService != null && !executorService.isShutdown()) {
+            executorService.shutdown();
+            executorService = null;
+        }
+
+        if (faceAuthViewModel != null) {
+            faceAuthViewModel.getAuthenticateStatus().removeObservers(this);
+        }
     }
 }

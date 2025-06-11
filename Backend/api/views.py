@@ -96,7 +96,7 @@ class SpeechCreateAPIView(APIView):
         if os.path.abspath(saved_full_path) != os.path.abspath(audio_path):
           shutil.copy(saved_full_path, audio_path)
 
-        speaker_id, _ = test_verification(audio_path, threshold=0.8)
+        speaker_id, _ = test_verification(audio_path, threshold=0.7)
         print("Speaker ID:", speaker_id)
         pr_id = map_name_to_id(speaker_id)
         for person in persons:
