@@ -1,6 +1,6 @@
 # Smart Home Project
 
-## Backend
+## Backend with Django Rest Framework (DRF)
 
 ### Setup Backend
 
@@ -20,7 +20,7 @@ py -m venv venv
 pip install -r requirements.txt
 ```
 
-#### Cập nhật pip packages nếu cần (Latest version: 25.0.1)
+#### Update pip packages if needed (Latest version: 25.0.1)
 
 ```bash
 py -m pip install --upgrade pip
@@ -30,6 +30,12 @@ py -m pip install --upgrade pip
 
 ```bash
 pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu117
+```
+
+#### Run server
+
+```bash
+python manage.py runserver 0.0.0.0:<host>
 ```
 
 ---
