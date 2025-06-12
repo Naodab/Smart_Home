@@ -47,6 +47,7 @@ public class AuthRepository {
 
     public void login(String email, String password) {
         loginStatus.setValue(Result.loading());
+        Log.d("Login log", "loggingggggg");
         LoginRequest request = new LoginRequest(email, password);
         apiService.login(request).enqueue(new Callback<LoginResponse>() {
             @Override
@@ -71,6 +72,7 @@ public class AuthRepository {
             public void onFailure(@NonNull Call<LoginResponse> call,
                                   @NonNull Throwable t) {
                 loginStatus.setValue(Result.error("Không thể gửi yêu cầu đển server!"));
+                Log.d("Login log", "Không thể gửi yeu cầu đến server");
             }
         });
     }
