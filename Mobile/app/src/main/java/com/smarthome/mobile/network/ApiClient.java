@@ -2,6 +2,8 @@ package com.smarthome.mobile.network;
 
 import static com.smarthome.mobile.BuildConfig.API_BASE_URL;
 
+import android.util.Log;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.smarthome.mobile.app.MyApp;
@@ -31,6 +33,7 @@ public class ApiClient {
                     .registerTypeAdapter(Type.class, new TypeDeserializer())
                     .create();
 
+            Log.d("API_BASE_URL", "getClient: " + BASE_URL);
             retrofit = new Retrofit.Builder()
                     .baseUrl(BASE_URL)
                     .addConverterFactory(GsonConverterFactory.create(gson))
